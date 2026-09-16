@@ -1,0 +1,279 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+/* ========================================
+   FIRE THEME — Liquid Glass + Fire Colors
+   ======================================== */
+@theme {
+    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+
+    /* Fire color palette */
+    --color-fire-50:  #fff7ed;
+    --color-fire-100: #ffedd5;
+    --color-fire-200: #fed7aa;
+    --color-fire-300: #fdba74;
+    --color-fire-400: #fb923c;
+    --color-fire-500: #f97316;
+    --color-fire-600: #ea580c;
+    --color-fire-700: #c2410c;
+    --color-fire-800: #9a3412;
+    --color-fire-900: #7c2d12;
+    --color-fire-950: #431407;
+
+    /* Ember/dark accents */
+    --color-ember-900: #1a0a00;
+    --color-ember-800: #2d1200;
+    --color-ember-700: #3d1a00;
+    --color-ember-600: #4a1f00;
+
+    /* Gold accent */
+    --color-gold-400: #fbbf24;
+    --color-gold-500: #f59e0b;
+    --color-gold-600: #d97706;
+}
+
+/* ========================================
+   LIQUID GLASS UTILITY CLASSES
+   ======================================== */
+
+/* Glass card */
+.glass-card {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 1rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* Glass card hover */
+.glass-card-hover {
+    transition: all 0.3s ease;
+}
+.glass-card-hover:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(249, 115, 22, 0.4);
+    box-shadow: 0 12px 40px rgba(249, 115, 22, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+}
+
+/* Glass navbar */
+.glass-nav {
+    background: rgba(26, 10, 0, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(249, 115, 22, 0.3);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+}
+
+/* Glass sidebar */
+.glass-sidebar {
+    background: rgba(26, 10, 0, 0.9);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-right: 1px solid rgba(249, 115, 22, 0.2);
+}
+
+/* Fire gradient text */
+.fire-text {
+    background: linear-gradient(135deg, #f97316, #fbbf24, #ef4444);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Fire gradient button */
+.btn-fire {
+    background: linear-gradient(135deg, #ea580c, #f97316);
+    border: 1px solid rgba(251, 191, 36, 0.3);
+    color: white;
+    font-weight: 600;
+    padding: 0.5rem 1.25rem;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+    box-shadow: 0 0 12px rgba(234, 88, 12, 0.4);
+}
+.btn-fire:hover {
+    background: linear-gradient(135deg, #c2410c, #ea580c);
+    box-shadow: 0 0 20px rgba(249, 115, 22, 0.6);
+    transform: translateY(-1px);
+}
+
+/* Secondary ghost button */
+.btn-ghost {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.8);
+    padding: 0.5rem 1.25rem;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+}
+.btn-ghost:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(249, 115, 22, 0.4);
+    color: white;
+}
+
+/* Danger button */
+.btn-danger {
+    background: linear-gradient(135deg, #dc2626, #ef4444);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: white;
+    font-weight: 600;
+    padding: 0.5rem 1.25rem;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+}
+.btn-danger:hover {
+    background: linear-gradient(135deg, #b91c1c, #dc2626);
+    box-shadow: 0 0 16px rgba(239, 68, 68, 0.5);
+}
+
+/* Badge status */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.65rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.025em;
+}
+.badge-warning  { background: rgba(251,191,36,0.15); color: #fbbf24; border: 1px solid rgba(251,191,36,0.3); }
+.badge-success  { background: rgba(34,197,94,0.15);  color: #4ade80; border: 1px solid rgba(34,197,94,0.3); }
+.badge-info     { background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); }
+.badge-danger   { background: rgba(239,68,68,0.15);  color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+.badge-fire     { background: rgba(249,115,22,0.15); color: #fb923c; border: 1px solid rgba(249,115,22,0.3); }
+.badge-gray     { background: rgba(255,255,255,0.08); color: #9ca3af; border: 1px solid rgba(255,255,255,0.15); }
+
+/* Form input glass */
+.input-glass {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 0.5rem;
+    color: white;
+    padding: 0.6rem 1rem;
+    width: 100%;
+    transition: all 0.2s ease;
+    outline: none;
+}
+.input-glass::placeholder { color: rgba(255,255,255,0.35); }
+.input-glass:focus {
+    border-color: rgba(249, 115, 22, 0.6);
+    background: rgba(255, 255, 255, 0.09);
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15);
+}
+.input-glass:focus-visible { outline: none; }
+
+/* Table glass */
+.table-glass thead tr {
+    background: rgba(249, 115, 22, 0.12);
+    border-bottom: 1px solid rgba(249, 115, 22, 0.3);
+}
+.table-glass thead th {
+    color: #fb923c;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.75rem 1rem;
+}
+.table-glass tbody tr {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    transition: background 0.2s;
+}
+.table-glass tbody tr:hover {
+    background: rgba(249, 115, 22, 0.06);
+}
+.table-glass tbody td {
+    padding: 0.85rem 1rem;
+    color: rgba(255,255,255,0.85);
+    font-size: 0.875rem;
+}
+
+/* Fire glow divider */
+.fire-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(249,115,22,0.5), transparent);
+    margin: 1rem 0;
+}
+
+/* Stat card glow */
+.stat-card {
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 1rem;
+    padding: 1.25rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #ea580c, #f97316, #fbbf24);
+}
+.stat-card:hover {
+    border-color: rgba(249,115,22,0.3);
+    box-shadow: 0 8px 32px rgba(249,115,22,0.15);
+}
+
+/* Sidebar nav link */
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.65rem 1rem;
+    border-radius: 0.5rem;
+    color: rgba(255,255,255,0.6);
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+.nav-link:hover {
+    background: rgba(249,115,22,0.12);
+    color: #fb923c;
+}
+.nav-link.active {
+    background: rgba(249,115,22,0.2);
+    color: #fb923c;
+    border: 1px solid rgba(249,115,22,0.3);
+}
+
+/* Alert/flash messages */
+.alert-success {
+    background: rgba(34,197,94,0.1);
+    border: 1px solid rgba(34,197,94,0.3);
+    color: #4ade80;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+}
+.alert-error {
+    background: rgba(239,68,68,0.1);
+    border: 1px solid rgba(239,68,68,0.3);
+    color: #f87171;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+}
+
+/* Page fire background */
+.fire-bg {
+    background:
+        radial-gradient(ellipse at 20% 50%, rgba(234,88,12,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 20%, rgba(249,115,22,0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 60% 80%, rgba(220,38,38,0.08) 0%, transparent 50%),
+        #0f0500;
+    min-height: 100vh;
+}

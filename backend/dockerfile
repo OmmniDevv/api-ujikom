@@ -1,0 +1,51 @@
+# ============================================================
+# Dockerfile — Laravel 12 + PHP 8.4 + Node 20 (Vite build)
+# ============================================================
+
+FROM php:8.4-cli
+
+# 1. Dependensi sistem + ekstensi PHP
+RUN apt-get update && apt-get install -y \
+    libzip-dev \
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    libonig-dev \
+    libxml2-dev \
+    zip unzip curl git \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install \
+        pdo pdo_mysql zip gd mbstring xml bcmath pcntl \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# 2. Node.js 20 (untuk Vite/Tailwind build)
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# 3. Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# 4. Working directory
+WORKDIR /var/www
+
+# 5. Copy composer files dulu (layer cache optimal)
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --no-scripts --no-autoloader --no-interaction
+
+# 6. Copy package.json lalu npm install
+COPY package.json package-lock.json* ./
+RUN npm install
+
+# 7. Copy seluruh source code
+COPY . .
+
+# 8. Finalisasi composer autoloader
+RUN composer dump-autoload --optimize
+
+# 9. Set permission storage & cache
+RUN chown -R www-data:www-data storage bootstrap/cache \
+    && chmod -R 775 storage bootstrap/cache
+
+# 10. Expose port
+EXPOSE 8000
