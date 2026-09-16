@@ -1,0 +1,166 @@
+@startuml UseCase_SistemPeminjamanAlat
+
+skinparam backgroundColor transparent
+skinparam actorBackgroundColor #E8F4FD
+skinparam actorBorderColor #2C7BB6
+skinparam actorFontSize 13
+skinparam actorFontStyle bold
+skinparam usecaseBackgroundColor #FEFEFE
+skinparam usecaseBorderColor #2C7BB6
+skinparam usecaseFontSize 12
+skinparam ArrowColor #333333
+skinparam ArrowThickness 1.5
+skinparam packageBackgroundColor #F0F7FF
+skinparam packageBorderColor #2C7BB6
+skinparam packageFontSize 13
+skinparam packageFontStyle bold
+skinparam shadowing false
+skinparam padding 6
+skinparam nodesep 50
+skinparam ranksep 60
+
+left to right direction
+
+' ============ ACTORS ============
+actor "Admin" as admin #E8F4FD
+actor "Petugas" as petugas #E8FFE8
+actor "Peminjam\n(Siswa/Guru)" as peminjam #FFF8E8
+
+' ============ SYSTEM BOUNDARY ============
+rectangle "Sistem Peminjaman Alat" {
+
+  ' ---------- AUTH ----------
+  package "Autentikasi" {
+    usecase "Login" as UC_LOGIN
+    usecase "Logout" as UC_LOGOUT
+    usecase "Validasi Kredensial" as UC_VALIDASI
+    usecase "Redirect Berdasarkan Role" as UC_REDIRECT
+  }
+
+  ' ---------- ADMIN ----------
+  package "Kelola Data Master (Admin)" {
+    usecase "Kelola User" as UC_USER
+    usecase "Tambah User" as UC_ADD_USER
+    usecase "Edit User" as UC_EDIT_USER
+    usecase "Hapus User" as UC_DEL_USER
+    usecase "Cari & Filter User" as UC_SEARCH_USER
+
+    usecase "Kelola Kategori" as UC_KAT
+    usecase "Tambah Kategori" as UC_ADD_KAT
+    usecase "Edit Kategori" as UC_EDIT_KAT
+    usecase "Hapus Kategori" as UC_DEL_KAT
+
+    usecase "Kelola Alat" as UC_ALAT
+    usecase "Tambah Alat" as UC_ADD_ALAT
+    usecase "Edit Alat" as UC_EDIT_ALAT
+    usecase "Hapus Alat" as UC_DEL_ALAT
+
+    usecase "Lihat Semua Peminjaman" as UC_ADMIN_PINJAM
+  }
+
+  ' ---------- PETUGAS ----------
+  package "Kelola Peminjaman (Petugas)" {
+    usecase "Lihat Pengajuan\nPeminjaman" as UC_IDX_PINJAM
+    usecase "Setujui Peminjaman" as UC_SETUJUI
+    usecase "Tolak Peminjaman" as UC_TOLAK
+    usecase "Kurangi Stok Alat" as UC_KURANGI_STOK
+    usecase "Hapus Data Pengajuan" as UC_HAPUS_PENGAJUAN
+    usecase "Cari Peminjaman" as UC_CARI_PINJAM
+
+    usecase "Kelola Pengembalian" as UC_KEMBALI
+    usecase "Proses Pengembalian" as UC_PROSES_KEMBALI
+    usecase "Hitung Denda" as UC_DENDA
+    usecase "Catat Kondisi Alat" as UC_KONDISI
+
+    usecase "Cetak Laporan" as UC_LAPORAN
+  }
+
+  ' ---------- PEMINJAM ----------
+  package "Aktivitas Peminjam" {
+    usecase "Lihat Katalog Alat" as UC_KATALOG
+    usecase "Filter Alat per Kategori" as UC_FILTER_ALAT
+    usecase "Ajukan Peminjaman" as UC_AJUKAN
+    usecase "Validasi Stok Alat" as UC_CEK_STOK
+    usecase "Lihat Riwayat\nPeminjaman" as UC_RIWAYAT
+  }
+
+  ' ---------- LOG ----------
+  package "Log Sistem" {
+    usecase "Catat Log Aktivitas" as UC_LOG
+  }
+}
+
+' ============ RELASI ACTOR → UC ============
+
+' Auth — semua aktor
+admin   --> UC_LOGIN
+petugas --> UC_LOGIN
+peminjam --> UC_LOGIN
+admin   --> UC_LOGOUT
+petugas --> UC_LOGOUT
+peminjam --> UC_LOGOUT
+
+' Admin
+admin --> UC_USER
+admin --> UC_KAT
+admin --> UC_ALAT
+admin --> UC_ADMIN_PINJAM
+
+' Petugas
+petugas --> UC_IDX_PINJAM
+petugas --> UC_SETUJUI
+petugas --> UC_TOLAK
+petugas --> UC_KEMBALI
+petugas --> UC_LAPORAN
+
+' Peminjam
+peminjam --> UC_KATALOG
+peminjam --> UC_AJUKAN
+peminjam --> UC_RIWAYAT
+
+' ============ INCLUDE ============
+UC_LOGIN ..> UC_VALIDASI       : <<include>>
+UC_LOGIN ..> UC_REDIRECT       : <<include>>
+UC_LOGIN ..> UC_LOG            : <<include>>
+UC_LOGOUT ..> UC_LOG           : <<include>>
+
+UC_USER ..> UC_ADD_USER        : <<include>>
+UC_USER ..> UC_EDIT_USER       : <<include>>
+UC_USER ..> UC_DEL_USER        : <<include>>
+UC_USER ..> UC_SEARCH_USER     : <<include>>
+
+UC_KAT ..> UC_ADD_KAT          : <<include>>
+UC_KAT ..> UC_EDIT_KAT         : <<include>>
+UC_KAT ..> UC_DEL_KAT          : <<include>>
+
+UC_ALAT ..> UC_ADD_ALAT        : <<include>>
+UC_ALAT ..> UC_EDIT_ALAT       : <<include>>
+UC_ALAT ..> UC_DEL_ALAT        : <<include>>
+
+UC_IDX_PINJAM ..> UC_CARI_PINJAM : <<include>>
+
+UC_SETUJUI ..> UC_KURANGI_STOK : <<include>>
+UC_SETUJUI ..> UC_LOG          : <<include>>
+
+UC_TOLAK ..> UC_HAPUS_PENGAJUAN : <<include>>
+UC_TOLAK ..> UC_LOG            : <<include>>
+
+UC_KEMBALI ..> UC_PROSES_KEMBALI : <<include>>
+UC_PROSES_KEMBALI ..> UC_KONDISI : <<include>>
+UC_PROSES_KEMBALI ..> UC_LOG   : <<include>>
+
+UC_AJUKAN ..> UC_CEK_STOK     : <<include>>
+UC_AJUKAN ..> UC_LOG          : <<include>>
+
+' ============ EXTEND ============
+UC_PROSES_KEMBALI ..> UC_DENDA  : <<extend>>
+UC_KATALOG ..> UC_FILTER_ALAT   : <<extend>>
+UC_RIWAYAT ..> UC_CARI_PINJAM   : <<extend>>
+UC_ADD_USER ..> UC_LOG          : <<extend>>
+UC_EDIT_USER ..> UC_LOG         : <<extend>>
+UC_DEL_USER ..> UC_LOG          : <<extend>>
+UC_ADD_ALAT ..> UC_LOG          : <<extend>>
+UC_EDIT_ALAT ..> UC_LOG         : <<extend>>
+UC_DEL_ALAT ..> UC_LOG          : <<extend>>
+
+@enduml

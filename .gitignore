@@ -1,0 +1,47 @@
+# Dependencies
+backend/vendor/
+backend/node_modules/
+
+# Laravel
+backend/.env
+backend/.env.backup
+backend/.env.production
+backend/public/build/
+backend/public/hot
+backend/public/storage
+backend/storage/*.key
+backend/storage/pail
+backend/bootstrap/cache/*.php
+
+# IDE / Editor
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing
+backend/.phpunit.cache
+backend/.phpunit.result.cache
+
+# Logs
+*.log
+
+# Docker
+docker-compose.override.yml
+
+# Misc
+.phpactor.json
+.auth.json
+Homestead.json
+Homestead.yaml
+
+# AI / IDE steering
+.kiro/
+
+# School assignments (LKPD) - not part of project
+*.pdf

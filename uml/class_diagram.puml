@@ -1,0 +1,244 @@
+@startuml ClassDiagram_SistemPeminjamanAlat
+
+skinparam backgroundColor transparent
+skinparam classBackgroundColor #FEFEFE
+skinparam classBorderColor #2C7BB6
+skinparam classHeaderBackgroundColor #2C7BB6
+skinparam classHeaderFontColor white
+skinparam classFontSize 11
+skinparam classAttributeFontSize 10
+skinparam classStereotypeFontSize 10
+skinparam ArrowColor #333333
+skinparam ArrowThickness 1.5
+skinparam shadowing false
+skinparam padding 5
+skinparam nodesep 40
+skinparam ranksep 60
+
+' ============ MODELS ============
+
+class User {
+  +id : int
+  +name : string
+  +email : string
+  -password : string
+  +role : enum(admin|petugas|peminjam)
+  +no_hp : string
+  +alamat : string
+  +foto_profile : string
+  --
+  +peminjaman() : HasMany
+  +logAktivitas() : HasMany
+  +isAdmin() : bool
+  +isPetugas() : bool
+  +isPeminjam() : bool
+  +scopeSearch() : Builder
+  +scopeByRole() : Builder
+}
+
+class Kategori {
+  +id : int
+  +nama_kategori : string
+  +deskripsi : string
+  --
+  +alat() : HasMany
+  +masihDigunakan() : bool
+  +scopeSearch() : Builder
+}
+
+class Alat {
+  +id : int
+  +kategori_id : int <<FK>>
+  +nama_alat : string
+  +stok : int
+  +status_kondisi : string
+  +deskripsi : string
+  +gambar : string
+  --
+  +kategori() : BelongsTo
+  +detailPinjam() : HasMany
+  +stokCukup(jumlah:int) : bool
+  +scopeSearch() : Builder
+  +scopeByKategori() : Builder
+}
+
+class Peminjaman {
+  +id : int
+  +user_id : int <<FK>>
+  +tgl_pinjam : date
+  +tgl_kembali_plan : date
+  +status : enum(diajukan|dipinjam|dikembalikan|telat)
+  --
+  +user() : BelongsTo
+  +detailPinjam() : HasMany
+  +pengembalian() : HasOne
+  +scopeByStatus() : Builder
+  +scopeSearch() : Builder
+}
+
+class DetailPinjam {
+  +id : int
+  +peminjaman_id : int <<FK>>
+  +alat_id : int <<FK>>
+  +jumlah : int
+  --
+  +peminjaman() : BelongsTo
+  +alat() : BelongsTo
+}
+
+class Pengembalian {
+  +id : int
+  +peminjaman_id : int <<FK>>
+  +petugas_id : int <<FK>>
+  +tgl_kembali : date
+  +kondisi_kembali : string
+  +denda : int
+  --
+  +peminjaman() : BelongsTo
+  +petugas() : BelongsTo
+}
+
+class LogAktivitas {
+  +id : int
+  +user_id : int <<FK>>
+  +aktivitas : text
+  +keterangan : text
+  --
+  +user() : BelongsTo
+}
+
+' ============ CONTROLLERS ============
+
+class AuthController {
+  +showLogin() : View
+  +login(request) : RedirectResponse
+  +logout(request) : RedirectResponse
+  -redirectByRole() : RedirectResponse
+}
+
+class UserController {
+  +index(request) : View
+  +create() : View
+  +store(request) : RedirectResponse
+  +show(user) : View
+  +edit(user) : View
+  +update(request,user) : RedirectResponse
+  +destroy(user) : RedirectResponse
+}
+
+class KategoriController {
+  +index(request) : View
+  +create() : View
+  +store(request) : RedirectResponse
+  +edit(kategori) : View
+  +update(request,kategori) : RedirectResponse
+  +destroy(kategori) : RedirectResponse
+}
+
+class AlatController {
+  +index(request) : View
+  +katalog(request) : View
+  +create() : View
+  +store(request) : RedirectResponse
+  +show(alat) : View
+  +edit(alat) : View
+  +update(request,alat) : RedirectResponse
+  +destroy(alat) : RedirectResponse
+}
+
+class PeminjamanController {
+  +index(request) : View
+  +riwayat(request) : View
+  +create() : View
+  +store(request) : RedirectResponse
+  +show(peminjaman) : View
+  +approve(peminjaman) : RedirectResponse
+  +tolak(peminjaman) : RedirectResponse
+}
+
+class PetugasController {
+  +indexPeminjaman(request) : View
+  +setujuiPeminjaman(id) : RedirectResponse
+  +tolakPeminjaman(id) : RedirectResponse
+  +laporan() : View
+}
+
+class PengembalianController {
+  +index(request) : View
+  +create(request) : View
+  +store(request) : RedirectResponse
+  +show(pengembalian) : View
+}
+
+class DashboardController {
+  +admin() : View
+  +petugas() : View
+  +peminjam() : View
+}
+
+' ============ SERVICES ============
+
+class PeminjamanService {
+  +ajukan(userId,tglPinjam,tglKembali,detail) : array
+  +approve(peminjaman) : void
+  +tolak(peminjaman) : array
+}
+
+class PengembalianService {
+  +proses(peminjamanId,data) : Pengembalian
+}
+
+class ActivityLogger {
+  +{static} log(aktivitas,keterangan,userId) : void
+  +{static} logError(aktivitas,keterangan) : void
+}
+
+' ============ MIDDLEWARE ============
+
+class CheckRole {
+  +handle(request,next,...roles) : Response
+}
+
+' ============ RELASI MODEL ============
+
+User "1" --> "0..*" Peminjaman        : mengajukan
+User "1" --> "0..*" LogAktivitas      : mencatat
+User "1" --> "0..*" Pengembalian      : memverifikasi (petugas)
+Kategori "1" --> "0..*" Alat          : mengkategorikan
+Alat "1" --> "0..*" DetailPinjam      : digunakan
+Peminjaman "1" --> "0..*" DetailPinjam : terdiri dari
+Peminjaman "1" --> "0..1" Pengembalian : diproses menjadi
+
+' ============ RELASI CONTROLLER → MODEL ============
+
+UserController ..> User               : uses
+KategoriController ..> Kategori       : uses
+AlatController ..> Alat               : uses
+AlatController ..> Kategori           : uses
+PeminjamanController ..> PeminjamanService : uses
+PeminjamanController ..> Peminjaman   : uses
+PetugasController ..> Peminjaman      : uses
+PetugasController ..> Alat            : uses
+PengembalianController ..> PengembalianService : uses
+
+' ============ RELASI SERVICE → MODEL ============
+
+PeminjamanService ..> Peminjaman      : manages
+PeminjamanService ..> DetailPinjam    : creates
+PeminjamanService ..> Alat            : updates stok
+PengembalianService ..> Pengembalian  : creates
+PengembalianService ..> Peminjaman    : updates status
+
+' ============ CONTROLLER → LOGGER ============
+
+AuthController ..> ActivityLogger     : calls
+UserController ..> ActivityLogger     : calls
+AlatController ..> ActivityLogger     : calls
+PeminjamanController ..> ActivityLogger : calls
+PetugasController ..> ActivityLogger  : calls
+PengembalianController ..> ActivityLogger : calls
+
+' ============ MIDDLEWARE ============
+CheckRole ..> User                    : checks role
+
+@enduml

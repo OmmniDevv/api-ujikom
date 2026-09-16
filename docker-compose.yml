@@ -1,0 +1,94 @@
+services:
+
+  # ============================================================
+  # 1. DATABASE — MySQL 8.0
+  # ============================================================
+  mysql-server:
+    image: mysql:8.0
+    container_name: MySQL-API
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: API_ujikom
+      MYSQL_USER: api_ujikom
+      MYSQL_PASSWORD: api_ujikom
+      MYSQL_ROOT_PASSWORD: passwordroot
+    ports:
+      - "3306:3306"
+    networks:
+      - API-UJIKOM
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "api_ujikom", "--password=api_ujikom"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+
+  # ============================================================
+  # 2. BACKEND — Laravel 12 (pakai image php:8.4-cli)
+  # ============================================================
+  app-laravel:
+    image: php:8.4-cli
+    container_name: laravel-api
+    restart: unless-stopped
+    working_dir: /var/www
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/var/www
+    depends_on:
+      mysql-server:
+        condition: service_healthy
+    networks:
+      - API-UJIKOM
+    environment:
+      DB_HOST: mysql-server
+      DB_PORT: 3306
+      DB_DATABASE: API_ujikom
+      DB_USERNAME: api_ujikom
+      DB_PASSWORD: api_ujikom
+    command: >
+      bash -c "
+        apt-get update -q &&
+        apt-get install -y -q libzip-dev libpng-dev libonig-dev libxml2-dev zip unzip curl git &&
+        docker-php-ext-install pdo pdo_mysql zip mbstring &&
+        curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer &&
+        curl -fsSL https://deb.nodesource.com/setup_20.x | bash - &&
+        apt-get install -y nodejs &&
+        composer install --no-interaction --no-dev --optimize-autoloader &&
+        npm install &&
+        npm run build &&
+        php artisan migrate --force &&
+        php artisan storage:link --force 2>/dev/null || true &&
+        php artisan config:clear &&
+        php artisan serve --host=0.0.0.0 --port=8000
+      "
+
+  # ============================================================
+  # 3. DATABASE UI — phpMyAdmin
+  # ============================================================
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: PhpMyadmin-API
+    restart: unless-stopped
+    environment:
+      PMA_HOST: mysql-server
+      PMA_PORT: 3306
+    ports:
+      - "8081:80"
+    depends_on:
+      mysql-server:
+        condition: service_healthy
+    networks:
+      - API-UJIKOM
+
+# ============================================================
+# Volumes & Networks
+# ============================================================
+volumes:
+  mysql_data:
+
+networks:
+  API-UJIKOM:
+    driver: bridge
