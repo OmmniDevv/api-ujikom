@@ -71,7 +71,7 @@
 
     <div class="flex gap-3">
         @if($peminjaman->status === 'diajukan')
-            <form action="{{ route('petugas.peminjaman.approve', $peminjaman) }}" method="POST">
+            <form action="{{ route('petugas.peminjaman.setujui', $peminjaman) }}" method="POST">
                 @csrf <button type="submit" class="btn-fire px-5 py-2.5">Setujui Peminjaman</button>
             </form>
             <form action="{{ route('petugas.peminjaman.tolak', $peminjaman) }}" method="POST"

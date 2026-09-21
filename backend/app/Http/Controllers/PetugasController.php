@@ -3,16 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Exports\LaporanPeminjamanExport;
-use App\Models\Alat;
 use App\Models\Peminjaman;
-use App\Models\Pengembalian;
+use App\Services\ActivityLogger;
+use App\Services\PeminjamanService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class PetugasController extends Controller
 {
-    
+    public function __construct(private PeminjamanService $service) {}
+
     public function indexPeminjaman(Request $request)
     {
         $search = $request->input('search');
@@ -30,24 +30,21 @@ class PetugasController extends Controller
         return view('petugas.peminjaman.index', compact('peminjamans', 'search'));
     }
 
-    public function setujuiPeminjaman($id)
+    public function setujuiPeminjaman(Peminjaman $peminjaman)
     {
-        DB::beginTransaction();
         try {
-            $peminjaman = Peminjaman::with('detailPinjam')->findOrFail($id);
-            $peminjaman->update(['status' => 'dipinjam']);
+            $this->service->approve($peminjaman);
 
-            foreach ($peminjaman->detailPinjam as $detail) {
-                $alat = Alat::findOrFail($detail->alat_id);
-                $alat->stok -= $detail->jumlah;
-                $alat->save();
-            }
+            ActivityLogger::log(
+                'Approve Peminjaman',
+                "Peminjaman #{$peminjaman->id} disetujui | Peminjam: {$peminjaman->user->name}"
+            );
 
-            DB::commit();
-            return redirect()->back()->with('success', 'Peminjaman disetujui dan stok alat dikurangi.');
+            return redirect()->back()->with('success', 'Peminjaman disetujui. Stok alat sudah di-reserve saat pengajuan.');
+        } catch (\RuntimeException $e) {
+            return redirect()->back()->with('error', $e->getMessage());
         } catch (\Exception $e) {
-            DB::rollback();
-            return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat menyetujui peminjaman.');
         }
     }
 
@@ -71,7 +68,7 @@ class PetugasController extends Controller
         $pdf = Pdf::loadView('petugas.laporan.pdf', compact('peminjamans'))
             ->setPaper('a4', 'landscape');
 
-        return $pdf->download('laporan-peminjaman-' . now()->format('Ymd-His') . '.pdf');
+        return $pdf->download('laporan-peminjaman-'.now()->format('Ymd-His').'.pdf');
     }
 
     public function laporanExcel()
@@ -82,22 +79,25 @@ class PetugasController extends Controller
             ->get();
 
         $export = new LaporanPeminjamanExport($peminjamans);
-        return $export->download('laporan-peminjaman-' . now()->format('Ymd-His') . '.xlsx');
+
+        return $export->download('laporan-peminjaman-'.now()->format('Ymd-His').'.xlsx');
     }
 
-    public function tolakPeminjaman($id)
+    public function tolakPeminjaman(Peminjaman $peminjaman)
     {
         try {
-            $peminjaman = Peminjaman::findOrFail($id);
+            $namaAlat = $this->service->tolak($peminjaman);
 
-            if ($peminjaman->status == 'diajukan') {
-                $peminjaman->delete();
-                return redirect()->back()->with('success', 'Pengajuan peminjaman berhasil ditolak.');
-            }
+            ActivityLogger::log(
+                'Tolak Peminjaman',
+                "Peminjaman #{$peminjaman->id} ditolak | Peminjam: {$peminjaman->user->name} | Stok dikembalikan: ".implode(', ', $namaAlat)
+            );
 
-            return redirect()->back()->with('error', 'Status peminjaman sudah berubah.');
+            return redirect()->back()->with('success', 'Pengajuan peminjaman ditolak dan stok dikembalikan.');
+        } catch (\RuntimeException $e) {
+            return redirect()->back()->with('error', $e->getMessage());
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat menolak peminjaman.');
         }
     }
 }

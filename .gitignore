@@ -6,6 +6,8 @@ backend/node_modules/
 backend/.env
 backend/.env.backup
 backend/.env.production
+backend/API_ujikom
+backend/*.sqlite
 backend/public/build/
 backend/public/hot
 backend/public/storage

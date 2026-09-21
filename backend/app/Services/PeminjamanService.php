@@ -14,24 +14,27 @@ class PeminjamanService
         DB::beginTransaction();
         try {
             $peminjaman = Peminjaman::create([
-                'user_id'          => $userId,
-                'tgl_pinjam'       => $tglPinjam,
+                'user_id' => $userId,
+                'tgl_pinjam' => $tglPinjam,
                 'tgl_kembali_plan' => $tglKembaliPlan,
-                'status'           => 'diajukan',
+                'status' => 'diajukan',
             ]);
 
             $namaAlat = [];
 
+            // ponytail: race condition stok diabaikan — aplikasi single-server sekolah,
+            // lockForUpdate + re-cek cukup. Kalau scale-out: pindah ke DB CHECK (stok >= 0).
             foreach ($detail as $item) {
-                $alat = Alat::findOrFail($item['alat_id']);
+                $alat = Alat::lockForUpdate()->findOrFail($item['alat_id']);
 
-                if (!$alat->stokCukup($item['jumlah'])) {
+                if (! $alat->stokCukup($item['jumlah'])) {
                     DB::rollBack();
+
                     return [
-                        'success'  => false,
-                        'error'    => "Stok alat \"{$alat->nama_alat}\" tidak mencukupi (tersedia: {$alat->stok}).",
+                        'success' => false,
+                        'error' => "Stok alat \"{$alat->nama_alat}\" tidak mencukupi (tersedia: {$alat->stok}).",
                         'peminjaman' => null,
-                        'namaAlat'   => [],
+                        'namaAlat' => [],
                     ];
                 }
 
@@ -39,8 +42,8 @@ class PeminjamanService
 
                 DetailPinjam::create([
                     'peminjaman_id' => $peminjaman->id,
-                    'alat_id'       => $item['alat_id'],
-                    'jumlah'        => $item['jumlah'],
+                    'alat_id' => $item['alat_id'],
+                    'jumlah' => $item['jumlah'],
                 ]);
 
                 $namaAlat[] = "{$alat->nama_alat} ({$item['jumlah']} unit)";
@@ -49,10 +52,10 @@ class PeminjamanService
             DB::commit();
 
             return [
-                'success'    => true,
+                'success' => true,
                 'peminjaman' => $peminjaman,
-                'namaAlat'   => $namaAlat,
-                'error'      => null,
+                'namaAlat' => $namaAlat,
+                'error' => null,
             ];
 
         } catch (\Exception $e) {
@@ -60,14 +63,18 @@ class PeminjamanService
             throw $e;
         }
     }
+
     public function approve(Peminjaman $peminjaman): void
     {
         if ($peminjaman->status !== 'diajukan') {
             throw new \RuntimeException('Hanya peminjaman berstatus "diajukan" yang bisa disetujui.');
         }
 
+        // Stok sudah di-reserve saat pengajuan (lihat ajukan()).
+        // Approve hanya mengubah status, tidak mengubah stok lagi.
         $peminjaman->update(['status' => 'dipinjam']);
     }
+
     public function tolak(Peminjaman $peminjaman): array
     {
         if ($peminjaman->status !== 'diajukan') {

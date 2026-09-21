@@ -72,9 +72,6 @@ Route::prefix('petugas')
         // Detail peminjaman (dari PeminjamanController)
         Route::get('/peminjaman/{peminjaman}', [PeminjamanController::class, 'show'])->name('peminjaman.show');
 
-        // Approve & tolak lama (PeminjamanController) — tetap tersedia untuk backward compat
-        Route::post('/peminjaman/{peminjaman}/approve', [PeminjamanController::class, 'approve'])->name('peminjaman.approve');
-
         // Proses pengembalian
         Route::get('/pengembalian', [PengembalianController::class, 'index'])->name('pengembalian.index');
         Route::get('/pengembalian/create', [PengembalianController::class, 'create'])->name('pengembalian.create');
@@ -117,11 +114,12 @@ Route::prefix('peminjam')
 Route::get('/', function () {
     if (auth()->check()) {
         return match (auth()->user()->role) {
-            'admin'    => redirect()->route('admin.dashboard'),
-            'petugas'  => redirect()->route('petugas.dashboard'),
+            'admin' => redirect()->route('admin.dashboard'),
+            'petugas' => redirect()->route('petugas.dashboard'),
             'peminjam' => redirect()->route('peminjam.dashboard'),
-            default    => redirect()->route('login'),
+            default => redirect()->route('login'),
         };
     }
+
     return redirect()->route('login');
 });

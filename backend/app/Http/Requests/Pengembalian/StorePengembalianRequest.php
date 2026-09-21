@@ -6,15 +6,18 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StorePengembalianRequest extends FormRequest
 {
-    public function authorize(): bool { return true; }
+    public function authorize(): bool
+    {
+        return true;
+    }
 
     public function rules(): array
     {
         return [
             'peminjaman_id' => ['required', 'exists:peminjaman,id'],
-            'tgl_kembali'   => ['required', 'date'],
-            'kondisi_alat'  => ['required', 'in:baik,rusak,perbaikan'],
-            'catatan'       => ['nullable', 'string', 'max:500'],
+            'tgl_kembali' => ['required', 'date'],
+            'kondisi_kembali' => ['required', 'in:baik,rusak,perbaikan'],
+            'catatan' => ['nullable', 'string', 'max:500'],
         ];
     }
 
@@ -22,10 +25,10 @@ class StorePengembalianRequest extends FormRequest
     {
         return [
             'peminjaman_id.required' => 'Data peminjaman wajib dipilih.',
-            'peminjaman_id.exists'   => 'Data peminjaman tidak ditemukan.',
-            'tgl_kembali.required'   => 'Tanggal kembali wajib diisi.',
-            'kondisi_alat.required'  => 'Kondisi alat wajib diisi.',
-            'kondisi_alat.in'        => 'Kondisi alat tidak valid.',
+            'peminjaman_id.exists' => 'Data peminjaman tidak ditemukan.',
+            'tgl_kembali.required' => 'Tanggal kembali wajib diisi.',
+            'kondisi_kembali.required' => 'Kondisi alat wajib dipilih.',
+            'kondisi_kembali.in' => 'Kondisi alat tidak valid.',
         ];
     }
 }

@@ -49,7 +49,7 @@
                     <td class="text-center">
                         @if($item->status == 'diajukan')
                             <div class="flex items-center justify-center gap-2">
-                                <form action="{{ route('petugas.peminjaman.setujui', $item->id) }}" method="POST">
+                                <form action="{{ route('petugas.peminjaman.setujui', $item) }}" method="POST">
                                     @csrf
                                     <button type="submit"
                                         onclick="return confirm('Setujui peminjaman alat ini?')"
@@ -57,7 +57,7 @@
                                         Setujui
                                     </button>
                                 </form>
-                                <form action="{{ route('petugas.peminjaman.tolak', $item->id) }}" method="POST"
+                                <form action="{{ route('petugas.peminjaman.tolak', $item) }}" method="POST"
                                       onsubmit="return confirm('Yakin ingin menolak pengajuan peminjaman ini?')">
                                     @csrf
                                     <button type="submit" class="btn-danger px-3 py-1.5 text-xs">

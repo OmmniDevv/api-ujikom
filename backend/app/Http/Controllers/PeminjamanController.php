@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 class PeminjamanController extends Controller
 {
     public function __construct(private PeminjamanService $service) {}
+
     public function index(Request $request)
     {
         $peminjamans = Peminjaman::with(['user', 'detailPinjam.alat'])
@@ -23,6 +24,7 @@ class PeminjamanController extends Controller
 
         return view('petugas.peminjaman.index', compact('peminjamans'));
     }
+
     public function riwayat(Request $request)
     {
         $peminjamanList = Peminjaman::with(['detailPinjam.alat', 'pengembalian'])
@@ -34,6 +36,7 @@ class PeminjamanController extends Controller
 
         return view('peminjam.peminjaman.riwayat', compact('peminjamanList'));
     }
+
     public function create()
     {
         $alats = Alat::where('status_kondisi', 'baik')
@@ -43,6 +46,7 @@ class PeminjamanController extends Controller
 
         return view('peminjam.peminjaman.create', compact('alats'));
     }
+
     public function store(StorePeminjamanRequest $request)
     {
         try {
@@ -53,14 +57,14 @@ class PeminjamanController extends Controller
                 $request->detail
             );
 
-            if (!$result['success']) {
+            if (! $result['success']) {
                 return back()->with('error', $result['error']);
             }
 
             $p = $result['peminjaman'];
             ActivityLogger::log(
                 'Ajukan Peminjaman',
-                "Peminjaman #{$p->id} | Alat: " . implode(', ', $result['namaAlat']) .
+                "Peminjaman #{$p->id} | Alat: ".implode(', ', $result['namaAlat']).
                 " | Tgl Pinjam: {$request->tgl_pinjam} | Rencana Kembali: {$request->tgl_kembali_plan}"
             );
 
@@ -69,30 +73,18 @@ class PeminjamanController extends Controller
 
         } catch (\Exception $e) {
             ActivityLogger::logError('Gagal Ajukan Peminjaman', $e->getMessage());
+
             return back()->with('error', 'Terjadi kesalahan. Silakan coba lagi.');
         }
     }
+
     public function show(Peminjaman $peminjaman)
     {
         $peminjaman->load(['user', 'detailPinjam.alat', 'pengembalian.petugas']);
+
         return view('petugas.peminjaman.show', compact('peminjaman'));
     }
-    public function approve(Peminjaman $peminjaman)
-    {
-        try {
-            $this->service->approve($peminjaman);
 
-            ActivityLogger::log(
-                'Approve Peminjaman',
-                "Peminjaman #{$peminjaman->id} disetujui | Peminjam: {$peminjaman->user->name} | Tgl Pinjam: {$peminjaman->tgl_pinjam->format('d M Y')}"
-            );
-
-            return back()->with('success', 'Peminjaman berhasil disetujui.');
-
-        } catch (\RuntimeException $e) {
-            return back()->with('error', $e->getMessage());
-        }
-    }
     public function tolak(Peminjaman $peminjaman)
     {
         try {
@@ -100,7 +92,7 @@ class PeminjamanController extends Controller
 
             ActivityLogger::log(
                 'Tolak Peminjaman',
-                "Peminjaman #{$peminjaman->id} ditolak | Peminjam: {$peminjaman->user->name} | Stok dikembalikan: " . implode(', ', $namaAlat)
+                "Peminjaman #{$peminjaman->id} ditolak | Peminjam: {$peminjaman->user->name} | Stok dikembalikan: ".implode(', ', $namaAlat)
             );
 
             return redirect()->route('petugas.peminjaman.index')

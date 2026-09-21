@@ -53,7 +53,9 @@ class AlatSeeder extends Seeder
         ];
 
         foreach ($alat as $item) {
-            Alat::create($item);
+            Alat::create(array_merge($item, [
+                'status_kondisi' => strtolower($item['status_kondisi']),
+            ]));
         }
     }
 }
