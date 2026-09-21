@@ -21,7 +21,7 @@ class Pengembalian extends Model
     {
         return [
             'tgl_kembali' => 'date:Y-m-d',
-            'denda'       => 'integer',
+            'denda' => 'integer',
         ];
     }
 

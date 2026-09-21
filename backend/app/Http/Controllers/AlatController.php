@@ -25,6 +25,7 @@ class AlatController extends Controller
 
         return view('admin.alats.index', compact('alats', 'kategoris'));
     }
+
     public function katalog(Request $request)
     {
         $alats = Alat::with('kategori')
@@ -44,6 +45,7 @@ class AlatController extends Controller
     public function create()
     {
         $kategoris = Kategori::orderBy('nama_kategori')->get();
+
         return view('admin.alats.create', compact('kategoris'));
     }
 
@@ -69,22 +71,26 @@ class AlatController extends Controller
     public function show(Alat $alat)
     {
         $alat->load('kategori', 'detailPinjam.peminjaman.user');
+
         return view('admin.alats.show', compact('alat'));
     }
 
     public function edit(Alat $alat)
     {
         $kategoris = Kategori::orderBy('nama_kategori')->get();
+
         return view('admin.alats.edit', compact('alat', 'kategoris'));
     }
 
     public function update(UpdateAlatRequest $request, Alat $alat)
     {
-        $data    = $request->validated();
+        $data = $request->validated();
         $oldStok = $alat->stok;
 
         if ($request->hasFile('gambar')) {
-            if ($alat->gambar) Storage::disk('public')->delete($alat->gambar);
+            if ($alat->gambar) {
+                Storage::disk('public')->delete($alat->gambar);
+            }
             $data['gambar'] = $request->file('gambar')->store('alat', 'public');
         }
 
@@ -105,7 +111,9 @@ class AlatController extends Controller
     {
         $nama = $alat->nama_alat;
 
-        if ($alat->gambar) Storage::disk('public')->delete($alat->gambar);
+        if ($alat->gambar) {
+            Storage::disk('public')->delete($alat->gambar);
+        }
 
         $alat->delete();
 

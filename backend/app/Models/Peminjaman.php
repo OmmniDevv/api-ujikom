@@ -16,7 +16,7 @@ class Peminjaman extends Model
     protected function casts(): array
     {
         return [
-            'tgl_pinjam'       => 'date:Y-m-d',
+            'tgl_pinjam' => 'date:Y-m-d',
             'tgl_kembali_plan' => 'date:Y-m-d',
         ];
     }
@@ -41,14 +41,16 @@ class Peminjaman extends Model
         if ($status) {
             $query->where('status', $status);
         }
+
         return $query;
     }
 
     public function scopeSearch($query, ?string $keyword)
     {
         if ($keyword) {
-            $query->whereHas('user', fn($q) => $q->where('name', 'like', "%{$keyword}%"));
+            $query->whereHas('user', fn ($q) => $q->where('name', 'like', "%{$keyword}%"));
         }
+
         return $query;
     }
 }

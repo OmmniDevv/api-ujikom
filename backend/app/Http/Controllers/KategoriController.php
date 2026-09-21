@@ -32,7 +32,7 @@ class KategoriController extends Controller
 
         ActivityLogger::log(
             'Buat Kategori',
-            "Kategori baru: {$kategori->nama_kategori}" . ($kategori->deskripsi ? " | Deskripsi: {$kategori->deskripsi}" : '')
+            "Kategori baru: {$kategori->nama_kategori}".($kategori->deskripsi ? " | Deskripsi: {$kategori->deskripsi}" : '')
         );
 
         return redirect()->route('admin.kategoris.index')
@@ -42,6 +42,7 @@ class KategoriController extends Controller
     public function show(Kategori $kategori)
     {
         $kategori->load('alat');
+
         return view('admin.kategoris.show', compact('kategori'));
     }
 

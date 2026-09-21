@@ -17,7 +17,7 @@ class UpdateKategoriRequest extends FormRequest
 
         return [
             'nama_kategori' => ['required', 'string', 'max:100', "unique:kategori,nama_kategori,{$kategoriId}"],
-            'deskripsi'     => ['nullable', 'string', 'max:500'],
+            'deskripsi' => ['nullable', 'string', 'max:500'],
         ];
     }
 
@@ -25,7 +25,7 @@ class UpdateKategoriRequest extends FormRequest
     {
         return [
             'nama_kategori.required' => 'Nama kategori wajib diisi.',
-            'nama_kategori.unique'   => 'Nama kategori sudah digunakan kategori lain.',
+            'nama_kategori.unique' => 'Nama kategori sudah digunakan kategori lain.',
         ];
     }
 }

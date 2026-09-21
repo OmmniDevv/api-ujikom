@@ -13,13 +13,13 @@ class DashboardController extends Controller
     public function admin()
     {
         $stats = [
-            'total_user'       => User::count(),
-            'total_alat'       => Alat::count(),
-            'total_kategori'   => Kategori::count(),
+            'total_user' => User::count(),
+            'total_alat' => Alat::count(),
+            'total_kategori' => Kategori::count(),
             'total_peminjaman' => Peminjaman::count(),
-            'diajukan'         => Peminjaman::where('status', 'diajukan')->count(),
-            'dipinjam'         => Peminjaman::where('status', 'dipinjam')->count(),
-            'dikembalikan'     => Peminjaman::where('status', 'dikembalikan')->count(),
+            'diajukan' => Peminjaman::where('status', 'diajukan')->count(),
+            'dipinjam' => Peminjaman::where('status', 'dipinjam')->count(),
+            'dikembalikan' => Peminjaman::where('status', 'dikembalikan')->count(),
         ];
 
         $logTerbaru = LogAktivitas::with('user')
@@ -29,13 +29,14 @@ class DashboardController extends Controller
 
         return view('admin.dashboard', compact('stats', 'logTerbaru'));
     }
+
     public function petugas()
     {
         $stats = [
-            'diajukan'     => Peminjaman::where('status', 'diajukan')->count(),
-            'dipinjam'     => Peminjaman::where('status', 'dipinjam')->count(),
+            'diajukan' => Peminjaman::where('status', 'diajukan')->count(),
+            'dipinjam' => Peminjaman::where('status', 'dipinjam')->count(),
             'dikembalikan' => Peminjaman::where('status', 'dikembalikan')->count(),
-            'telat'        => Peminjaman::where('status', 'telat')->count(),
+            'telat' => Peminjaman::where('status', 'telat')->count(),
         ];
 
         $peminjamanTerbaru = Peminjaman::with(['user', 'detailPinjam.alat'])
@@ -46,6 +47,7 @@ class DashboardController extends Controller
 
         return view('petugas.dashboard', compact('stats', 'peminjamanTerbaru'));
     }
+
     public function peminjam()
     {
         $user = auth()->user();
@@ -57,9 +59,9 @@ class DashboardController extends Controller
             ->get();
 
         $stats = [
-            'total'        => Peminjaman::where('user_id', $user->id)->count(),
-            'diajukan'     => Peminjaman::where('user_id', $user->id)->where('status', 'diajukan')->count(),
-            'dipinjam'     => Peminjaman::where('user_id', $user->id)->where('status', 'dipinjam')->count(),
+            'total' => Peminjaman::where('user_id', $user->id)->count(),
+            'diajukan' => Peminjaman::where('user_id', $user->id)->where('status', 'diajukan')->count(),
+            'dipinjam' => Peminjaman::where('user_id', $user->id)->where('status', 'dipinjam')->count(),
             'dikembalikan' => Peminjaman::where('user_id', $user->id)->where('status', 'dikembalikan')->count(),
         ];
 

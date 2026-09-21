@@ -25,8 +25,9 @@ class Kategori extends Model
     {
         if ($keyword) {
             $query->where('nama_kategori', 'like', "%{$keyword}%")
-                  ->orWhere('deskripsi', 'like', "%{$keyword}%");
+                ->orWhere('deskripsi', 'like', "%{$keyword}%");
         }
+
         return $query;
     }
 }

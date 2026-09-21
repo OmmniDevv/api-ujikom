@@ -21,10 +21,12 @@ class UserController extends Controller
 
         return view('admin.users.index', compact('users'));
     }
+
     public function create()
     {
         return view('admin.users.create');
     }
+
     public function store(StoreUserRequest $request)
     {
         $data = $request->validated();
@@ -44,15 +46,19 @@ class UserController extends Controller
         return redirect()->route('admin.users.index')
             ->with('success', "User {$user->name} berhasil ditambahkan.");
     }
+
     public function show(User $user)
     {
         $user->load('peminjaman');
+
         return view('admin.users.show', compact('user'));
     }
+
     public function edit(User $user)
     {
         return view('admin.users.edit', compact('user'));
     }
+
     public function update(UpdateUserRequest $request, User $user)
     {
         $data = $request->validated();
@@ -82,15 +88,16 @@ class UserController extends Controller
         return redirect()->route('admin.users.index')
             ->with('success', "User {$user->name} berhasil diperbarui.");
     }
+
     public function destroy(User $user)
     {
         if ($user->id === auth()->id()) {
             return back()->with('error', 'Tidak dapat menghapus akun sendiri.');
         }
 
-        $nama  = $user->name;
+        $nama = $user->name;
         $email = $user->email;
-        $role  = $user->role;
+        $role = $user->role;
 
         if ($user->foto_profile) {
             Storage::disk('public')->delete($user->foto_profile);

@@ -11,7 +11,7 @@ class Alat extends Model
     protected $table = 'alat';
 
     protected $fillable = [
-        'kategori_id', 'nama_alat', 'stok', 'status_kondisi', 'deskripsi', 'gambar'
+        'kategori_id', 'nama_alat', 'stok', 'status_kondisi', 'deskripsi', 'gambar',
     ];
 
     protected function casts(): array
@@ -34,10 +34,11 @@ class Alat extends Model
         if ($keyword) {
             $query->where(function ($q) use ($keyword) {
                 $q->where('nama_alat', 'like', "%{$keyword}%")
-                  ->orWhere('deskripsi', 'like', "%{$keyword}%")
-                  ->orWhereHas('kategori', fn($k) => $k->where('nama_kategori', 'like', "%{$keyword}%"));
+                    ->orWhere('deskripsi', 'like', "%{$keyword}%")
+                    ->orWhereHas('kategori', fn ($k) => $k->where('nama_kategori', 'like', "%{$keyword}%"));
             });
         }
+
         return $query;
     }
 
@@ -46,6 +47,7 @@ class Alat extends Model
         if ($kategoriId) {
             $query->where('kategori_id', $kategoriId);
         }
+
         return $query;
     }
 

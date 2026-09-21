@@ -14,14 +14,17 @@ class AuthController extends Controller
         if (Auth::check()) {
             return $this->redirectByRole();
         }
+
         return view('auth.login');
     }
+
     public function login(LoginRequest $request)
     {
         $credentials = $request->only('email', 'password');
 
-        if (!Auth::attempt($credentials, $request->boolean('remember'))) {
+        if (! Auth::attempt($credentials, $request->boolean('remember'))) {
             ActivityLogger::logError('Gagal Login', "Email yang dicoba: {$request->email}");
+
             return back()->withErrors(['email' => 'Email atau password salah.'])->withInput();
         }
 
@@ -36,6 +39,7 @@ class AuthController extends Controller
 
         return $this->redirectByRole();
     }
+
     public function logout(Request $request)
     {
         $user = Auth::user();
@@ -51,13 +55,14 @@ class AuthController extends Controller
 
         return redirect()->route('login')->with('success', 'Berhasil logout.');
     }
+
     private function redirectByRole()
     {
         return match (Auth::user()->role) {
-            'admin'    => redirect()->route('admin.dashboard'),
-            'petugas'  => redirect()->route('petugas.dashboard'),
+            'admin' => redirect()->route('admin.dashboard'),
+            'petugas' => redirect()->route('petugas.dashboard'),
             'peminjam' => redirect()->route('peminjam.dashboard'),
-            default    => redirect('/'),
+            default => redirect('/'),
         };
     }
 }
