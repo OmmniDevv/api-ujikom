@@ -54,7 +54,7 @@ class PengembalianController extends Controller
                 'Proses Pengembalian',
                 "Peminjaman #{$peminjaman->id} | Peminjam: {$peminjaman->user->name}".
                 ' | Alat: '.implode(', ', $result['namaAlat']).
-                " | Kondisi: {$request->kondisi_alat}".
+                " | Kondisi: {$request->kondisi_kembali}".
                 " | Terlambat: {$result['terlambatHari']} hari".
                 ' | Denda: Rp '.number_format($result['denda'])
             );
