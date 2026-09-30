@@ -40,21 +40,23 @@
         </div>
 
         {{-- User info --}}
+        @auth
         <div class="p-4 border-b border-orange-900/20">
             <div class="flex items-center gap-3">
                 <div class="w-9 h-9 rounded-full bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center text-sm font-bold flex-shrink-0">
-                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                    {{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 1)) }}
                 </div>
                 <div class="min-w-0">
-                    <p class="text-sm font-medium text-white truncate">{{ auth()->user()->name }}</p>
-                    <span class="badge badge-fire text-xs">{{ ucfirst(auth()->user()->role) }}</span>
+                    <p class="text-sm font-medium text-white truncate">{{ auth()->user()->name ?? 'User' }}</p>
+                    <span class="badge badge-fire text-xs">{{ ucfirst(auth()->user()->role ?? 'Guest') }}</span>
                 </div>
             </div>
         </div>
+        @endauth
 
         {{-- Navigation --}}
         <nav class="flex-1 p-3 space-y-0.5">
-            @php $role = auth()->user()->role; @endphp
+            @php $role = auth()->user()?->role; @endphp
 
             {{-- ADMIN NAV --}}
             @if($role === 'admin')
@@ -89,6 +91,12 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                     </svg> Peminjaman
                 </a>
+                <a href="{{ route('admin.analitik.index') }}"
+                   class="nav-link {{ request()->routeIs('admin.analitik*') ? 'active' : '' }}">
+                    <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                    </svg> Analitik Eksekutif
+                </a>
             @endif
 
             {{-- PETUGAS NAV --}}
@@ -117,6 +125,12 @@
                     <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                     </svg> Cetak Laporan
+                </a>
+                <a href="{{ route('petugas.analitik.index') }}"
+                   class="nav-link {{ request()->routeIs('petugas.analitik*') ? 'active' : '' }}">
+                    <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                    </svg> Analitik Eksekutif
                 </a>
             @endif
 
@@ -166,8 +180,19 @@
                 <h1 class="text-sm font-semibold text-white">@yield('page-title', 'Dashboard')</h1>
                 <p class="text-xs text-orange-400/60">@yield('page-subtitle', '')</p>
             </div>
-            <div class="flex items-center gap-3 text-sm text-orange-300/60">
-                <span>{{ now()->format('d M Y') }}</span>
+            <div class="flex items-center gap-3 text-sm">
+                @if(auth()->user()?->role === 'peminjam')
+                    @php $tier = auth()->user()->tier_reputasi; @endphp
+                    <div class="flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 hover:border-orange-500/30 transition cursor-help"
+                         title="{{ $tier['deskripsi'] }} (Kuota Pinjam: {{ $tier['kuota_max'] }} alat)">
+                        <span class="text-xs">{{ $tier['icon'] }}</span>
+                        <span class="text-xs font-semibold text-white/90 hidden sm:inline">{{ $tier['nama'] }}</span>
+                        <span class="text-xs font-mono font-bold {{ $tier['color'] }} bg-black/40 px-2 py-0.5 rounded-full border border-white/5">
+                            {{ auth()->user()->skor_reputasi ?? 100 }} pts
+                        </span>
+                    </div>
+                @endif
+                <span class="text-xs text-white/40 hidden md:inline">{{ now()->format('d M Y') }}</span>
             </div>
         </header>
 
@@ -227,6 +252,218 @@
         </div>
     </div>
 </div>
+
+{{-- ===== FLOATING AI LAB ASSISTANT WIDGET ===== --}}
+<div id="aiWidgetContainer" class="fixed bottom-5 right-5 z-40 flex flex-col items-end">
+    
+    {{-- Chat Drawer Box (Hidden by default) --}}
+    <div id="aiChatDrawer" class="hidden mb-3 w-[360px] sm:w-[400px] h-[520px] max-h-[80vh] glass-card flex-col border border-orange-500/30 shadow-2xl shadow-black/80 rounded-2xl overflow-hidden backdrop-blur-2xl bg-slate-950/85 transition-all duration-300">
+        {{-- Header --}}
+        <div class="px-4 py-3 bg-gradient-to-r from-orange-950/50 via-slate-900/60 to-red-950/50 border-b border-white/10 flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-orange-500 to-amber-400 flex items-center justify-center text-white text-xs font-bold shadow-md shadow-orange-500/30">
+                    AI
+                </div>
+                <div>
+                    <h3 class="text-xs font-bold text-white flex items-center gap-1.5">
+                        SiPinjam AI <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    </h3>
+                    <p class="text-[10px] text-white/40">Asisten Peminjaman & Lab Sekolah</p>
+                </div>
+            </div>
+            <button onclick="toggleAiDrawer()" class="text-white/40 hover:text-white p-1 rounded-lg transition" title="Tutup">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+
+        {{-- Messages Container --}}
+        <div id="aiChatMessages" class="flex-1 overflow-y-auto p-4 space-y-3 text-xs">
+            {{-- Welcome bubble from AI --}}
+            <div class="flex items-start gap-2">
+                <div class="w-6 h-6 rounded-full bg-orange-500/20 border border-orange-500/30 text-orange-400 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
+                    AI
+                </div>
+                <div class="p-3 rounded-2xl rounded-tl-sm bg-white/5 border border-white/10 text-white/90 leading-relaxed shadow-sm">
+                    Halo! Saya <strong>SiPinjam AI</strong>. Butuh rekomendasi alat praktikum atau ingin mengecek ketersediaan inventaris lab sekolah? Tanyakan saja di sini! 😊
+                </div>
+            </div>
+
+            {{-- Quick Chips --}}
+            <div id="aiQuickChips" class="flex flex-wrap gap-1.5 pt-1">
+                <button type="button" onclick="sendQuickPrompt('Rekomendasi alat rekam video podcast')" class="text-[11px] px-2.5 py-1 rounded-full bg-orange-500/10 hover:bg-orange-500/20 text-orange-300 border border-orange-500/20 transition">
+                    🎥 Rekomendasi Podcast
+                </button>
+                <button type="button" onclick="sendQuickPrompt('Alat praktikum instalasi jaringan LAN')" class="text-[11px] px-2.5 py-1 rounded-full bg-orange-500/10 hover:bg-orange-500/20 text-orange-300 border border-orange-500/20 transition">
+                    🌐 Alat Jaringan LAN
+                </button>
+                <button type="button" onclick="sendQuickPrompt('Bagaimana aturan batas waktu peminjaman dan denda?')" class="text-[11px] px-2.5 py-1 rounded-full bg-orange-500/10 hover:bg-orange-500/20 text-orange-300 border border-orange-500/20 transition">
+                    📋 Aturan & Denda
+                </button>
+            </div>
+        </div>
+
+        {{-- Input Form --}}
+        <div class="p-3 border-t border-white/10 bg-slate-900/40">
+            <form id="aiChatForm" onsubmit="handleAiSubmit(event)" class="flex gap-2">
+                <input type="text" id="aiInputText" placeholder="Tanya alat praktikum atau lab..."
+                    class="input-glass text-xs h-9 px-3 flex-1 bg-white/5 border-white/15 focus:border-orange-500" autocomplete="off" required>
+                <button type="submit" id="aiSendBtn" class="btn-fire h-9 px-3 shrink-0 flex items-center justify-center">
+                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                    </svg>
+                </button>
+            </form>
+            <p class="text-[9px] text-white/30 text-center mt-1.5">Didukung Gemini AI • Khusus konteks inventaris SiPinjam</p>
+        </div>
+    </div>
+
+    {{-- Floating Toggle Button (FAB) --}}
+    <button id="aiFabBtn" onclick="toggleAiDrawer()"
+        class="w-12 h-12 rounded-full bg-gradient-to-tr from-orange-600 via-orange-500 to-amber-400 p-0.5 shadow-[0_0_20px_rgba(249,115,22,0.5)] hover:shadow-[0_0_30px_rgba(249,115,22,0.8)] hover:scale-105 active:scale-95 transition-all duration-300 flex items-center justify-center group"
+        title="Tanya SiPinjam AI">
+        <span class="w-full h-full rounded-full bg-slate-950/50 backdrop-blur-sm flex items-center justify-center">
+            <svg class="w-5 h-5 text-white group-hover:rotate-12 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+        </span>
+        <span class="absolute -top-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-400 border-2 border-slate-900 animate-pulse"></span>
+    </button>
+</div>
+
+<script>
+let aiConversationHistory = [];
+
+function toggleAiDrawer() {
+    const drawer = document.getElementById('aiChatDrawer');
+    if (drawer.classList.contains('hidden')) {
+        drawer.classList.remove('hidden');
+        drawer.classList.add('flex');
+        document.getElementById('aiInputText').focus();
+    } else {
+        drawer.classList.add('hidden');
+        drawer.classList.remove('flex');
+    }
+}
+
+function sendQuickPrompt(promptText) {
+    document.getElementById('aiInputText').value = promptText;
+    document.getElementById('aiChatForm').dispatchEvent(new Event('submit'));
+}
+
+async function handleAiSubmit(e) {
+    e.preventDefault();
+    const input = document.getElementById('aiInputText');
+    const sendBtn = document.getElementById('aiSendBtn');
+    const messagesBox = document.getElementById('aiChatMessages');
+    const prompt = input.value.trim();
+
+    if (!prompt) return;
+
+    // Sembunyikan chip prompt agar obrolan bersih
+    const quickChips = document.getElementById('aiQuickChips');
+    if (quickChips) quickChips.remove();
+
+    // 1. Tampilkan pesan User
+    appendMessage('user', prompt);
+    input.value = '';
+    input.disabled = true;
+    sendBtn.disabled = true;
+
+    // 2. Tampilkan indikator mengetik
+    const typingId = 'typing-' + Date.now();
+    appendTypingIndicator(typingId);
+    messagesBox.scrollTop = messagesBox.scrollHeight;
+
+    try {
+        const response = await fetch("{{ route('ai.chat') }}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                message: prompt,
+                history: aiConversationHistory
+            })
+        });
+
+        const data = await response.json();
+        removeTypingIndicator(typingId);
+
+        if (data.success && data.reply) {
+            appendMessage('model', data.reply);
+            aiConversationHistory.push({ role: 'user', text: prompt });
+            aiConversationHistory.push({ role: 'model', text: data.reply });
+        } else {
+            appendMessage('model', data.reply || 'Maaf, terjadi kesalahan pada asisten AI.');
+        }
+
+    } catch (err) {
+        removeTypingIndicator(typingId);
+        appendMessage('model', 'Koneksi ke asisten AI terganggu. Silakan periksa jaringan Anda.');
+    } finally {
+        input.disabled = false;
+        sendBtn.disabled = false;
+        input.focus();
+        messagesBox.scrollTop = messagesBox.scrollHeight;
+    }
+}
+
+function appendMessage(role, text) {
+    const box = document.getElementById('aiChatMessages');
+    const div = document.createElement('div');
+    div.className = 'flex items-start gap-2 ' + (role === 'user' ? 'justify-end' : '');
+
+    // Format text sederhana (bolding markdown & baris baru)
+    const formattedText = text
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\n/g, '<br>');
+
+    if (role === 'user') {
+        div.innerHTML = `
+            <div class="p-3 rounded-2xl rounded-tr-sm bg-gradient-to-r from-orange-600 to-red-600 text-white leading-relaxed max-w-[85%] shadow-md">
+                ${formattedText}
+            </div>
+        `;
+    } else {
+        div.innerHTML = `
+            <div class="w-6 h-6 rounded-full bg-orange-500/20 border border-orange-500/30 text-orange-400 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
+                AI
+            </div>
+            <div class="p-3 rounded-2xl rounded-tl-sm bg-white/5 border border-white/10 text-white/90 leading-relaxed max-w-[85%] shadow-sm">
+                ${formattedText}
+            </div>
+        `;
+    }
+    box.appendChild(div);
+}
+
+function appendTypingIndicator(id) {
+    const box = document.getElementById('aiChatMessages');
+    const div = document.createElement('div');
+    div.id = id;
+    div.className = 'flex items-start gap-2';
+    div.innerHTML = `
+        <div class="w-6 h-6 rounded-full bg-orange-500/20 border border-orange-500/30 text-orange-400 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
+            AI
+        </div>
+        <div class="p-3 rounded-2xl rounded-tl-sm bg-white/5 border border-white/10 text-white/50 flex items-center gap-1.5 shadow-sm">
+            <span class="w-1.5 h-1.5 rounded-full bg-orange-400 animate-bounce"></span>
+            <span class="w-1.5 h-1.5 rounded-full bg-orange-400 animate-bounce" style="animation-delay: 0.2s"></span>
+            <span class="w-1.5 h-1.5 rounded-full bg-orange-400 animate-bounce" style="animation-delay: 0.4s"></span>
+        </div>
+    `;
+    box.appendChild(div);
+}
+
+function removeTypingIndicator(id) {
+    const el = document.getElementById(id);
+    if (el) el.remove();
+}
+</script>
 
 <script>
 function confirmDelete(url, message) {

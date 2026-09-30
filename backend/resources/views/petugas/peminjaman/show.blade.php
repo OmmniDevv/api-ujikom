@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Detail Peminjaman')
 @section('page-title', 'Detail Peminjaman')
-@section('page-subtitle', 'Informasi lengkap peminjaman #{{ $peminjaman->id }}')
+@section('page-subtitle', 'Informasi lengkap peminjaman #' . $peminjaman->id)
 
 @section('content')
 <div class="max-w-3xl space-y-4">
@@ -10,7 +10,7 @@
         <h2 class="font-semibold text-white mb-4">Informasi Peminjaman</h2>
         <div class="fire-divider"></div>
         <div class="grid grid-cols-2 gap-4 mt-4 text-sm">
-            <div><p class="text-white/40">Peminjam</p><p class="text-white font-medium mt-1">{{ $peminjaman->user->name }}</p></div>
+            <div><p class="text-white/40">Peminjam</p><p class="text-white font-medium mt-1">{{ $peminjaman->user?->name ?? 'User Dihapus' }}</p></div>
             <div><p class="text-white/40">Status</p>
                 <div class="mt-1">
                     @if($peminjaman->status === 'diajukan')     <span class="badge badge-warning">Diajukan</span>

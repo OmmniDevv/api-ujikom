@@ -40,9 +40,19 @@
             <tbody>
                 @forelse($peminjamans as $item)
                 <tr class="align-top">
-                    <td class="font-medium text-white">{{ $item->user->name ?? 'User Dihapus' }}</td>
-                    <td class="text-white/60">{{ $item->tgl_pinjam }}</td>
-                    <td class="text-white/60">{{ $item->tgl_kembali_plan }}</td>
+                    <td>
+                        <div class="flex flex-col sm:flex-row sm:items-center gap-1.5">
+                            <span class="font-medium text-white">{{ $item->user->name ?? 'User Dihapus' }}</span>
+                            @if($item->user)
+                                @php $t = $item->user->tier_reputasi; @endphp
+                                <span class="badge {{ $t['badge'] }} text-[10px] px-2 py-0.5 self-start" title="{{ $t['nama'] }}: {{ $t['deskripsi'] }}">
+                                    {{ $t['icon'] }} {{ $item->user->skor_reputasi ?? 100 }} pts
+                                </span>
+                            @endif
+                        </div>
+                    </td>
+                    <td class="text-white/60">{{ $item->tgl_pinjam?->format('d M Y') ?? $item->tgl_pinjam }}</td>
+                    <td class="text-white/60">{{ $item->tgl_kembali_plan?->format('d M Y') ?? $item->tgl_kembali_plan }}</td>
                     <td>
                         <ul class="list-disc list-inside space-y-1 text-xs text-white/70">
                             @foreach($item->detailPinjam as $detail)
@@ -84,6 +94,9 @@
                 @endforelse
             </tbody>
         </table>
+        @if($peminjamans->hasPages())
+        <div class="p-4 border-t border-white/10">{{ $peminjamans->links() }}</div>
+        @endif
     </div>
 
 </div>

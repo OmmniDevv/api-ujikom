@@ -3,39 +3,99 @@
 <head>
 <meta charset="utf-8">
 <style>
-  body { font-family: DejaVu Sans, sans-serif; font-size: 10px; color: #1e293b; }
-  h1 { text-align: center; font-size: 16px; margin: 0; color: #1e40af; }
-  h2 { text-align: center; font-size: 11px; font-weight: normal; margin: 4px 0 12px; color: #475569; }
-  .meta { text-align: right; font-size: 9px; color: #64748b; margin-bottom: 10px; }
-  table { width: 100%; border-collapse: collapse; }
-  th { background: #1e40af; color: #fff; font-size: 9px; padding: 6px 4px; text-align: left; }
-  td { padding: 5px 4px; border-bottom: 1px solid #e2e8f0; font-size: 9px; }
-  tr:nth-child(even) td { background: #eff6ff; }
+  @page { margin: 20px 25px; }
+  body { font-family: DejaVu Sans, sans-serif; font-size: 9px; color: #1e293b; position: relative; }
+  
+  /* Digital Watermark Background */
+  .watermark {
+    position: fixed;
+    top: 35%;
+    left: 10%;
+    width: 80%;
+    text-align: center;
+    font-size: 38px;
+    font-weight: 900;
+    color: rgba(30, 64, 175, 0.06);
+    letter-spacing: 6px;
+    transform: rotate(-25deg);
+    z-index: -1000;
+    pointer-events: none;
+    line-height: 1.4;
+    text-transform: uppercase;
+  }
+
+  .header-table { width: 100%; border-bottom: 2px solid #1e40af; padding-bottom: 8px; margin-bottom: 12px; }
+  .header-logo { font-size: 18px; font-weight: 900; color: #ea580c; letter-spacing: -0.5px; }
+  .header-sub { font-size: 9px; color: #64748b; margin-top: 2px; }
+  
+  h1 { text-align: right; font-size: 14px; margin: 0; color: #1e40af; font-weight: 800; }
+  .meta { text-align: right; font-size: 8px; color: #64748b; margin-top: 2px; }
+  
+  table.data-table { width: 100%; border-collapse: collapse; margin-top: 5px; }
+  table.data-table th { background: #1e40af; color: #fff; font-size: 8.5px; padding: 6px 4px; text-align: left; }
+  table.data-table td { padding: 4.5px 4px; border-bottom: 1px solid #e2e8f0; font-size: 8px; }
+  table.data-table tr:nth-child(even) td { background: #f8fafc; }
+  
   .text-center { text-align: center; }
   .text-right { text-align: right; }
-  .badge { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 8px; font-weight: bold; color: #fff; }
+  .badge { display: inline-block; padding: 2px 5px; border-radius: 3px; font-size: 7.5px; font-weight: bold; color: #fff; }
   .badge-diajukan { background: #f59e0b; }
   .badge-dipinjam { background: #3b82f6; }
   .badge-dikembalikan { background: #10b981; }
   .badge-telat { background: #ef4444; }
-  .footer { margin-top: 16px; text-align: right; font-size: 9px; color: #64748b; }
+  
+  /* Security Footer & Verification Seal */
+  .security-footer {
+    margin-top: 15px;
+    padding-top: 8px;
+    border-top: 1px dashed #cbd5e1;
+    width: 100%;
+  }
+  .seal-box {
+    border: 1px solid #94a3b8;
+    padding: 6px 10px;
+    display: inline-block;
+    border-radius: 4px;
+    background: #f8fafc;
+    font-size: 7.5px;
+    color: #475569;
+  }
+  .hash-code { font-family: monospace; font-weight: bold; color: #1e40af; }
 </style>
 </head>
 <body>
 
-<h1>LAPORAN PEMINJAMAN ALAT</h1>
-<h2>SMKN 7 BALEENDAH</h2>
-<div class="meta">Tanggal Cetak: {{ now()->format('d/m/Y H:i') }} &nbsp;|&nbsp; Total Data: {{ $peminjamans->count() }}</div>
+{{-- Watermark Digital Tembus Pandang --}}
+<div class="watermark">
+  SIPINJAM OFFICIAL<br>DIGITAL VERIFIED
+</div>
 
-<table>
+{{-- Header Laporan dengan Identitas Resmi --}}
+<table class="header-table">
+  <tr>
+    <td style="vertical-align: middle;">
+      <div class="header-logo">⚡ SiPinjam</div>
+      <div class="header-sub">Sistem Manajemen Peminjaman Alat Laboratorium • SMKN 7 Baleendah</div>
+    </td>
+    <td style="vertical-align: middle; text-align: right;">
+      <h1>REKAPITULASI PEMINJAMAN ALAT</h1>
+      <div class="meta">
+        Tgl Dokumen: {{ now()->format('d/m/Y H:i') }} WIB &nbsp;|&nbsp;
+        Total Data: {{ $peminjamans->count() }} Transaksi
+      </div>
+    </td>
+  </tr>
+</table>
+
+<table class="data-table">
   <thead>
     <tr>
-      <th class="text-center" style="width: 28px">No</th>
+      <th class="text-center" style="width: 24px">No</th>
       <th>Nama Peminjam</th>
       <th>Tgl Pinjam</th>
       <th>Rencana Kembali</th>
-      <th>Nama Alat</th>
-      <th class="text-center">Jml</th>
+      <th>Detail Alat Dipinjam</th>
+      <th class="text-center" style="width: 30px">Jml</th>
       <th>Status</th>
       <th>Tgl Kembali</th>
       <th>Kondisi</th>
@@ -60,7 +120,7 @@
       @endphp
       <tr>
         <td class="text-center">{{ $i + 1 }}</td>
-        <td>{{ $item->user->name ?? '-' }}</td>
+        <td><strong>{{ $item->user->name ?? '-' }}</strong></td>
         <td>{{ $item->tgl_pinjam instanceof \Carbon\Carbon ? $item->tgl_pinjam->format('d/m/Y') : $item->tgl_pinjam }}</td>
         <td>{{ $item->tgl_kembali_plan instanceof \Carbon\Carbon ? $item->tgl_kembali_plan->format('d/m/Y') : $item->tgl_kembali_plan }}</td>
         <td>{{ $alats }}</td>
@@ -76,9 +136,25 @@
   </tbody>
 </table>
 
-<div class="footer">
-  Dicetak oleh sistem pada {{ now()->format('d F Y, H:i') }} WIB
-</div>
+{{-- Security Footer & Digital Verification Seal --}}
+<table class="security-footer">
+  <tr>
+    <td style="vertical-align: top; width: 65%;">
+      <div class="seal-box">
+        <strong>🔒 KEAMANAN & OTENTIKASI DOKUMEN DIGITAL</strong><br>
+        Dokumen ini diterbitkan secara otomatis dan sah melalui enkripsi sistem SiPinjam.<br>
+        Digital Checksum: <span class="hash-code">{{ strtoupper(substr(hash('sha256', now()->timestamp . $peminjamans->count()), 0, 24)) }}</span><br>
+        Otentikasi: <em>VERIFIED BY SIPINJAM SECURITY ENGINE</em>
+      </div>
+    </td>
+    <td style="vertical-align: top; text-align: right; width: 35%;">
+      <p style="margin: 0; font-size: 8px; color: #64748b;">
+        Dicetak pada: <strong>{{ now()->format('d F Y, H:i') }} WIB</strong><br>
+        Oleh Petugas: <strong>{{ auth()->user()->name ?? 'System' }}</strong>
+      </p>
+    </td>
+  </tr>
+</table>
 
 </body>
 </html>

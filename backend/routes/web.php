@@ -8,6 +8,8 @@ use App\Http\Controllers\PeminjamanController;
 use App\Http\Controllers\PengembalianController;
 use App\Http\Controllers\PetugasController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\AiChatController;
+use App\Http\Controllers\ExecutiveAnalyticsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -23,6 +25,11 @@ Route::middleware('guest')->group(function () {
 Route::match(['get', 'post'], '/logout', [AuthController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
+
+// AI Smart Assistant Endpoint
+Route::post('/ai/chat', [AiChatController::class, 'chat'])
+    ->middleware('auth')
+    ->name('ai.chat');
 
 /*
 |--------------------------------------------------------------------------
@@ -49,6 +56,9 @@ Route::prefix('admin')
         // Lihat semua peminjaman (read only untuk admin)
         Route::get('/peminjaman', [PeminjamanController::class, 'index'])->name('peminjaman.index');
         Route::get('/peminjaman/{peminjaman}', [PeminjamanController::class, 'show'])->name('peminjaman.show');
+
+        // Analitik Tingkat Eksekutif
+        Route::get('/analitik', [ExecutiveAnalyticsController::class, 'index'])->name('analitik.index');
     });
 
 /*
@@ -82,6 +92,9 @@ Route::prefix('petugas')
         Route::get('/laporan', [PetugasController::class, 'laporan'])->name('laporan.index');
         Route::get('/laporan/pdf', [PetugasController::class, 'laporanPdf'])->name('laporan.pdf');
         Route::get('/laporan/excel', [PetugasController::class, 'laporanExcel'])->name('laporan.excel');
+
+        // Analitik Tingkat Eksekutif
+        Route::get('/analitik', [ExecutiveAnalyticsController::class, 'index'])->name('analitik.index');
     });
 
 /*

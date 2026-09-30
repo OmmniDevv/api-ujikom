@@ -44,7 +44,7 @@
                 <tr>
                     <td class="text-white/40">{{ $kategoris->firstItem() + $i }}</td>
                     <td class="font-medium text-white">{{ $k->nama_kategori }}</td>
-                    <td class="text-white/60">{{ Str::limit($k->deskripsi, 60) ?? '-' }}</td>
+                    <td class="text-white/60">{{ $k->deskripsi ? Str::limit($k->deskripsi, 60) : '-' }}</td>
                     <td class="text-center">
                         <span class="badge badge-fire">{{ $k->alat_count }} alat</span>
                     </td>

@@ -39,7 +39,7 @@
             @foreach($peminjamanTerbaru as $p)
             <div class="flex items-center justify-between p-3 rounded-lg bg-white/3 hover:bg-white/5 transition">
                 <div>
-                    <p class="text-sm font-medium text-white">{{ $p->user->name }}</p>
+                    <p class="text-sm font-medium text-white">{{ $p->user?->name ?? 'User Dihapus' }}</p>
                     <p class="text-xs text-white/40 mt-0.5">{{ $p->detailPinjam->count() }} alat · {{ $p->tgl_pinjam->format('d M Y') }}</p>
                 </div>
                 <div class="flex items-center gap-2">

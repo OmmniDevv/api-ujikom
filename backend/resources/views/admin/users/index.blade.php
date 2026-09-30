@@ -48,6 +48,7 @@
                     <th class="text-left">Nama</th>
                     <th class="text-left">Email</th>
                     <th class="text-left">Role</th>
+                    <th class="text-center">Reputasi</th>
                     <th class="text-left">No HP</th>
                     <th class="text-center">Aksi</th>
                 </tr>
@@ -75,6 +76,17 @@
                             <span class="badge badge-info">Petugas</span>
                         @else
                             <span class="badge badge-gray">Peminjam</span>
+                        @endif
+                    </td>
+                    <td class="text-center">
+                        @if($user->role === 'peminjam')
+                            @php $t = $user->tier_reputasi; @endphp
+                            <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10" title="{{ $t['nama'] }}: {{ $t['deskripsi'] }}">
+                                <span class="text-xs">{{ $t['icon'] }}</span>
+                                <span class="font-mono text-xs font-bold {{ $t['color'] }}">{{ $user->skor_reputasi ?? 100 }}</span>
+                            </div>
+                        @else
+                            <span class="text-white/30 text-xs font-mono">-</span>
                         @endif
                     </td>
                     <td class="text-white/60">{{ $user->no_hp ?? '-' }}</td>

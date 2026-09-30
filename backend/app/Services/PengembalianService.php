@@ -24,7 +24,7 @@ class PengembalianService
             $tglKembaliCarbon = Carbon::parse($tglKembali);
             $tglRencana = $peminjaman->tgl_kembali_plan;
 
-            $terlambatHari = max(0, $tglKembaliCarbon->diffInDays($tglRencana, false) * -1);
+            $terlambatHari = max(0, (int) $tglRencana->startOfDay()->diffInDays($tglKembaliCarbon->startOfDay(), false));
 
             $denda = $terlambatHari * 5000;
             $namaAlat = [];
@@ -56,6 +56,27 @@ class PengembalianService
 
             $statusBaru = $terlambatHari > 0 ? 'telat' : 'dikembalikan';
             $peminjaman->update(['status' => $statusBaru]);
+
+            // Pembaruan skor reputasi & gamifikasi peminjam
+            $userPeminjam = $peminjaman->user;
+            if ($userPeminjam) {
+                $skorSekarang = $userPeminjam->skor_reputasi ?? 100;
+                $deltaSkor = 0;
+                if ($terlambatHari === 0) {
+                    $deltaSkor += 2; // Reward tepat waktu
+                } else {
+                    $deltaSkor -= min(50, $terlambatHari * 5); // Penalti telat
+                }
+
+                if ($kondisiKembali === 'rusak') {
+                    $deltaSkor -= 20; // Penalti alat rusak
+                } elseif ($kondisiKembali === 'perbaikan') {
+                    $deltaSkor -= 10;
+                }
+
+                $skorBaru = max(0, min(150, $skorSekarang + $deltaSkor));
+                $userPeminjam->update(['skor_reputasi' => $skorBaru]);
+            }
 
             DB::commit();
 

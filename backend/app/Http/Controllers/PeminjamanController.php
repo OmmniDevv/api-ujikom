@@ -85,23 +85,4 @@ class PeminjamanController extends Controller
         return view('admin.peminjaman.show', compact('peminjaman'));
     }
 
-    public function tolak(Peminjaman $peminjaman)
-    {
-        try {
-            $namaAlat = $this->service->tolak($peminjaman);
-
-            ActivityLogger::log(
-                'Tolak Peminjaman',
-                "Peminjaman #{$peminjaman->id} ditolak | Peminjam: {$peminjaman->user->name} | Stok dikembalikan: ".implode(', ', $namaAlat)
-            );
-
-            return redirect()->route('petugas.peminjaman.index')
-                ->with('success', 'Peminjaman ditolak dan stok dikembalikan.');
-
-        } catch (\RuntimeException $e) {
-            return back()->with('error', $e->getMessage());
-        } catch (\Exception $e) {
-            return back()->with('error', 'Gagal menolak peminjaman.');
-        }
-    }
 }

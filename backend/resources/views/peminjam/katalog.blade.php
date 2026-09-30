@@ -46,7 +46,7 @@
                 <img src="{{ asset('storage/'.$alat->gambar) }}"
                     class="w-full h-36 object-cover rounded-lg mb-3 border border-orange-500/10"
                     onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');">
-                <div class="hidden w-full h-36 rounded-lg mb-3 bg-orange-900/20 items-center justify-center border border-orange-500/10">
+                <div class="hidden flex w-full h-36 rounded-lg mb-3 bg-orange-900/20 items-center justify-center border border-orange-500/10">
                     <svg class="w-10 h-10 text-orange-500/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14"/>
                     </svg>

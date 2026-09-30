@@ -25,7 +25,8 @@ class PetugasController extends Controller
                 });
             })
             ->latest()
-            ->get();
+            ->paginate(10)
+            ->withQueryString();
 
         return view('petugas.peminjaman.index', compact('peminjamans', 'search'));
     }

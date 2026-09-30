@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Dashboard')
 @section('page-title', 'Dashboard')
-@section('page-subtitle', 'Selamat datang, {{ auth()->user()->name }}')
+@section('page-subtitle', 'Selamat datang, ' . auth()->user()->name)
 
 @section('content')
 <div class="space-y-6">
@@ -18,10 +18,38 @@
         @foreach($cards as $c)
         <div class="stat-card">
             <p class="text-xs text-white/50 mb-1">{{ $c['label'] }}</p>
-            <p class="text-3xl font-bold text-white">{{ $c['value'] }}</p>
+            <p class="text-3xl font-bold text-white font-mono" data-counter="{{ $c['value'] }}">{{ $c['value'] }}</p>
             <div class="mt-2 w-8 h-1 rounded-full bg-gradient-to-r {{ $c['color'] }}"></div>
         </div>
         @endforeach
+    </div>
+
+    {{-- Reputation Card --}}
+    @php $tier = auth()->user()->tier_reputasi; @endphp
+    <div class="glass-card p-5 border border-orange-500/20 bg-gradient-to-r from-orange-950/30 via-slate-900/40 to-slate-900/20">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div class="flex items-center gap-4">
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-orange-500 to-amber-400 p-0.5 shadow-lg shadow-orange-500/20 flex items-center justify-center shrink-0">
+                    <div class="w-full h-full rounded-2xl bg-slate-950/80 flex items-center justify-center text-2xl">
+                        {{ $tier['icon'] }}
+                    </div>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-semibold text-white/50 uppercase tracking-wider">Status Kredibilitas Peminjam</span>
+                        <span class="badge {{ $tier['badge'] }} text-xs">{{ $tier['nama'] }}</span>
+                    </div>
+                    <h3 class="text-base font-bold text-white mt-0.5">{{ $tier['deskripsi'] }}</h3>
+                    <p class="text-xs text-white/40">Batas maksimal peminjaman aktif: <strong class="text-orange-400">{{ $tier['kuota_max'] }} alat sekaligus</strong></p>
+                </div>
+            </div>
+            <div class="sm:text-right flex sm:flex-col items-baseline sm:items-end justify-between border-t sm:border-t-0 border-white/10 pt-3 sm:pt-0 shrink-0">
+                <span class="text-3xl font-extrabold text-white font-mono" data-counter="{{ auth()->user()->skor_reputasi ?? 100 }}">
+                    {{ auth()->user()->skor_reputasi ?? 100 }}
+                </span>
+                <span class="text-xs text-orange-400 font-mono">Skor Reputasi (Max 150)</span>
+            </div>
+        </div>
     </div>
 
     <div class="flex gap-3">

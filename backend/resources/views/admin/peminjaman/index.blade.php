@@ -6,13 +6,6 @@
 @section('content')
 <div class="space-y-5">
 
-    {{-- Flash --}}
-    @if(session('success'))
-    <div class="alert-success">{{ session('success') }}</div>
-    @endif
-    @if(session('error'))
-    <div class="alert-error">{{ session('error') }}</div>
-    @endif
 
     {{-- Filter & Search --}}
     <div class="glass-card p-4">

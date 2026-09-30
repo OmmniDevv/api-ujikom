@@ -74,7 +74,7 @@
                     <tr>
                         <td>{{ $d->peminjaman?->user?->name ?? '—' }}</td>
                         <td>{{ $d->jumlah }} unit</td>
-                        <td>{{ $d->peminjaman?->tgl_pinjam->format('d M Y') ?? '—' }}</td>
+                        <td>{{ $d->peminjaman?->tgl_pinjam?->format('d M Y') ?? '—' }}</td>
                         <td>
                             <span class="badge
                                 {{ ($d->peminjaman?->status ?? '') === 'diajukan'     ? 'badge-warning' : '' }}

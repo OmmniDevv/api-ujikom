@@ -12,15 +12,23 @@ class DashboardController extends Controller
 {
     public function admin()
     {
+        $peminjamanStats = Peminjaman::selectRaw("
+            COUNT(*) as total_peminjaman,
+            COALESCE(SUM(status = 'diajukan'), 0) as diajukan,
+            COALESCE(SUM(status = 'dipinjam'), 0) as dipinjam,
+            COALESCE(SUM(status = 'dikembalikan'), 0) as dikembalikan,
+            COALESCE(SUM(status = 'telat'), 0) as telat
+        ")->first();
+
         $stats = [
             'total_user' => User::count(),
             'total_alat' => Alat::count(),
             'total_kategori' => Kategori::count(),
-            'total_peminjaman' => Peminjaman::count(),
-            'diajukan' => Peminjaman::where('status', 'diajukan')->count(),
-            'dipinjam' => Peminjaman::where('status', 'dipinjam')->count(),
-            'dikembalikan' => Peminjaman::where('status', 'dikembalikan')->count(),
-            'telat' => Peminjaman::where('status', 'telat')->count(),
+            'total_peminjaman' => (int) ($peminjamanStats->total_peminjaman ?? 0),
+            'diajukan' => (int) ($peminjamanStats->diajukan ?? 0),
+            'dipinjam' => (int) ($peminjamanStats->dipinjam ?? 0),
+            'dikembalikan' => (int) ($peminjamanStats->dikembalikan ?? 0),
+            'telat' => (int) ($peminjamanStats->telat ?? 0),
         ];
 
         $logTerbaru = LogAktivitas::with('user')
@@ -33,11 +41,18 @@ class DashboardController extends Controller
 
     public function petugas()
     {
+        $peminjamanStats = Peminjaman::selectRaw("
+            COALESCE(SUM(status = 'diajukan'), 0) as diajukan,
+            COALESCE(SUM(status = 'dipinjam'), 0) as dipinjam,
+            COALESCE(SUM(status = 'dikembalikan'), 0) as dikembalikan,
+            COALESCE(SUM(status = 'telat'), 0) as telat
+        ")->first();
+
         $stats = [
-            'diajukan' => Peminjaman::where('status', 'diajukan')->count(),
-            'dipinjam' => Peminjaman::where('status', 'dipinjam')->count(),
-            'dikembalikan' => Peminjaman::where('status', 'dikembalikan')->count(),
-            'telat' => Peminjaman::where('status', 'telat')->count(),
+            'diajukan' => (int) ($peminjamanStats->diajukan ?? 0),
+            'dipinjam' => (int) ($peminjamanStats->dipinjam ?? 0),
+            'dikembalikan' => (int) ($peminjamanStats->dikembalikan ?? 0),
+            'telat' => (int) ($peminjamanStats->telat ?? 0),
         ];
 
         $peminjamanTerbaru = Peminjaman::with(['user', 'detailPinjam.alat'])
@@ -59,12 +74,21 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
+        $peminjamanStats = Peminjaman::where('user_id', $user->id)
+            ->selectRaw("
+                COUNT(*) as total,
+                COALESCE(SUM(status = 'diajukan'), 0) as diajukan,
+                COALESCE(SUM(status = 'dipinjam'), 0) as dipinjam,
+                COALESCE(SUM(status = 'dikembalikan'), 0) as dikembalikan,
+                COALESCE(SUM(status = 'telat'), 0) as telat
+            ")->first();
+
         $stats = [
-            'total' => Peminjaman::where('user_id', $user->id)->count(),
-            'diajukan' => Peminjaman::where('user_id', $user->id)->where('status', 'diajukan')->count(),
-            'dipinjam' => Peminjaman::where('user_id', $user->id)->where('status', 'dipinjam')->count(),
-            'dikembalikan' => Peminjaman::where('user_id', $user->id)->where('status', 'dikembalikan')->count(),
-            'telat' => Peminjaman::where('user_id', $user->id)->where('status', 'telat')->count(),
+            'total' => (int) ($peminjamanStats->total ?? 0),
+            'diajukan' => (int) ($peminjamanStats->diajukan ?? 0),
+            'dipinjam' => (int) ($peminjamanStats->dipinjam ?? 0),
+            'dikembalikan' => (int) ($peminjamanStats->dikembalikan ?? 0),
+            'telat' => (int) ($peminjamanStats->telat ?? 0),
         ];
 
         return view('peminjam.dashboard', compact('peminjamanSaya', 'stats'));

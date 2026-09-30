@@ -15,7 +15,7 @@
             <a href="{{ route('petugas.pengembalian.create', ['peminjaman_id' => $p->id]) }}"
                class="flex items-center justify-between p-3 rounded-lg bg-white/3 hover:bg-white/6 transition border border-transparent hover:border-orange-500/30">
                 <div>
-                    <p class="text-sm font-medium text-white">{{ $p->user->name }}</p>
+                    <p class="text-sm font-medium text-white">{{ $p->user?->name ?? 'User Dihapus' }}</p>
                     <p class="text-xs text-white/40 mt-0.5">{{ $p->detailPinjam->count() }} alat · Rencana kembali: {{ $p->tgl_kembali_plan->format('d M Y') }}</p>
                 </div>
                 <span class="badge badge-info">Dipinjam</span>
@@ -29,7 +29,7 @@
 
     {{-- Form pengembalian --}}
     <div class="glass-card p-5">
-        <h2 class="font-semibold text-white mb-1">Peminjam: {{ $selectedPeminjaman->user->name }}</h2>
+        <h2 class="font-semibold text-white mb-1">Peminjam: {{ $selectedPeminjaman->user?->name ?? 'User Dihapus' }}</h2>
         <p class="text-xs text-white/40 mb-4">Rencana kembali: {{ $selectedPeminjaman->tgl_kembali_plan->format('d M Y') }}</p>
         <div class="fire-divider"></div>
 
@@ -58,9 +58,9 @@
                 <div>
                     <label class="block text-sm font-medium text-orange-200/80 mb-2">Kondisi Alat</label>
                     <select name="kondisi_kembali" class="input-glass">
-                        <option value="baik">Baik</option>
-                        <option value="rusak">Rusak</option>
-                        <option value="perbaikan">Perlu Perbaikan</option>
+                        <option value="baik" {{ old('kondisi_kembali') == 'baik' ? 'selected' : '' }}>Baik</option>
+                        <option value="rusak" {{ old('kondisi_kembali') == 'rusak' ? 'selected' : '' }}>Rusak</option>
+                        <option value="perbaikan" {{ old('kondisi_kembali') == 'perbaikan' ? 'selected' : '' }}>Perlu Perbaikan</option>
                     </select>
                 </div>
                 <div class="col-span-2">

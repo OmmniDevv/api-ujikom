@@ -12,7 +12,7 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
     protected $fillable = [
-        'name', 'email', 'password', 'role', 'no_hp', 'alamat', 'foto_profile',
+        'name', 'email', 'password', 'role', 'no_hp', 'alamat', 'foto_profile', 'skor_reputasi',
     ];
 
     protected $hidden = ['password', 'remember_token'];
@@ -70,5 +70,52 @@ class User extends Authenticatable
         }
 
         return $query;
+    }
+
+    public function getTierReputasiAttribute(): array
+    {
+        $skor = $this->skor_reputasi ?? 100;
+
+        if ($skor >= 120) {
+            return [
+                'nama' => 'Peminjam Teladan',
+                'badge' => 'badge-success',
+                'color' => 'text-emerald-400',
+                'icon' => '🌟',
+                'deskripsi' => 'Reputasi istimewa. Pengembalian selalu tertib dan terpercaya.',
+                'kuota_max' => 5,
+            ];
+        }
+
+        if ($skor >= 90) {
+            return [
+                'nama' => 'Kredibel & Tertib',
+                'badge' => 'badge-info',
+                'color' => 'text-cyan-400',
+                'icon' => '🟢',
+                'deskripsi' => 'Reputasi baik. Peminjam disiplin.',
+                'kuota_max' => 3,
+            ];
+        }
+
+        if ($skor >= 60) {
+            return [
+                'nama' => 'Perlu Perhatian',
+                'badge' => 'badge-warning',
+                'color' => 'text-amber-400',
+                'icon' => '🟡',
+                'deskripsi' => 'Ada catatan keterlambatan pengembalian.',
+                'kuota_max' => 2,
+            ];
+        }
+
+        return [
+            'nama' => 'Peninjauan / Rawan',
+            'badge' => 'badge-danger',
+            'color' => 'text-rose-400',
+            'icon' => '🔴',
+            'deskripsi' => 'Skor rendah. Sering terlambat atau merusak alat.',
+            'kuota_max' => 1,
+        ];
     }
 }

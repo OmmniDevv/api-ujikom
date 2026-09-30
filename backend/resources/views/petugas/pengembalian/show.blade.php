@@ -41,12 +41,15 @@
             </div>
             <div>
                 <p class="text-white/40 text-xs uppercase tracking-wider mb-1">Rencana Kembali</p>
-                <p class="text-white font-medium">{{ $pengembalian->peminjaman?->tgl_kembali_plan->format('d M Y') }}</p>
+                <p class="text-white font-medium">{{ $pengembalian->peminjaman?->tgl_kembali_plan?->format('d M Y') ?? '—' }}</p>
             </div>
             <div>
                 <p class="text-white/40 text-xs uppercase tracking-wider mb-1">Keterlambatan</p>
                 @php
-                    $terlambat = max(0, $pengembalian->tgl_kembali->diffInDays($pengembalian->peminjaman?->tgl_kembali_plan, false) * -1);
+                    $tglPlan = $pengembalian->peminjaman?->tgl_kembali_plan;
+                    $terlambat = ($tglPlan && $pengembalian->tgl_kembali)
+                        ? max(0, (int) $tglPlan->startOfDay()->diffInDays($pengembalian->tgl_kembali->startOfDay(), false))
+                        : 0;
                 @endphp
                 <p class="font-medium {{ $terlambat > 0 ? 'text-red-400' : 'text-green-400' }}">
                     {{ $terlambat > 0 ? $terlambat . ' hari' : 'Tepat waktu' }}
