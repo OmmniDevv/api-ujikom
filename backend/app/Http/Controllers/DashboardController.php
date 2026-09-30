@@ -20,6 +20,7 @@ class DashboardController extends Controller
             'diajukan' => Peminjaman::where('status', 'diajukan')->count(),
             'dipinjam' => Peminjaman::where('status', 'dipinjam')->count(),
             'dikembalikan' => Peminjaman::where('status', 'dikembalikan')->count(),
+            'telat' => Peminjaman::where('status', 'telat')->count(),
         ];
 
         $logTerbaru = LogAktivitas::with('user')
@@ -63,6 +64,7 @@ class DashboardController extends Controller
             'diajukan' => Peminjaman::where('user_id', $user->id)->where('status', 'diajukan')->count(),
             'dipinjam' => Peminjaman::where('user_id', $user->id)->where('status', 'dipinjam')->count(),
             'dikembalikan' => Peminjaman::where('user_id', $user->id)->where('status', 'dikembalikan')->count(),
+            'telat' => Peminjaman::where('user_id', $user->id)->where('status', 'telat')->count(),
         ];
 
         return view('peminjam.dashboard', compact('peminjamanSaya', 'stats'));

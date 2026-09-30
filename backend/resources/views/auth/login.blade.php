@@ -93,27 +93,6 @@
                 </button>
             </form>
 
-            {{-- Demo credentials --}}
-            <div class="mt-6 pt-5 border-t border-white/10">
-                <p class="text-xs text-center text-orange-300/50 mb-3">Akun Demo</p>
-                <div class="grid grid-cols-3 gap-2 text-xs text-center">
-                    <div class="glass-card p-2 rounded-lg">
-                        <p class="text-orange-400 font-semibold">Admin</p>
-                        <p class="text-white/50 mt-1">admin@gmail.com</p>
-                        <p class="text-white/50">password123</p>
-                    </div>
-                    <div class="glass-card p-2 rounded-lg">
-                        <p class="text-orange-400 font-semibold">Petugas</p>
-                        <p class="text-white/50 mt-1">petugas@gmail.com</p>
-                        <p class="text-white/50">password123</p>
-                    </div>
-                    <div class="glass-card p-2 rounded-lg">
-                        <p class="text-orange-400 font-semibold">Peminjam</p>
-                        <p class="text-white/50 mt-1">rian@gmail.com</p>
-                        <p class="text-white/50">password123</p>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 </body>

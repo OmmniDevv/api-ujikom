@@ -20,7 +20,7 @@
                 <div>
                     <label class="block text-sm font-medium text-orange-200/80 mb-2">Rencana Tanggal Kembali</label>
                     <input type="date" name="tgl_kembali_plan" value="{{ old('tgl_kembali_plan') }}"
-                        min="{{ now()->addDay()->format('Y-m-d') }}"
+                        min="{{ now()->format('Y-m-d') }}"
                         class="input-glass @error('tgl_kembali_plan') border-red-500/60 @enderror">
                     @error('tgl_kembali_plan')<p class="text-red-400 text-xs mt-1">{{ $message }}</p>@enderror
                 </div>

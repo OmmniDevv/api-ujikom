@@ -24,7 +24,13 @@ class PeminjamanService
 
             // ponytail: race condition stok diabaikan — aplikasi single-server sekolah,
             // lockForUpdate + re-cek cukup. Kalau scale-out: pindah ke DB CHECK (stok >= 0).
+            $seen = [];
             foreach ($detail as $item) {
+                if (in_array($item['alat_id'], $seen, true)) {
+                    DB::rollBack();
+                    return ['success'=>false,'error'=>'Duplikat alat dalam pengajuan.','peminjaman'=>null,'namaAlat'=>[]];
+                }
+                $seen[] = $item['alat_id'];
                 $alat = Alat::lockForUpdate()->findOrFail($item['alat_id']);
 
                 if (! $alat->stokCukup($item['jumlah'])) {

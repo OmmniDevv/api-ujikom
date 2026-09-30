@@ -40,23 +40,26 @@ class PengembalianController extends Controller
 
     public function store(StorePengembalianRequest $request)
     {
-        $peminjaman = Peminjaman::with('detailPinjam.alat')->findOrFail($request->peminjaman_id);
+        $peminjaman = Peminjaman::with(['user', 'detailPinjam.alat'])->findOrFail($request->peminjaman_id);
 
         try {
             $result = $this->service->proses(
                 $peminjaman,
                 $request->tgl_kembali,
                 $request->kondisi_kembali,
-                auth()->id()
+                auth()->id(),
+                $request->catatan
             );
 
+            $catatanExtra = $request->catatan ? ' | Catatan: '.$request->catatan : '';
+            $namaPeminjam = $peminjaman->user?->name ?? 'User Dihapus';
             ActivityLogger::log(
                 'Proses Pengembalian',
-                "Peminjaman #{$peminjaman->id} | Peminjam: {$peminjaman->user->name}".
+                "Peminjaman #{$peminjaman->id} | Peminjam: {$namaPeminjam}".
                 ' | Alat: '.implode(', ', $result['namaAlat']).
                 " | Kondisi: {$request->kondisi_kembali}".
                 " | Terlambat: {$result['terlambatHari']} hari".
-                ' | Denda: Rp '.number_format($result['denda'])
+                ' | Denda: Rp '.number_format($result['denda']).$catatanExtra
             );
 
             $msg = 'Pengembalian berhasil diproses.';

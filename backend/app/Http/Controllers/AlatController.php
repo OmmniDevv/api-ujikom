@@ -109,6 +109,10 @@ class AlatController extends Controller
 
     public function destroy(Alat $alat)
     {
+        if ($alat->masihDipinjam()) {
+            return back()->with('error', "Alat \"{$alat->nama_alat}\" tidak dapat dihapus karena sedang dalam proses peminjaman aktif.");
+        }
+
         $nama = $alat->nama_alat;
 
         if ($alat->gambar) {

@@ -14,7 +14,7 @@ class Pengembalian extends Model
         'tgl_kembali',
         'kondisi_kembali',
         'denda',
-        'petugas_id',
+        'petugas_id', 'catatan',
     ];
 
     protected function casts(): array

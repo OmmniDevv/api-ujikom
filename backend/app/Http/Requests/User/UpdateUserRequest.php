@@ -14,11 +14,12 @@ class UpdateUserRequest extends FormRequest
 
     public function rules(): array
     {
-        $userId = $this->route('user');
+        $user = $this->route('user');
+        $userId = $user instanceof \App\Models\User ? $user->id : $user;
 
         return [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', "unique:users,email,{$userId}"],
+            'email' => ['required', 'email', "unique:users,email,{$userId},id"],
             'password' => ['nullable', 'confirmed', Password::min(6)],
             'role' => ['required', 'in:admin,petugas,peminjam'],
             'no_hp' => ['nullable', 'string', 'max:20'],

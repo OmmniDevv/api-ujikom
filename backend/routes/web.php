@@ -66,8 +66,8 @@ Route::prefix('petugas')
 
         // Kelola peminjaman — PetugasController (sesuai tugas PDF)
         Route::get('/peminjaman', [PetugasController::class, 'indexPeminjaman'])->name('peminjaman.index');
-        Route::post('/peminjaman/{id}/setujui', [PetugasController::class, 'setujuiPeminjaman'])->name('peminjaman.setujui');
-        Route::post('/peminjaman/{id}/tolak', [PetugasController::class, 'tolakPeminjaman'])->name('peminjaman.tolak');
+        Route::post('/peminjaman/{peminjaman}/setujui', [PetugasController::class, 'setujuiPeminjaman'])->name('peminjaman.setujui');
+        Route::post('/peminjaman/{peminjaman}/tolak', [PetugasController::class, 'tolakPeminjaman'])->name('peminjaman.tolak');
 
         // Detail peminjaman (dari PeminjamanController)
         Route::get('/peminjaman/{peminjaman}', [PeminjamanController::class, 'show'])->name('peminjaman.show');

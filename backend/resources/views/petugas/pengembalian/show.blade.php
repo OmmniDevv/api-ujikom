@@ -74,6 +74,12 @@
                 <p class="text-white/40 text-xs uppercase tracking-wider mb-1">Waktu Proses</p>
                 <p class="text-white font-medium">{{ $pengembalian->created_at->format('d M Y H:i') }}</p>
             </div>
+            @if($pengembalian->catatan)
+            <div class="col-span-2 pt-2 border-t border-white/10">
+                <p class="text-white/40 text-xs uppercase tracking-wider mb-1">Catatan Petugas</p>
+                <p class="text-orange-200/90 bg-white/5 p-3 rounded-lg text-xs">{{ $pengembalian->catatan }}</p>
+            </div>
+            @endif
         </div>
     </div>
 

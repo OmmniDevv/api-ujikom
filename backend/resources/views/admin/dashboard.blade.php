@@ -35,7 +35,7 @@
     </div>
 
     {{-- Status peminjaman --}}
-    <div class="grid grid-cols-3 gap-4">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div class="glass-card p-5 text-center">
             <p class="text-2xl font-bold text-yellow-400">{{ $stats['diajukan'] }}</p>
             <p class="text-xs text-white/50 mt-1">Menunggu Persetujuan</p>
@@ -50,6 +50,11 @@
             <p class="text-2xl font-bold text-green-400">{{ $stats['dikembalikan'] }}</p>
             <p class="text-xs text-white/50 mt-1">Sudah Dikembalikan</p>
             <span class="badge badge-success mt-2">Selesai</span>
+        </div>
+        <div class="glass-card p-5 text-center">
+            <p class="text-2xl font-bold text-red-400">{{ $stats['telat'] }}</p>
+            <p class="text-xs text-white/50 mt-1">Kembali Terlambat</p>
+            <span class="badge badge-danger mt-2">Telat</span>
         </div>
     </div>
 

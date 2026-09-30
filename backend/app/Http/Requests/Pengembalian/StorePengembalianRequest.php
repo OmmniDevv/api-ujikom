@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Pengembalian;
 
+use App\Models\Peminjaman;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StorePengembalianRequest extends FormRequest
@@ -15,7 +16,15 @@ class StorePengembalianRequest extends FormRequest
     {
         return [
             'peminjaman_id' => ['required', 'exists:peminjaman,id'],
-            'tgl_kembali' => ['required', 'date'],
+            'tgl_kembali' => ['required', 'date', function (string $attribute, mixed $value, \Closure $fail) {
+                $peminjamanId = request()->input('peminjaman_id');
+                if (! $peminjamanId) return;
+                $p = Peminjaman::find($peminjamanId);
+                if (! $p) return;
+                if (\Carbon\Carbon::parse($value)->lt(\Carbon\Carbon::parse($p->tgl_pinjam))) {
+                    $fail('Tanggal kembali tidak boleh sebelum tanggal pinjam (' . $p->tgl_pinjam->format('d M Y') . ').');
+                }
+            }],
             'kondisi_kembali' => ['required', 'in:baik,rusak,perbaikan'],
             'catatan' => ['nullable', 'string', 'max:500'],
         ];

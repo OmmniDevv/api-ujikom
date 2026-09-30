@@ -55,4 +55,11 @@ class Alat extends Model
     {
         return $this->stok >= $jumlah;
     }
+
+    public function masihDipinjam(): bool
+    {
+        return $this->detailPinjam()
+            ->whereHas('peminjaman', fn ($q) => $q->whereIn('status', ['diajukan', 'dipinjam']))
+            ->exists();
+    }
 }

@@ -15,14 +15,14 @@ class PeminjamanController extends Controller
 
     public function index(Request $request)
     {
-        $peminjamans = Peminjaman::with(['user', 'detailPinjam.alat'])
+        $peminjamanList = Peminjaman::with(['user', 'detailPinjam.alat'])
             ->search($request->get('search'))
             ->byStatus($request->get('status'))
             ->latest()
             ->paginate(10)
             ->withQueryString();
 
-        return view('petugas.peminjaman.index', compact('peminjamans'));
+        return view('admin.peminjaman.index', compact('peminjamanList'));
     }
 
     public function riwayat(Request $request)
@@ -82,7 +82,7 @@ class PeminjamanController extends Controller
     {
         $peminjaman->load(['user', 'detailPinjam.alat', 'pengembalian.petugas']);
 
-        return view('petugas.peminjaman.show', compact('peminjaman'));
+        return view('admin.peminjaman.show', compact('peminjaman'));
     }
 
     public function tolak(Peminjaman $peminjaman)

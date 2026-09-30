@@ -12,7 +12,7 @@
             ['label'=>'Total Peminjaman', 'value'=>$stats['total'],        'color'=>'from-orange-500 to-red-600'],
             ['label'=>'Diajukan',         'value'=>$stats['diajukan'],     'color'=>'from-yellow-500 to-orange-500'],
             ['label'=>'Sedang Dipinjam',  'value'=>$stats['dipinjam'],     'color'=>'from-blue-500 to-cyan-500'],
-            ['label'=>'Selesai',          'value'=>$stats['dikembalikan'], 'color'=>'from-green-500 to-emerald-500'],
+            ['label'=>'Selesai',          'value'=>$stats['dikembalikan'] + $stats['telat'], 'color'=>'from-green-500 to-emerald-500'],
         ];
         @endphp
         @foreach($cards as $c)

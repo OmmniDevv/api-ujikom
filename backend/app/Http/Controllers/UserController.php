@@ -95,6 +95,10 @@ class UserController extends Controller
             return back()->with('error', 'Tidak dapat menghapus akun sendiri.');
         }
 
+        if ($user->peminjaman()->whereIn('status', ['diajukan', 'dipinjam'])->exists()) {
+            return back()->with('error', "User \"{$user->name}\" tidak dapat dihapus karena masih memiliki pengajuan/peminjaman aktif.");
+        }
+
         $nama = $user->name;
         $email = $user->email;
         $role = $user->role;
