@@ -26,47 +26,64 @@ class LaporanPeminjamanExport
         $writer->openToFile($tmpFile);
 
         // ===== STYLE HEADER =====
-        $headerStyle = new Style;
-        $headerStyle->setFontBold();
-        $headerStyle->setFontSize(11);
-        $headerStyle->setFontColor(Color::WHITE);
-        $headerStyle->setBackgroundColor('1E40AF'); // biru gelap
-        $headerStyle->setShouldWrapText(false);
+        $headerStyle = (new Style())
+            ->withFontBold(true)
+            ->withFontSize(10)
+            ->withFontColor(Color::WHITE)
+            ->withBackgroundColor('EA580C') // Oranye SiPinjam
+            ->withShouldWrapText(false);
 
         // ===== STYLE TITLE =====
-        $titleStyle = new Style;
-        $titleStyle->setFontBold();
-        $titleStyle->setFontSize(14);
-        $titleStyle->setFontColor('1E40AF');
+        $titleStyle = (new Style())
+            ->withFontBold(true)
+            ->withFontSize(14)
+            ->withFontColor('EA580C');
+
+        $metaStyle = (new Style())
+            ->withFontItalic(true)
+            ->withFontSize(9)
+            ->withFontColor('475569');
 
         // ===== STYLE ZEBRA =====
-        $zebraStyle = new Style;
-        $zebraStyle->setBackgroundColor('EFF6FF'); // biru muda
-        $zebraStyle->setFontSize(10);
+        $zebraStyle = (new Style())
+            ->withBackgroundColor('FFF7ED') // warm light orange zebra
+            ->withFontSize(9);
 
-        $normalStyle = new Style;
-        $normalStyle->setFontSize(10);
+        $normalStyle = (new Style())
+            ->withFontSize(9);
+
+        // Metadata pembuat laporan
+        $generatorName = auth()->user()->name ?? 'System';
+        $generatorRole = ucfirst(auth()->user()->role ?? 'Admin');
+        $waktuGenerate = now()->format('d F Y, H:i:s') . ' WIB';
 
         // ===== TITLE ROW =====
-        $writer->addRow(Row::fromValues(
-            ['LAPORAN PEMINJAMAN ALAT - SMKN 7 BALEENDAH'],
+        $writer->addRow(Row::fromValuesWithStyle(
+            ['LAPORAN REKAPITULASI PEMINJAMAN ALAT - SIPINJAM SMKN 7 BALEENDAH'],
             $titleStyle
         ));
-        $writer->addRow(Row::fromValues(['Tanggal Cetak: '.now()->format('d/m/Y H:i')]));
+        $writer->addRow(Row::fromValuesWithStyle(
+            ["Di-generate oleh: {$generatorName} ({$generatorRole}) | Tanggal & Waktu: {$waktuGenerate}"],
+            $metaStyle
+        ));
+        $writer->addRow(Row::fromValuesWithStyle(
+            ['Total Data Transaksi: ' . count($this->peminjamans) . ' transaksi'],
+            $metaStyle
+        ));
         $writer->addRow(Row::fromValues([''])); // baris kosong
 
         // ===== HEADER ROW =====
-        $writer->addRow(Row::fromValues([
+        $writer->addRow(Row::fromValuesWithStyle([
             'No',
             'Nama Peminjam',
             'Tanggal Pinjam',
             'Rencana Kembali',
-            'Nama Alat',
-            'Jumlah',
-            'Status',
+            'Nama Alat Dipinjam',
+            'Jumlah Unit',
+            'Status Peminjaman',
             'Tgl Kembali Aktual',
             'Kondisi Kembali',
-            'Denda (Rp)',
+            'Nominal Denda (Rp)',
         ], $headerStyle));
 
         // ===== DATA ROWS =====
@@ -88,7 +105,7 @@ class LaporanPeminjamanExport
 
             $style = ($no % 2 === 0) ? $zebraStyle : $normalStyle;
 
-            $writer->addRow(Row::fromValues([
+            $writer->addRow(Row::fromValuesWithStyle([
                 $no,
                 $item->user->name ?? '-',
                 $item->tgl_pinjam instanceof Carbon
@@ -98,7 +115,7 @@ class LaporanPeminjamanExport
                     ? $item->tgl_kembali_plan->format('d/m/Y')
                     : (string) $item->tgl_kembali_plan,
                 $alats,
-                $jumlahAlat,
+                (int) $jumlahAlat,
                 $statusLabel,
                 $tglKembali instanceof Carbon
                     ? $tglKembali->format('d/m/Y')
