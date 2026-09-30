@@ -62,6 +62,9 @@
                                 {{ strtoupper(substr($user->name, 0, 1)) }}
                             </div>
                             <span class="font-medium text-white">{{ $user->name }}</span>
+                            @if($user->id === auth()->id())
+                                <span class="text-[10px] px-2 py-0.5 rounded-full bg-orange-500/20 text-orange-300 font-medium border border-orange-500/30">Anda</span>
+                            @endif
                         </div>
                     </td>
                     <td class="text-white/60">{{ $user->email }}</td>
