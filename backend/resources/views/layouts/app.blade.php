@@ -6,10 +6,18 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'SiPinjam') — Sistem Peminjaman Alat</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="fire-bg text-white font-sans h-full">
+<body class="fire-bg text-white font-sans h-full relative selection:bg-orange-500/30 selection:text-orange-200">
+
+{{-- Ambient Floating Glow Orbs for Glassmorphism --}}
+<div class="fixed inset-0 pointer-events-none overflow-hidden -z-10" aria-hidden="true">
+    <div class="ambient-orb ambient-orb-1"></div>
+    <div class="ambient-orb ambient-orb-2"></div>
+    <div class="ambient-orb ambient-orb-3"></div>
+</div>
 
 <div class="flex h-screen overflow-hidden">
 
@@ -195,7 +203,7 @@
     {{-- Backdrop --}}
     <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" onclick="closeDeleteModal()"></div>
     {{-- Modal --}}
-    <div class="relative glass-card p-6 w-full max-w-sm border border-red-500/30 shadow-2xl shadow-red-900/30">
+    <div id="deleteModalCard" class="relative glass-card p-6 w-full max-w-sm border border-red-500/30 shadow-2xl shadow-red-900/30">
         <div class="flex items-center gap-3 mb-4">
             <div class="w-10 h-10 rounded-full bg-red-500/20 border border-red-500/30 flex items-center justify-center flex-shrink-0">
                 <svg class="w-5 h-5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">

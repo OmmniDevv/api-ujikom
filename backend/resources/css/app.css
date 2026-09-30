@@ -5,13 +5,14 @@
 @source '../**/*.blade.php';
 @source '../**/*.js';
 
-/* ========================================
-   FIRE THEME — Liquid Glass + Fire Colors
-   ======================================== */
+/* ==========================================================================
+   UI/UX PRO MAX — LIQUID GLASSMORPHISM & FIRE THEME TOKENS
+   ========================================================================== */
 @theme {
-    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    --font-sans: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-    /* Fire color palette */
+    /* Fire & Ember Accent Palette */
     --color-fire-50:  #fff7ed;
     --color-fire-100: #ffedd5;
     --color-fire-200: #fed7aa;
@@ -24,256 +25,425 @@
     --color-fire-900: #7c2d12;
     --color-fire-950: #431407;
 
-    /* Ember/dark accents */
-    --color-ember-900: #1a0a00;
-    --color-ember-800: #2d1200;
-    --color-ember-700: #3d1a00;
-    --color-ember-600: #4a1f00;
+    /* Deep Cosmic Obsidian (Dark Mode Foundation) */
+    --color-obsidian-950: #06090e;
+    --color-obsidian-900: #0b0f17;
+    --color-obsidian-850: #101622;
+    --color-obsidian-800: #161e2e;
+    --color-obsidian-700: #1e293b;
 
-    /* Gold accent */
+    /* Gold / Amber Accents */
     --color-gold-400: #fbbf24;
     --color-gold-500: #f59e0b;
     --color-gold-600: #d97706;
 }
 
-/* ========================================
-   LIQUID GLASS UTILITY CLASSES
-   ======================================== */
+/* Base Body & Viewport */
+html, body {
+    font-family: var(--font-sans);
+    background-color: #080c14;
+    color: #f1f5f9;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
 
-/* Glass card */
+/* ==========================================================================
+   AMBIENT GLOWING BACKGROUND (LIGHT SOURCE FOR GLASS EFFECT)
+   ========================================================================== */
+.fire-bg {
+    background-color: #070b12;
+    position: relative;
+    min-height: 100vh;
+}
+
+.ambient-orb {
+    position: absolute;
+    border-radius: 9999px;
+    filter: blur(100px);
+    opacity: 0.45;
+    pointer-events: none;
+    z-index: 0;
+    will-change: transform, opacity;
+}
+
+.ambient-orb-1 {
+    width: 500px;
+    height: 500px;
+    top: -100px;
+    left: 10%;
+    background: radial-gradient(circle, rgba(249, 115, 22, 0.35) 0%, rgba(234, 88, 12, 0.1) 70%, transparent 100%);
+}
+
+.ambient-orb-2 {
+    width: 650px;
+    height: 650px;
+    bottom: -150px;
+    right: 5%;
+    background: radial-gradient(circle, rgba(220, 38, 38, 0.25) 0%, rgba(249, 115, 22, 0.08) 60%, transparent 100%);
+}
+
+.ambient-orb-3 {
+    width: 400px;
+    height: 400px;
+    top: 40%;
+    left: 45%;
+    background: radial-gradient(circle, rgba(245, 158, 11, 0.2) 0%, transparent 70%);
+}
+
+/* ==========================================================================
+   PREMIUM LIQUID GLASSMORPHISM COMPONENTS
+   ========================================================================== */
+
+/* Glass card standard */
 .glass-card {
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 1rem;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4),
-                inset 0 1px 0 rgba(255, 255, 255, 0.2);
-}
-
-/* Glass card hover */
-.glass-card-hover {
-    transition: all 0.3s ease;
-}
-.glass-card-hover:hover {
-    background: rgba(255, 255, 255, 0.12);
-    border-color: rgba(249, 115, 22, 0.4);
-    box-shadow: 0 12px 40px rgba(249, 115, 22, 0.2),
-                inset 0 1px 0 rgba(255, 255, 255, 0.25);
-    transform: translateY(-2px);
-}
-
-/* Glass navbar */
-.glass-nav {
-    background: rgba(26, 10, 0, 0.85);
+    background: rgba(16, 22, 34, 0.65);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(249, 115, 22, 0.3);
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 1.125rem;
+    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    position: relative;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+/* Glass card hover elevation */
+.glass-card-hover {
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.glass-card-hover:hover {
+    background: rgba(22, 30, 46, 0.75);
+    border-color: rgba(249, 115, 22, 0.4);
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.6),
+                0 0 25px rgba(249, 115, 22, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    transform: translateY(-3px);
+}
+
+/* Glass navigation bar */
+.glass-nav {
+    background: rgba(11, 15, 25, 0.75);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.4);
 }
 
 /* Glass sidebar */
 .glass-sidebar {
-    background: rgba(26, 10, 0, 0.9);
+    background: rgba(9, 13, 22, 0.85);
+    backdrop-filter: blur(28px);
+    -webkit-backdrop-filter: blur(28px);
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 4px 0 24px -2px rgba(0, 0, 0, 0.3);
+}
+
+/* Stat card with top glowing gradient line */
+.stat-card {
+    background: rgba(16, 23, 36, 0.65);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border-right: 1px solid rgba(249, 115, 22, 0.2);
-}
-
-/* Fire gradient text */
-.fire-text {
-    background: linear-gradient(135deg, #f97316, #fbbf24, #ef4444);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-/* Fire gradient button */
-.btn-fire {
-    background: linear-gradient(135deg, #ea580c, #f97316);
-    border: 1px solid rgba(251, 191, 36, 0.3);
-    color: white;
-    font-weight: 600;
-    padding: 0.5rem 1.25rem;
-    border-radius: 0.5rem;
-    transition: all 0.2s ease;
-    box-shadow: 0 0 12px rgba(234, 88, 12, 0.4);
-}
-.btn-fire:hover {
-    background: linear-gradient(135deg, #c2410c, #ea580c);
-    box-shadow: 0 0 20px rgba(249, 115, 22, 0.6);
-    transform: translateY(-1px);
-}
-
-/* Secondary ghost button */
-.btn-ghost {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    color: rgba(255, 255, 255, 0.8);
-    padding: 0.5rem 1.25rem;
-    border-radius: 0.5rem;
-    transition: all 0.2s ease;
-}
-.btn-ghost:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(249, 115, 22, 0.4);
-    color: white;
-}
-
-/* Danger button */
-.btn-danger {
-    background: linear-gradient(135deg, #dc2626, #ef4444);
-    border: 1px solid rgba(239, 68, 68, 0.3);
-    color: white;
-    font-weight: 600;
-    padding: 0.5rem 1.25rem;
-    border-radius: 0.5rem;
-    transition: all 0.2s ease;
-}
-.btn-danger:hover {
-    background: linear-gradient(135deg, #b91c1c, #dc2626);
-    box-shadow: 0 0 16px rgba(239, 68, 68, 0.5);
-}
-
-/* Badge status */
-.badge {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.2rem 0.65rem;
-    border-radius: 9999px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.025em;
-}
-.badge-warning  { background: rgba(251,191,36,0.15); color: #fbbf24; border: 1px solid rgba(251,191,36,0.3); }
-.badge-success  { background: rgba(34,197,94,0.15);  color: #4ade80; border: 1px solid rgba(34,197,94,0.3); }
-.badge-info     { background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); }
-.badge-danger   { background: rgba(239,68,68,0.15);  color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
-.badge-fire     { background: rgba(249,115,22,0.15); color: #fb923c; border: 1px solid rgba(249,115,22,0.3); }
-.badge-gray     { background: rgba(255,255,255,0.08); color: #9ca3af; border: 1px solid rgba(255,255,255,0.15); }
-
-/* Form input glass */
-.input-glass {
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 0.5rem;
-    color: white;
-    padding: 0.6rem 1rem;
-    width: 100%;
-    transition: all 0.2s ease;
-    outline: none;
-}
-.input-glass::placeholder { color: rgba(255,255,255,0.35); }
-.input-glass:focus {
-    border-color: rgba(249, 115, 22, 0.6);
-    background: rgba(255, 255, 255, 0.09);
-    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15);
-}
-.input-glass:focus-visible { outline: none; }
-
-/* Table glass */
-.table-glass thead tr {
-    background: rgba(249, 115, 22, 0.12);
-    border-bottom: 1px solid rgba(249, 115, 22, 0.3);
-}
-.table-glass thead th {
-    color: #fb923c;
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    padding: 0.75rem 1rem;
-}
-.table-glass tbody tr {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-    transition: background 0.2s;
-}
-.table-glass tbody tr:hover {
-    background: rgba(249, 115, 22, 0.06);
-}
-.table-glass tbody td {
-    padding: 0.85rem 1rem;
-    color: rgba(255,255,255,0.85);
-    font-size: 0.875rem;
-}
-
-/* Fire glow divider */
-.fire-divider {
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(249,115,22,0.5), transparent);
-    margin: 1rem 0;
-}
-
-/* Stat card glow */
-.stat-card {
-    background: rgba(255,255,255,0.05);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 1rem;
-    padding: 1.25rem;
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 1.125rem;
+    padding: 1.25rem 1.5rem;
     position: relative;
     overflow: hidden;
-    transition: all 0.3s ease;
+    box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .stat-card::before {
     content: '';
     position: absolute;
     top: 0; left: 0; right: 0;
-    height: 2px;
+    height: 2.5px;
     background: linear-gradient(90deg, #ea580c, #f97316, #fbbf24);
+    opacity: 0.9;
 }
 .stat-card:hover {
-    border-color: rgba(249,115,22,0.3);
-    box-shadow: 0 8px 32px rgba(249,115,22,0.15);
+    border-color: rgba(249, 115, 22, 0.35);
+    transform: translateY(-2px);
+    box-shadow: 0 16px 36px -6px rgba(0, 0, 0, 0.6),
+                0 0 20px rgba(249, 115, 22, 0.12),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
-/* Sidebar nav link */
+/* ==========================================================================
+   BUTTONS & INTERACTIVE ELEMENTS
+   ========================================================================== */
+
+/* Primary Action: Fire Gradient Button */
+.btn-fire {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: linear-gradient(135deg, #f97316 0%, #ea580c 50%, #dc2626 100%);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 0.875rem;
+    padding: 0.55rem 1.25rem;
+    border-radius: 0.625rem;
+    box-shadow: 0 4px 14px 0 rgba(234, 88, 12, 0.38),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    cursor: pointer;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+.btn-fire:hover {
+    background: linear-gradient(135deg, #fb923c 0%, #ea580c 50%, #b91c1c 100%);
+    box-shadow: 0 6px 20px 0 rgba(249, 115, 22, 0.55),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    transform: translateY(-1.5px);
+}
+.btn-fire:active {
+    transform: translateY(0.5px);
+    box-shadow: 0 2px 8px 0 rgba(234, 88, 12, 0.4);
+}
+
+/* Ghost / Glass Secondary Button */
+.btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.85);
+    font-weight: 500;
+    font-size: 0.875rem;
+    padding: 0.55rem 1.25rem;
+    border-radius: 0.625rem;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    cursor: pointer;
+}
+.btn-ghost:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(249, 115, 22, 0.4);
+    color: #ffffff;
+    box-shadow: 0 4px 16px rgba(249, 115, 22, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    transform: translateY(-1px);
+}
+.btn-ghost:active {
+    transform: translateY(0);
+}
+
+/* Danger Button */
+.btn-danger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 0.875rem;
+    padding: 0.55rem 1.25rem;
+    border-radius: 0.625rem;
+    box-shadow: 0 4px 14px rgba(220, 38, 38, 0.35),
+                inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+.btn-danger:hover {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5);
+    transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   FORM INPUTS & SELECTS (FROSTED GLASS)
+   ========================================================================== */
+.input-glass {
+    background: rgba(14, 20, 32, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 0.625rem;
+    color: #ffffff;
+    padding: 0.625rem 1rem;
+    width: 100%;
+    font-size: 0.875rem;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    outline: none;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+.input-glass::placeholder {
+    color: rgba(255, 255, 255, 0.35);
+}
+.input-glass:focus {
+    background: rgba(18, 25, 40, 0.85);
+    border-color: #f97316;
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.22),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+select.input-glass option {
+    background-color: #0f172a;
+    color: #f8fafc;
+}
+
+/* ==========================================================================
+   STATUS BADGES (NEON FROSTED PILLS)
+   ========================================================================== */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.025em;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+.badge-warning {
+    background: rgba(245, 158, 11, 0.15);
+    color: #fcd34d;
+    border: 1px solid rgba(245, 158, 11, 0.35);
+}
+.badge-success {
+    background: rgba(16, 185, 129, 0.15);
+    color: #6ee7b7;
+    border: 1px solid rgba(16, 185, 129, 0.35);
+}
+.badge-info {
+    background: rgba(59, 130, 246, 0.15);
+    color: #93c5fd;
+    border: 1px solid rgba(59, 130, 246, 0.35);
+}
+.badge-danger {
+    background: rgba(239, 68, 68, 0.15);
+    color: #fca5a5;
+    border: 1px solid rgba(239, 68, 68, 0.35);
+}
+.badge-fire {
+    background: rgba(249, 115, 22, 0.18);
+    color: #fdba74;
+    border: 1px solid rgba(249, 115, 22, 0.4);
+}
+.badge-gray {
+    background: rgba(255, 255, 255, 0.08);
+    color: #cbd5e1;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+/* ==========================================================================
+   TABLE GLASS DESIGN
+   ========================================================================== */
+.table-glass {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+.table-glass thead tr {
+    background: rgba(249, 115, 22, 0.08);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.table-glass thead th {
+    color: #fdba74;
+    font-size: 0.725rem;
+    font-weight: 700;
+    letter-spacing: 0.075em;
+    text-transform: uppercase;
+    padding: 0.9rem 1.15rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.table-glass tbody tr {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    transition: background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s ease;
+}
+.table-glass tbody tr:hover {
+    background: rgba(249, 115, 22, 0.05);
+}
+.table-glass tbody td {
+    padding: 0.95rem 1.15rem;
+    color: rgba(248, 250, 252, 0.88);
+    font-size: 0.875rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* ==========================================================================
+   NAVIGATION & UTILITIES
+   ========================================================================== */
 .nav-link {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    padding: 0.65rem 1rem;
-    border-radius: 0.5rem;
-    color: rgba(255,255,255,0.6);
+    padding: 0.7rem 1rem;
+    border-radius: 0.625rem;
+    color: rgba(255, 255, 255, 0.65);
     font-size: 0.875rem;
     font-weight: 500;
-    transition: all 0.2s ease;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     text-decoration: none;
+    border: 1px solid transparent;
 }
 .nav-link:hover {
-    background: rgba(249,115,22,0.12);
+    background: rgba(249, 115, 22, 0.12);
     color: #fb923c;
+    border-color: rgba(249, 115, 22, 0.2);
+    transform: translateX(3px);
 }
 .nav-link.active {
-    background: rgba(249,115,22,0.2);
+    background: linear-gradient(90deg, rgba(249, 115, 22, 0.22) 0%, rgba(249, 115, 22, 0.08) 100%);
     color: #fb923c;
-    border: 1px solid rgba(249,115,22,0.3);
+    border: 1px solid rgba(249, 115, 22, 0.35);
+    font-weight: 600;
+    box-shadow: 0 2px 10px rgba(249, 115, 22, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
-/* Alert/flash messages */
+/* Fire gradient text */
+.fire-text {
+    background: linear-gradient(135deg, #fdba74 0%, #f97316 50%, #ef4444 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Glow divider */
+.fire-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(249, 115, 22, 0.4), transparent);
+    margin: 1.25rem 0;
+}
+
+/* Alert notifications */
 .alert-success {
-    background: rgba(34,197,94,0.1);
-    border: 1px solid rgba(34,197,94,0.3);
-    color: #4ade80;
-    padding: 0.75rem 1rem;
-    border-radius: 0.5rem;
+    background: rgba(16, 185, 129, 0.12);
+    border: 1px solid rgba(16, 185, 129, 0.35);
+    color: #6ee7b7;
+    padding: 0.85rem 1.15rem;
+    border-radius: 0.75rem;
     font-size: 0.875rem;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.15);
 }
 .alert-error {
-    background: rgba(239,68,68,0.1);
-    border: 1px solid rgba(239,68,68,0.3);
-    color: #f87171;
-    padding: 0.75rem 1rem;
-    border-radius: 0.5rem;
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    color: #fca5a5;
+    padding: 0.85rem 1.15rem;
+    border-radius: 0.75rem;
     font-size: 0.875rem;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 4px 16px rgba(239, 68, 68, 0.15);
 }
 
-/* Page fire background */
-.fire-bg {
-    background:
-        radial-gradient(ellipse at 20% 50%, rgba(234,88,12,0.12) 0%, transparent 60%),
-        radial-gradient(ellipse at 80% 20%, rgba(249,115,22,0.08) 0%, transparent 50%),
-        radial-gradient(ellipse at 60% 80%, rgba(220,38,38,0.08) 0%, transparent 50%),
-        #0f0500;
-    min-height: 100vh;
+/* Accessibility: respect user motion preferences */
+@media (prefers-reduced-motion: reduce) {
+    *, ::before, ::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
 }
