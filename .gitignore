@@ -47,3 +47,8 @@ Homestead.yaml
 
 # School assignments (LKPD) - not part of project
 *.pdf
+
+# Naskah
+*naskah*
+*NASKAH*
+NASKAH_PRESENTASI.md
