@@ -5,13 +5,21 @@
 
 @section('content')
 <div class="space-y-4">
-    <div class="flex flex-col sm:flex-row gap-3 justify-between">
-        <form method="GET" class="flex gap-2 flex-1 max-w-sm">
-            <input type="text" name="search" value="{{ request('search') }}"
-                placeholder="Cari kategori..." class="input-glass flex-1">
-            <button type="submit" class="btn-ghost px-4">Cari</button>
+    <div class="flex flex-col sm:flex-row gap-3 justify-between items-center">
+        <form method="GET" class="flex flex-wrap sm:flex-nowrap gap-2.5 flex-1 w-full max-w-md items-center">
+            <div class="relative flex-1 min-w-[200px]">
+                <input type="text" name="search" value="{{ request('search') }}"
+                    placeholder="Cari kategori..." class="input-glass w-full pl-9 pr-3">
+                <svg class="w-4 h-4 text-white/40 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+            </div>
+            <button type="submit" class="btn-ghost shrink-0 px-4">Cari</button>
+            @if(request('search'))
+                <a href="{{ route('admin.kategoris.index') }}" class="btn-ghost shrink-0 px-3 text-xs">Reset</a>
+            @endif
         </form>
-        <a href="{{ route('admin.kategoris.create') }}" class="btn-fire flex items-center gap-2">
+        <a href="{{ route('admin.kategoris.create') }}" class="btn-fire shrink-0 flex items-center gap-2">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
             </svg> Tambah Kategori

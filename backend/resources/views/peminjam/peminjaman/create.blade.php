@@ -38,14 +38,16 @@
 
                 <div id="daftarAlat" class="space-y-3">
                     <div class="alat-row flex items-center gap-3">
-                        <select name="detail[0][alat_id]" class="input-glass flex-1">
+                        <select name="detail[0][alat_id]" class="input-glass flex-1 min-w-0">
                             <option value="">-- Pilih Alat --</option>
                             @foreach($alats as $a)
                                 <option value="{{ $a->id }}">{{ $a->nama_alat }} (Stok: {{ $a->stok }})</option>
                             @endforeach
                         </select>
-                        <input type="number" name="detail[0][jumlah]" value="1" min="1"
-                            placeholder="Jml" class="input-glass w-24">
+                        <div class="w-24 shrink-0">
+                            <input type="number" name="detail[0][jumlah]" value="1" min="1"
+                                placeholder="Jml" class="input-glass w-full text-center">
+                        </div>
                     </div>
                 </div>
                 @error('detail')<p class="text-red-400 text-xs mt-1">{{ $message }}</p>@enderror
@@ -76,9 +78,11 @@ function tambahAlat() {
     alats.forEach(a => { options += `<option value="${a.id}">${a.nama} (Stok: ${a.stok})</option>`; });
 
     div.innerHTML = `
-        <select name="detail[${index}][alat_id]" class="input-glass flex-1">${options}</select>
-        <input type="number" name="detail[${index}][jumlah]" value="1" min="1" placeholder="Jml" class="input-glass w-24">
-        <button type="button" onclick="this.parentElement.remove()" class="text-red-400 hover:text-red-300 p-1 flex-shrink-0">
+        <select name="detail[${index}][alat_id]" class="input-glass flex-1 min-w-0">${options}</select>
+        <div class="w-24 shrink-0">
+            <input type="number" name="detail[${index}][jumlah]" value="1" min="1" placeholder="Jml" class="input-glass w-full text-center">
+        </div>
+        <button type="button" onclick="this.parentElement.remove()" class="text-red-400 hover:text-red-300 p-1 shrink-0">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
             </svg>

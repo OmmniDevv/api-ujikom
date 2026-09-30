@@ -5,19 +5,29 @@
 
 @section('content')
 <div class="space-y-4">
-    <div class="flex flex-col sm:flex-row gap-3 justify-between">
-        <form method="GET" class="flex gap-2 flex-1 max-w-lg">
-            <input type="text" name="search" value="{{ request('search') }}"
-                placeholder="Cari nama alat, kategori..." class="input-glass flex-1">
-            <select name="kategori_id" class="input-glass w-44">
-                <option value="">Semua Kategori</option>
-                @foreach($kategoris as $k)
-                    <option value="{{ $k->id }}" {{ request('kategori_id')==$k->id ? 'selected':'' }}>{{ $k->nama_kategori }}</option>
-                @endforeach
-            </select>
-            <button type="submit" class="btn-ghost px-4">Cari</button>
+    <div class="flex flex-col sm:flex-row gap-3 justify-between items-center">
+        <form method="GET" class="flex flex-wrap sm:flex-nowrap gap-2.5 flex-1 w-full max-w-xl items-center">
+            <div class="relative flex-1 min-w-[200px]">
+                <input type="text" name="search" value="{{ request('search') }}"
+                    placeholder="Cari nama alat, kategori..." class="input-glass w-full pl-9 pr-3">
+                <svg class="w-4 h-4 text-white/40 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+            </div>
+            <div class="w-44 shrink-0">
+                <select name="kategori_id" class="input-glass w-full">
+                    <option value="">Semua Kategori</option>
+                    @foreach($kategoris as $k)
+                        <option value="{{ $k->id }}" {{ request('kategori_id')==$k->id ? 'selected':'' }}>{{ $k->nama_kategori }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <button type="submit" class="btn-ghost shrink-0 px-4">Cari</button>
+            @if(request('search') || request('kategori_id'))
+                <a href="{{ route('admin.alats.index') }}" class="btn-ghost shrink-0 px-3 text-xs">Reset</a>
+            @endif
         </form>
-        <a href="{{ route('admin.alats.create') }}" class="btn-fire flex items-center gap-2">
+        <a href="{{ route('admin.alats.create') }}" class="btn-fire shrink-0 flex items-center gap-2">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
             </svg> Tambah Alat
@@ -42,15 +52,23 @@
                 <tr>
                     <td class="text-white/40">{{ $alats->firstItem() + $i }}</td>
                     <td>
-                        @if($alat->gambar)
-                            <img src="{{ asset('storage/'.$alat->gambar) }}" class="w-10 h-10 rounded-lg object-cover border border-orange-500/20">
-                        @else
-                            <div class="w-10 h-10 rounded-lg bg-orange-900/30 flex items-center justify-center">
+                        <div class="w-10 h-10 rounded-lg overflow-hidden flex items-center justify-center bg-orange-950/40 border border-orange-500/20 flex-shrink-0">
+                            @if($alat->gambar)
+                                <img src="{{ asset('storage/'.$alat->gambar) }}"
+                                     class="w-full h-full object-cover"
+                                     alt="{{ $alat->nama_alat }}"
+                                     onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');">
+                                <div class="hidden w-full h-full flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-orange-500/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    </svg>
+                                </div>
+                            @else
                                 <svg class="w-5 h-5 text-orange-500/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                 </svg>
-                            </div>
-                        @endif
+                            @endif
+                        </div>
                     </td>
                     <td class="font-medium text-white">{{ $alat->nama_alat }}</td>
                     <td><span class="badge badge-gray">{{ $alat->kategori?->nama_kategori }}</span></td>

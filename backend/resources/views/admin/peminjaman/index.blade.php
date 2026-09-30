@@ -16,24 +16,29 @@
 
     {{-- Filter & Search --}}
     <div class="glass-card p-4">
-        <form method="GET" class="flex flex-wrap gap-3 items-end">
-            <div class="flex-1 min-w-48">
-                <label class="text-white/50 text-xs block mb-1.5">Cari Peminjam</label>
-                <input type="text" name="search" value="{{ request('search') }}"
-                    class="input-glass" placeholder="Nama peminjam...">
+        <form method="GET" class="flex flex-wrap sm:flex-nowrap gap-3 items-end">
+            <div class="flex-1 min-w-[200px]">
+                <label class="text-white/50 text-xs block mb-1.5 font-medium">Cari Peminjam</label>
+                <div class="relative">
+                    <input type="text" name="search" value="{{ request('search') }}"
+                        class="input-glass w-full pl-9 pr-3" placeholder="Nama peminjam...">
+                    <svg class="w-4 h-4 text-white/40 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                </div>
             </div>
-            <div>
-                <label class="text-white/50 text-xs block mb-1.5">Status</label>
-                <select name="status" class="input-glass">
+            <div class="w-44 shrink-0">
+                <label class="text-white/50 text-xs block mb-1.5 font-medium">Status</label>
+                <select name="status" class="input-glass w-full">
                     <option value="">Semua Status</option>
                     @foreach(['diajukan','dipinjam','dikembalikan','telat'] as $s)
                     <option value="{{ $s }}" @selected(request('status') === $s)>{{ ucfirst($s) }}</option>
                     @endforeach
                 </select>
             </div>
-            <button type="submit" class="btn-fire h-10 px-5">Filter</button>
+            <button type="submit" class="btn-fire h-10 px-5 shrink-0">Filter</button>
             @if(request('search') || request('status'))
-            <a href="{{ route('admin.peminjaman.index') }}" class="btn-ghost h-10 px-4">Reset</a>
+            <a href="{{ route('admin.peminjaman.index') }}" class="btn-ghost h-10 px-4 shrink-0 flex items-center">Reset</a>
             @endif
         </form>
     </div>

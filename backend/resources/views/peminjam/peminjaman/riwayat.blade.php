@@ -5,18 +5,23 @@
 
 @section('content')
 <div class="space-y-4">
-    <div class="flex flex-col sm:flex-row gap-3 justify-between">
-        <form method="GET" class="flex gap-2">
-            <select name="status" class="input-glass w-44">
-                <option value="">Semua Status</option>
-                <option value="diajukan"     {{ request('status')=='diajukan'     ? 'selected':'' }}>Diajukan</option>
-                <option value="dipinjam"     {{ request('status')=='dipinjam'     ? 'selected':'' }}>Dipinjam</option>
-                <option value="dikembalikan" {{ request('status')=='dikembalikan' ? 'selected':'' }}>Dikembalikan</option>
-                <option value="telat"        {{ request('status')=='telat'        ? 'selected':'' }}>Telat</option>
-            </select>
-            <button type="submit" class="btn-ghost px-4">Filter</button>
+    <div class="flex flex-col sm:flex-row gap-3 justify-between items-center">
+        <form method="GET" class="flex gap-2 items-center">
+            <div class="w-48 shrink-0">
+                <select name="status" class="input-glass w-full">
+                    <option value="">Semua Status</option>
+                    <option value="diajukan"     {{ request('status')=='diajukan'     ? 'selected':'' }}>Diajukan</option>
+                    <option value="dipinjam"     {{ request('status')=='dipinjam'     ? 'selected':'' }}>Dipinjam</option>
+                    <option value="dikembalikan" {{ request('status')=='dikembalikan' ? 'selected':'' }}>Dikembalikan</option>
+                    <option value="telat"        {{ request('status')=='telat'        ? 'selected':'' }}>Telat</option>
+                </select>
+            </div>
+            <button type="submit" class="btn-ghost shrink-0 px-4">Filter</button>
+            @if(request('status'))
+                <a href="{{ route('peminjam.peminjaman.riwayat') }}" class="btn-ghost shrink-0 px-3 text-xs">Reset</a>
+            @endif
         </form>
-        <a href="{{ route('peminjam.peminjaman.create') }}" class="btn-fire flex items-center gap-2">
+        <a href="{{ route('peminjam.peminjaman.create') }}" class="btn-fire shrink-0 flex items-center gap-2">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
             </svg> Ajukan Baru

@@ -270,6 +270,7 @@ html, body {
     color: #ffffff;
     padding: 0.625rem 1rem;
     width: 100%;
+    min-width: 0;
     font-size: 0.875rem;
     transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     outline: none;

@@ -8,13 +8,18 @@
 <div class="space-y-4">
 
     {{-- Search --}}
-    <div class="flex flex-col sm:flex-row gap-3 justify-between">
-        <form method="GET" class="flex gap-2 flex-1 max-w-lg">
-            <input type="text" name="search" value="{{ request('search') }}"
-                placeholder="Cari nama peminjam..." class="input-glass flex-1">
-            <button type="submit" class="btn-ghost px-4">Cari</button>
+    <div class="flex flex-col sm:flex-row gap-3 justify-between items-center">
+        <form method="GET" class="flex flex-wrap sm:flex-nowrap gap-2.5 flex-1 w-full max-w-lg items-center">
+            <div class="relative flex-1 min-w-[200px]">
+                <input type="text" name="search" value="{{ request('search') }}"
+                    placeholder="Cari nama peminjam..." class="input-glass w-full pl-9 pr-3">
+                <svg class="w-4 h-4 text-white/40 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+            </div>
+            <button type="submit" class="btn-ghost shrink-0 px-4">Cari</button>
             @if(request('search'))
-                <a href="{{ route('petugas.peminjaman.index') }}" class="btn-ghost px-4">Reset</a>
+                <a href="{{ route('petugas.peminjaman.index') }}" class="btn-ghost shrink-0 px-3 text-xs">Reset</a>
             @endif
         </form>
     </div>
