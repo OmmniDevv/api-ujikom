@@ -59,6 +59,11 @@ Route::prefix('admin')
 
         // Analitik Tingkat Eksekutif
         Route::get('/analitik', [ExecutiveAnalyticsController::class, 'index'])->name('analitik.index');
+
+        // Cetak Laporan (Akses Admin)
+        Route::get('/laporan', [PetugasController::class, 'laporan'])->name('laporan.index');
+        Route::get('/laporan/pdf', [PetugasController::class, 'laporanPdf'])->name('laporan.pdf');
+        Route::get('/laporan/excel', [PetugasController::class, 'laporanExcel'])->name('laporan.excel');
     });
 
 /*
