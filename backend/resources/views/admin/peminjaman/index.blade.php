@@ -17,14 +17,16 @@
     {{-- Filter & Search --}}
     <div class="glass-card p-4">
         <form method="GET" class="flex flex-wrap sm:flex-nowrap gap-3 items-end">
-            <div class="flex-1 min-w-[200px]">
+            <div class="flex-1 min-w-[220px]">
                 <label class="text-white/50 text-xs block mb-1.5 font-medium">Cari Peminjam</label>
                 <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-white/40">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                    </div>
                     <input type="text" name="search" value="{{ request('search') }}"
-                        class="input-glass w-full pl-9 pr-3" placeholder="Nama peminjam...">
-                    <svg class="w-4 h-4 text-white/40 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                    </svg>
+                        class="input-glass input-has-icon w-full pr-3" placeholder="Nama peminjam...">
                 </div>
             </div>
             <div class="w-44 shrink-0">

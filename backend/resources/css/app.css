@@ -185,13 +185,15 @@ html, body {
     color: #ffffff;
     font-weight: 600;
     font-size: 0.875rem;
-    padding: 0.55rem 1.25rem;
+    height: 2.625rem;
+    padding: 0 1.25rem;
     border-radius: 0.625rem;
     box-shadow: 0 4px 14px 0 rgba(234, 88, 12, 0.38),
                 inset 0 1px 0 rgba(255, 255, 255, 0.3);
     transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     cursor: pointer;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+    white-space: nowrap;
 }
 .btn-fire:hover {
     background: linear-gradient(135deg, #fb923c 0%, #ea580c 50%, #b91c1c 100%);
@@ -215,7 +217,8 @@ html, body {
     color: rgba(255, 255, 255, 0.85);
     font-weight: 500;
     font-size: 0.875rem;
-    padding: 0.55rem 1.25rem;
+    height: 2.625rem;
+    padding: 0 1.25rem;
     border-radius: 0.625rem;
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
@@ -223,6 +226,7 @@ html, body {
                 inset 0 1px 0 rgba(255, 255, 255, 0.08);
     transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     cursor: pointer;
+    white-space: nowrap;
 }
 .btn-ghost:hover {
     background: rgba(255, 255, 255, 0.1);
@@ -247,12 +251,14 @@ html, body {
     color: #ffffff;
     font-weight: 600;
     font-size: 0.875rem;
-    padding: 0.55rem 1.25rem;
+    height: 2.625rem;
+    padding: 0 1.25rem;
     border-radius: 0.625rem;
     box-shadow: 0 4px 14px rgba(220, 38, 38, 0.35),
                 inset 0 1px 0 rgba(255, 255, 255, 0.25);
     transition: all 0.2s ease;
     cursor: pointer;
+    white-space: nowrap;
 }
 .btn-danger:hover {
     background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
@@ -260,18 +266,34 @@ html, body {
     transform: translateY(-1px);
 }
 
+/* Compact Buttons inside Table Cells */
+.table-glass .btn-ghost,
+.table-glass .btn-danger,
+.table-glass .btn-fire,
+.btn-sm {
+    height: auto !important;
+    min-height: 1.875rem !important;
+    padding: 0.25rem 0.75rem !important;
+    font-size: 0.75rem !important;
+    border-radius: 0.5rem !important;
+}
+
 /* ==========================================================================
    FORM INPUTS & SELECTS (FROSTED GLASS)
    ========================================================================== */
 .input-glass {
+    display: inline-flex;
+    align-items: center;
     background: rgba(14, 20, 32, 0.7);
     border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 0.625rem;
     color: #ffffff;
-    padding: 0.625rem 1rem;
+    padding: 0 1rem;
+    height: 2.625rem;
     width: 100%;
     min-width: 0;
     font-size: 0.875rem;
+    line-height: 1.25rem;
     transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     outline: none;
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
@@ -284,6 +306,25 @@ html, body {
     border-color: #f97316;
     box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.22),
                 inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+/* Khusus input pencarian yang memiliki icon kaca pembesar di sisi kiri */
+.input-glass.input-has-icon,
+.input-has-icon {
+    padding-left: 2.75rem !important;
+}
+
+/* Custom styled modern select dropdown with glowing chevron */
+select.input-glass {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23f97316' stroke-width='2.2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-position: right 0.85rem center;
+    background-repeat: no-repeat;
+    background-size: 1rem 1rem;
+    padding-right: 2.5rem !important;
+    cursor: pointer;
 }
 select.input-glass option {
     background-color: #0f172a;
