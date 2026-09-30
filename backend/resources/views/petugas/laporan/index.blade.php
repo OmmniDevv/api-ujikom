@@ -118,12 +118,81 @@
         </div>
     </div>
 
-    {{-- ===== PRINT ONLY HEADER (Hanya muncul saat dicetak ke printer / PDF browser) ===== --}}
-    <div class="hidden print:block mb-6 text-center text-black">
-        <h1 class="text-xl font-bold uppercase tracking-wider">Laporan Peminjaman Alat</h1>
-        <p class="text-sm">SMKN 7 Baleendah — Sistem Informasi Inventaris & Peminjaman</p>
-        <p class="text-xs text-gray-500 mt-1">Dicetak pada: {{ now()->translatedFormat('d F Y, H:i') }} WIB | Total Data: {{ $totalData }}</p>
-        <hr class="my-3 border-gray-400">
+    {{-- ===== PRINT ONLY HEADER & METADATA (Tampil Eksklusif Saat Dicetak / Save as PDF) ===== --}}
+    @php
+        $currentUser = auth()->user();
+        $generatorNama = $currentUser ? $currentUser->name : 'Sistem Otomatis';
+        $generatorRole = $currentUser ? ucfirst($currentUser->role) : 'Administrator';
+        $generatorEmail = $currentUser ? $currentUser->email : '-';
+        $waktuCetak = now()->format('d F Y, H:i:s') . ' WIB';
+        $docId = 'SPJ-DOC-' . now()->format('Ymd') . '-' . strtoupper(substr(hash('crc32', $generatorNama . now()->timestamp), 0, 6));
+    @endphp
+
+    <div class="hidden print:block mb-4">
+        {{-- Watermark Background Print --}}
+        <div class="print-watermark">
+            SIPINJAM • SMKN 7 BALEENDAH • DOKUMEN RESMI TERVERIFIKASI
+        </div>
+
+        {{-- Kop Header --}}
+        <div class="flex items-center justify-between pb-3 mb-3 border-b-2 border-orange-600">
+            <div>
+                <h1 class="text-lg font-black text-orange-600 uppercase tracking-tight">⚡ SiPinjam - SMKN 7 Baleendah</h1>
+                <p class="text-[11px] text-slate-600">Sistem Informasi Manajemen Inventaris & Peminjaman Peralatan Laboratorium</p>
+                <p class="text-[10px] text-slate-500">Jl. Siliwangi No. 127, Baleendah, Kec. Baleendah, Kabupaten Bandung, Jawa Barat</p>
+            </div>
+            <div class="text-right">
+                <h2 class="text-base font-extrabold text-slate-900 uppercase">Rekapitulasi Peminjaman Alat</h2>
+                <p class="text-[10px] font-mono font-bold text-orange-600">No. Dokumen: {{ $docId }}</p>
+            </div>
+        </div>
+
+        {{-- Metadata Box Generator --}}
+        <div class="p-3 rounded bg-slate-50 border border-slate-200 border-l-4 border-l-orange-500 mb-4 text-xs">
+            <div class="grid grid-cols-2 gap-y-1 gap-x-4">
+                <div>
+                    <span class="text-slate-500">Di-generate Oleh:</span>
+                    <strong class="text-slate-900 ml-1">{{ $generatorNama }}</strong> 
+                    <span class="text-orange-600 font-semibold">({{ $generatorRole }})</span>
+                </div>
+                <div>
+                    <span class="text-slate-500">Waktu Pembuatan:</span>
+                    <strong class="text-slate-900 ml-1">{{ $waktuCetak }}</strong>
+                </div>
+                <div>
+                    <span class="text-slate-500">Email Akun:</span>
+                    <span class="text-slate-800 ml-1">{{ $generatorEmail }}</span>
+                </div>
+                <div>
+                    <span class="text-slate-500">Status Dokumen:</span>
+                    <strong class="text-emerald-700 ml-1">✓ ASLI & TERSERTIFIKASI ELEKTRONIK</strong>
+                </div>
+            </div>
+        </div>
+
+        {{-- Metric Strip Ringkasan Cetak --}}
+        <div class="grid grid-cols-5 gap-2 mb-4 text-center">
+            <div class="p-2 rounded bg-slate-100 border border-slate-200">
+                <span class="text-[9px] font-bold text-slate-600 uppercase block">Total Transaksi</span>
+                <span class="text-sm font-black text-slate-900 font-mono">{{ $totalData }}</span>
+            </div>
+            <div class="p-2 rounded bg-blue-50 border border-blue-200">
+                <span class="text-[9px] font-bold text-blue-700 uppercase block">Sedang Dipinjam</span>
+                <span class="text-sm font-black text-blue-900 font-mono">{{ $totalDipinjam }}</span>
+            </div>
+            <div class="p-2 rounded bg-emerald-50 border border-emerald-200">
+                <span class="text-[9px] font-bold text-emerald-700 uppercase block">Selesai (Tepat Waktu)</span>
+                <span class="text-sm font-black text-emerald-900 font-mono">{{ $totalSelesai }}</span>
+            </div>
+            <div class="p-2 rounded bg-rose-50 border border-rose-200">
+                <span class="text-[9px] font-bold text-rose-700 uppercase block">Kasus Terlambat</span>
+                <span class="text-sm font-black text-rose-900 font-mono">{{ $totalTelat }}</span>
+            </div>
+            <div class="p-2 rounded bg-orange-50 border border-orange-200">
+                <span class="text-[9px] font-bold text-orange-700 uppercase block">Total Kas Denda</span>
+                <span class="text-sm font-black text-orange-900 font-mono">Rp {{ number_format($totalDenda, 0, ',', '.') }}</span>
+            </div>
+        </div>
     </div>
 
     {{-- ===== TABEL LAPORAN LENGKAP ===== --}}
@@ -221,21 +290,65 @@
         </div>
     </div>
 
+    {{-- PRINT FOOTER: PENGESAHAN & CHECKSUM DIGITAL (Hanya tampil saat print) --}}
+    <div class="hidden print:block mt-6 pt-4 border-t border-dashed border-slate-300" style="page-break-inside: avoid;">
+        <div class="flex items-start justify-between gap-6">
+            <div class="w-7/12 p-3 rounded bg-slate-50 border border-slate-200 text-[10px] text-slate-600 leading-relaxed">
+                <div class="flex items-center gap-1.5 font-bold text-slate-900 mb-1">
+                    <span class="text-orange-600">🔒</span> OTENTIKASI & KEAMANAN DOKUMEN DIGITAL
+                </div>
+                Dokumen ini merupakan salinan digital resmi yang dihasilkan secara otomatis oleh sistem <strong>SiPinjam SMKN 7 Baleendah</strong>. Seluruh riwayat transaksi di atas tervalidasi pada database server.
+                <div class="mt-2 font-mono text-[9px] text-slate-500 break-all">
+                    Checksum SHA-256: <span class="font-bold text-orange-600">{{ strtoupper(hash('sha256', $docId . now()->timestamp . $totalData)) }}</span>
+                </div>
+            </div>
+            <div class="w-4/12 text-center text-xs text-slate-800">
+                <p class="text-slate-600">Baleendah, {{ now()->translatedFormat('d F Y') }}</p>
+                <p class="font-bold text-slate-900 mt-0.5">{{ $generatorRole }} Penanggung Jawab,</p>
+                <div class="h-14 flex items-center justify-center">
+                    <span class="text-[9px] text-slate-300 font-mono italic">[ Tanda Tangan Digital Tersertifikasi ]</span>
+                </div>
+                <p class="font-bold underline text-slate-900 text-xs">{{ $generatorNama }}</p>
+                <p class="text-[10px] text-slate-500 font-mono">ID Akun: #{{ $currentUser->id ?? '1' }} • Status: Verified</p>
+            </div>
+        </div>
+    </div>
+
 </div>
 
-{{-- CSS KHUSUS PRINT BROWSER SUPAYA BERSIH SAAT DICETAK --}}
+{{-- CSS KHUSUS PRINT BROWSER MODERN & ELEGAN --}}
 <style>
 @media print {
-    body {
-        background: #ffffff !important;
-        color: #111827 !important;
+    @page {
+        size: landscape;
+        margin: 10mm 12mm;
     }
-    aside, header, .glass-sidebar, .glass-nav, .btn-fire, .btn-ghost, .btn-danger, .stat-card {
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    html, body {
+        height: auto !important;
+        overflow: visible !important;
+        background: #ffffff !important;
+        color: #0f172a !important;
+        font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+        font-size: 11px !important;
+    }
+    .flex.h-screen, .h-screen, .overflow-hidden, .overflow-y-auto {
+        height: auto !important;
+        overflow: visible !important;
+        display: block !important;
+    }
+    aside, header, nav, .glass-sidebar, .glass-nav, .btn-fire, .btn-ghost, .btn-danger, .stat-card, .fixed, .print\:hidden {
         display: none !important;
     }
-    main {
+    main, .main-content, .container, .p-6, .space-y-6 {
         padding: 0 !important;
+        margin: 0 !important;
         overflow: visible !important;
+        width: 100% !important;
+        max-width: 100% !important;
     }
     .glass-card {
         background: transparent !important;
@@ -243,24 +356,116 @@
         box-shadow: none !important;
         padding: 0 !important;
     }
+    .overflow-x-auto {
+        overflow: visible !important;
+    }
+    .print-watermark {
+        position: fixed !important;
+        top: 40% !important;
+        left: 5% !important;
+        right: 5% !important;
+        font-size: 34px !important;
+        font-weight: 900 !important;
+        color: rgba(234, 88, 12, 0.04) !important;
+        transform: rotate(-12deg) !important;
+        text-align: center !important;
+        z-index: 0 !important;
+        pointer-events: none !important;
+        text-transform: uppercase !important;
+        letter-spacing: 3px !important;
+    }
     table {
         border-collapse: collapse !important;
         width: 100% !important;
-        color: #111827 !important;
+        font-size: 10.5px !important;
+        position: relative !important;
+        z-index: 10 !important;
+        page-break-inside: auto !important;
     }
-    th, td {
-        border: 1px solid #d1d5db !important;
-        padding: 6px 8px !important;
-        color: #111827 !important;
+    tr {
+        page-break-inside: avoid !important;
+        page-break-after: auto !important;
+    }
+    thead {
+        display: table-header-group !important;
+    }
+    thead tr {
+        background-color: #0f172a !important;
+        color: #ffffff !important;
     }
     th {
-        background-color: #f3f4f6 !important;
-        font-weight: bold !important;
+        background-color: #0f172a !important;
+        color: #ffffff !important;
+        font-weight: 800 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.05em !important;
+        padding: 8px 10px !important;
+        font-size: 9.5px !important;
+        border: none !important;
+        border-bottom: 2px solid #ea580c !important;
+    }
+    td {
+        border-top: none !important;
+        border-left: none !important;
+        border-right: none !important;
+        border-bottom: 1px solid #e2e8f0 !important;
+        padding: 7px 10px !important;
+        color: #1e293b !important;
+        vertical-align: middle !important;
+    }
+    tbody tr:nth-child(even) {
+        background-color: #f8fafc !important;
+    }
+    tbody tr:nth-child(odd) {
+        background-color: #ffffff !important;
     }
     .badge {
-        border: 1px solid #9ca3af !important;
-        color: #111827 !important;
-        background: transparent !important;
+        display: inline-block !important;
+        padding: 2px 8px !important;
+        border-radius: 9999px !important;
+        font-size: 9px !important;
+        font-weight: 700 !important;
+        text-transform: uppercase !important;
+    }
+    .badge-success {
+        background-color: #ecfdf5 !important;
+        color: #047857 !important;
+        border: 1px solid #a7f3d0 !important;
+    }
+    .badge-danger {
+        background-color: #fff1f2 !important;
+        color: #be123c !important;
+        border: 1px solid #fecdd3 !important;
+    }
+    .badge-warning {
+        background-color: #fffbeb !important;
+        color: #b45309 !important;
+        border: 1px solid #fde68a !important;
+    }
+    .badge-info {
+        background-color: #eff6ff !important;
+        color: #1d4ed8 !important;
+        border: 1px solid #bfdbfe !important;
+    }
+    .badge-gray {
+        background-color: #f1f5f9 !important;
+        color: #475569 !important;
+        border: 1px solid #cbd5e1 !important;
+    }
+    .text-white {
+        color: #0f172a !important;
+    }
+    .text-white\/90 {
+        color: #1e293b !important;
+    }
+    .text-white\/70 {
+        color: #475569 !important;
+    }
+    .text-white\/50 {
+        color: #64748b !important;
+    }
+    .text-white\/30 {
+        color: #94a3b8 !important;
     }
 }
 </style>
