@@ -19,169 +19,162 @@
     <div class="ambient-orb ambient-orb-3"></div>
 </div>
 
-<div class="flex h-screen overflow-hidden">
+<div class="flex h-screen overflow-hidden p-3 sm:p-4 gap-3 sm:gap-4">
 
-    {{-- ===== SIDEBAR ===== --}}
-    <aside class="glass-sidebar w-64 flex-shrink-0 flex flex-col h-full overflow-y-auto">
-        {{-- Logo --}}
-        <div class="p-5 border-b border-orange-900/30">
-            <a href="{{ url('/') }}" class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center shadow-lg shadow-orange-900/50">
+    {{-- ===== SIDEBAR FLOATING (ref: SideBar UI reel) ===== --}}
+    <aside id="appSidebar" class="sidebar-float w-72 flex-shrink-0 flex flex-col h-full overflow-hidden transition-all duration-300">
+        {{-- Logo + collapse --}}
+        <div class="flex items-center justify-between pl-5 pr-4 pt-5 pb-4">
+            <a href="{{ url('/') }}" class="flex items-center gap-3 min-w-0">
+                <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center shadow-lg shadow-orange-900/50 flex-shrink-0">
                     <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z"/>
                     </svg>
                 </div>
-                <div>
-                    <p class="font-bold text-white text-sm leading-tight">SiPinjam</p>
-                    <p class="text-xs text-orange-400/70">Peminjaman Alat</p>
+                <div class="sidebar-label min-w-0">
+                    <p class="font-extrabold text-white text-[17px] leading-tight tracking-tight">Si<span class="text-orange-500">Pinjam</span></p>
+                    <p class="text-[11px] text-white/40">Peminjaman Alat</p>
                 </div>
             </a>
+            <button type="button" onclick="toggleSidebar()" title="Lipatkan sidebar"
+                class="sidebar-label w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/40 hover:text-white hover:border-orange-500/50 transition flex-shrink-0">
+                <svg id="collapseIcon" class="w-4 h-4 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+            </button>
         </div>
 
-        {{-- User info --}}
+        {{-- Profile --}}
         @auth
-        <div class="p-4 border-b border-orange-900/20">
-            <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-full bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center text-sm font-bold flex-shrink-0">
-                    {{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 1)) }}
-                </div>
-                <div class="min-w-0">
-                    <p class="text-sm font-medium text-white truncate">{{ auth()->user()->name ?? 'User' }}</p>
-                    <span class="badge badge-fire text-xs">{{ ucfirst(auth()->user()->role ?? 'Guest') }}</span>
-                </div>
+        <div class="mx-4 mb-3 p-3 rounded-2xl bg-white/[0.04] border border-white/10 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center text-sm font-bold flex-shrink-0">
+                {{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 1)) }}
             </div>
+            <div class="sidebar-label min-w-0 flex-1">
+                <p class="text-sm font-semibold text-white truncate">{{ auth()->user()->name ?? 'User' }}</p>
+                <p class="text-[11px] text-white/40 truncate">{{ ucfirst(auth()->user()->role ?? 'Guest') }}</p>
+            </div>
+            <svg class="sidebar-label w-4 h-4 text-white/30 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
         </div>
         @endauth
 
+        {{-- Search --}}
+        <div class="sidebar-search px-4 mb-1">
+            <div class="relative">
+                <svg class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-white/25 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+                <input id="sidebarSearch" type="text" placeholder="SEARCH" autocomplete="off"
+                    class="w-full h-10 pl-11 pr-4 rounded-full bg-white/[0.04] border border-white/10 text-[11px] tracking-[0.2em] text-white placeholder:text-white/25 focus:outline-none focus:border-orange-500/50 focus:bg-white/[0.07] transition">
+            </div>
+        </div>
+
         {{-- Navigation --}}
-        <nav class="flex-1 p-3 space-y-0.5">
-            @php $role = auth()->user()?->role; @endphp
+        <nav id="sidebarNav" class="flex-1 px-4 py-3 space-y-1 overflow-y-auto">
+            @php
+                $role = auth()->user()?->role;
+                $diajukanCount = \App\Models\Peminjaman::where('status', 'diajukan')->count();
+            @endphp
 
             {{-- ADMIN NAV --}}
             @if($role === 'admin')
-                <p class="text-xs font-semibold text-orange-500/50 uppercase tracking-widest px-3 py-2 mt-1">Menu Admin</p>
-                <a href="{{ route('admin.dashboard') }}"
-                   class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-                    <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h18M3 12h18M3 17h18"/>
-                    </svg> Dashboard
+                <p class="nav-section sidebar-label">Menu Admin</p>
+                <a href="{{ route('admin.dashboard') }}" data-label="dashboard" class="nav-float {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                    <span class="sidebar-label">Dashboard</span>
                 </a>
-                <a href="{{ route('admin.users.index') }}"
-                   class="nav-link {{ request()->routeIs('admin.users*') ? 'active' : '' }}">
-                    <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a4 4 0 00-5-3.87M9 20H4v-2a4 4 0 015-3.87m6-4a4 4 0 11-8 0 4 4 0 018 0z"/>
-                    </svg> Kelola User
+                <a href="{{ route('admin.users.index') }}" data-label="kelola user pengguna" class="nav-float {{ request()->routeIs('admin.users*') ? 'active' : '' }}">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a4 4 0 00-5-3.87M9 20H4v-2a4 4 0 015-3.87m6-4a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                    <span class="sidebar-label">Kelola User</span>
                 </a>
-                <a href="{{ route('admin.kategoris.index') }}"
-                   class="nav-link {{ request()->routeIs('admin.kategoris*') ? 'active' : '' }}">
-                    <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5l7 7-7 7-5-5V3z"/>
-                    </svg> Kategori
+                <a href="{{ route('admin.kategoris.index') }}" data-label="kategori" class="nav-float {{ request()->routeIs('admin.kategoris*') ? 'active' : '' }}">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5l7 7-7 7-5-5V3z"/></svg>
+                    <span class="sidebar-label">Kategori</span>
                 </a>
-                <a href="{{ route('admin.alats.index') }}"
-                   class="nav-link {{ request()->routeIs('admin.alats*') ? 'active' : '' }}">
-                    <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                    </svg> Alat
+                <a href="{{ route('admin.alats.index') }}" data-label="alat inventaris" class="nav-float {{ request()->routeIs('admin.alats*') ? 'active' : '' }}">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/></svg>
+                    <span class="sidebar-label">Alat</span>
                 </a>
-                <a href="{{ route('admin.peminjaman.index') }}"
-                   class="nav-link {{ request()->routeIs('admin.peminjaman*') ? 'active' : '' }}">
-                    <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                    </svg> Peminjaman
+                <a href="{{ route('admin.peminjaman.index') }}" data-label="peminjaman pinjaman" class="nav-float {{ request()->routeIs('admin.peminjaman*') ? 'active' : '' }}">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                    <span class="sidebar-label">Peminjaman</span>
+                    @if($diajukanCount > 0)<span class="sidebar-label nav-badge">{{ $diajukanCount }}</span>@endif
                 </a>
-                <a href="{{ route('admin.analitik.index') }}"
-                   class="nav-link {{ request()->routeIs('admin.analitik*') ? 'active' : '' }}">
-                    <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                    </svg> Analitik Eksekutif
+                <a href="{{ route('admin.analitik.index') }}" data-label="analitik eksekutif statistik" class="nav-float {{ request()->routeIs('admin.analitik*') ? 'active' : '' }}">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                    <span class="sidebar-label">Analitik Eksekutif</span>
                 </a>
-                <a href="{{ route('admin.laporan.index') }}"
-                   class="nav-link {{ request()->routeIs('admin.laporan*') ? 'active' : '' }}">
-                    <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                    </svg> Cetak Laporan
+                <a href="{{ route('admin.laporan.index') }}" data-label="cetak laporan pdf excel" class="nav-float {{ request()->routeIs('admin.laporan*') ? 'active' : '' }}">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    <span class="sidebar-label">Cetak Laporan</span>
                 </a>
             @endif
 
             {{-- PETUGAS NAV --}}
             @if($role === 'petugas')
-                <p class="text-xs font-semibold text-orange-500/50 uppercase tracking-widest px-3 py-2 mt-1">Menu Petugas</p>
-                <a href="{{ route('petugas.dashboard') }}"
-                   class="nav-link {{ request()->routeIs('petugas.dashboard') ? 'active' : '' }}">
-                    <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h18M3 12h18M3 17h18"/>
-                    </svg> Dashboard
+                <p class="nav-section sidebar-label">Menu Petugas</p>
+                <a href="{{ route('petugas.dashboard') }}" data-label="dashboard" class="nav-float {{ request()->routeIs('petugas.dashboard') ? 'active' : '' }}">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                    <span class="sidebar-label">Dashboard</span>
                 </a>
-                <a href="{{ route('petugas.peminjaman.index') }}"
-                   class="nav-link {{ request()->routeIs('petugas.peminjaman*') ? 'active' : '' }}">
-                    <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                    </svg> Persetujuan Peminjaman
+                <a href="{{ route('petugas.peminjaman.index') }}" data-label="persetujuan peminjaman approval" class="nav-float {{ request()->routeIs('petugas.peminjaman*') ? 'active' : '' }}">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <span class="sidebar-label">Persetujuan</span>
+                    @if($diajukanCount > 0)<span class="sidebar-label nav-badge">{{ $diajukanCount }}</span>@endif
                 </a>
-                <a href="{{ route('petugas.pengembalian.index') }}"
-                   class="nav-link {{ request()->routeIs('petugas.pengembalian*') ? 'active' : '' }}">
-                    <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/>
-                    </svg> Pemantauan Pengembalian
+                <a href="{{ route('petugas.pengembalian.index') }}" data-label="pengembalian kembali" class="nav-float {{ request()->routeIs('petugas.pengembalian*') ? 'active' : '' }}">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
+                    <span class="sidebar-label">Pengembalian</span>
                 </a>
-                <a href="{{ route('petugas.laporan.index') }}"
-                   class="nav-link {{ request()->routeIs('petugas.laporan*') ? 'active' : '' }}">
-                    <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                    </svg> Cetak Laporan
+                <a href="{{ route('petugas.laporan.index') }}" data-label="cetak laporan pdf excel" class="nav-float {{ request()->routeIs('petugas.laporan*') ? 'active' : '' }}">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    <span class="sidebar-label">Cetak Laporan</span>
                 </a>
-                <a href="{{ route('petugas.analitik.index') }}"
-                   class="nav-link {{ request()->routeIs('petugas.analitik*') ? 'active' : '' }}">
-                    <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                    </svg> Analitik Eksekutif
+                <a href="{{ route('petugas.analitik.index') }}" data-label="analitik eksekutif statistik" class="nav-float {{ request()->routeIs('petugas.analitik*') ? 'active' : '' }}">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                    <span class="sidebar-label">Analitik Eksekutif</span>
                 </a>
             @endif
 
             {{-- PEMINJAM NAV --}}
             @if($role === 'peminjam')
-                <p class="text-xs font-semibold text-orange-500/50 uppercase tracking-widest px-3 py-2 mt-1">Menu Peminjam</p>
-                <a href="{{ route('peminjam.dashboard') }}"
-                   class="nav-link {{ request()->routeIs('peminjam.dashboard') ? 'active' : '' }}">
-                    <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h18M3 12h18M3 17h18"/>
-                    </svg> Dashboard
+                <p class="nav-section sidebar-label">Menu Peminjam</p>
+                <a href="{{ route('peminjam.dashboard') }}" data-label="dashboard" class="nav-float {{ request()->routeIs('peminjam.dashboard') ? 'active' : '' }}">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                    <span class="sidebar-label">Dashboard</span>
                 </a>
-                <a href="{{ route('peminjam.katalog') }}"
-                   class="nav-link {{ request()->routeIs('peminjam.katalog') ? 'active' : '' }}">
-                    <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2"/>
-                    </svg> Katalog Alat
+                <a href="{{ route('peminjam.katalog') }}" data-label="katalog alat" class="nav-float {{ request()->routeIs('peminjam.katalog') ? 'active' : '' }}">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2"/></svg>
+                    <span class="sidebar-label">Katalog Alat</span>
                 </a>
-                <a href="{{ route('peminjam.peminjaman.riwayat') }}"
-                   class="nav-link {{ request()->routeIs('peminjam.peminjaman*') ? 'active' : '' }}">
-                    <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg> Riwayat Saya
+                <a href="{{ route('peminjam.peminjaman.riwayat') }}" data-label="riwayat saya" class="nav-float {{ request()->routeIs('peminjam.peminjaman*') ? 'active' : '' }}">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <span class="sidebar-label">Riwayat Saya</span>
                 </a>
             @endif
         </nav>
 
         {{-- Logout --}}
-        <div class="p-3 border-t border-orange-900/20">
+        <div class="p-4">
             <form action="{{ route('logout') }}" method="POST">
                 @csrf
-                <button type="submit" class="nav-link w-full text-left text-red-400 hover:bg-red-900/20 hover:text-red-300">
-                    <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-                    </svg> Logout
+                <button type="submit" class="nav-float w-full !text-red-400/80 hover:!text-red-300 hover:!border-red-500/40">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                    <span class="sidebar-label">Logout</span>
                 </button>
             </form>
         </div>
     </aside>
 
+
     {{-- ===== MAIN CONTENT ===== --}}
     <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
 
         {{-- Topbar --}}
-        <header class="glass-nav h-14 flex items-center justify-between px-6 flex-shrink-0">
+        <header class="glass-nav rounded-2xl h-16 flex items-center justify-between px-6 flex-shrink-0">
             <div>
                 <h1 class="text-sm font-semibold text-white">@yield('page-title', 'Dashboard')</h1>
                 <p class="text-xs text-orange-400/60">@yield('page-subtitle', '')</p>
@@ -489,5 +482,32 @@ document.addEventListener('keydown', function(e) {
 });
 </script>
 
+
+<script>
+// ===== Sidebar floating: collapse + search (ref: SideBar UI reel) =====
+function toggleSidebar() {
+    const sb = document.getElementById('appSidebar');
+    if (!sb) return;
+    sb.classList.toggle('is-collapsed');
+    try { localStorage.setItem('sipinjam-sidebar', sb.classList.contains('is-collapsed') ? '1' : '0'); } catch (e) {}
+}
+(function () {
+    try {
+        if (localStorage.getItem('sipinjam-sidebar') === '1') {
+            document.getElementById('appSidebar')?.classList.add('is-collapsed');
+        }
+    } catch (e) {}
+    const input = document.getElementById('sidebarSearch');
+    if (input) {
+        input.addEventListener('input', function () {
+            const q = this.value.trim().toLowerCase();
+            document.querySelectorAll('#sidebarNav .nav-float').forEach(function (el) {
+                const label = (el.getAttribute('data-label') || el.textContent).toLowerCase();
+                el.style.display = (!q || label.includes(q)) ? '' : 'none';
+            });
+        });
+    }
+})();
+</script>
 </body>
 </html>

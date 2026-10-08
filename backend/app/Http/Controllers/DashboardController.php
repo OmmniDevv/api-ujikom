@@ -36,7 +36,20 @@ class DashboardController extends Controller
             ->take(10)
             ->get();
 
-        return view('admin.dashboard', compact('stats', 'logTerbaru'));
+        // Tren 7 hari terakhir untuk chart dashboard (ref: Glassy Dashboard reel)
+        $trenRaw = Peminjaman::selectRaw("DATE(created_at) as tgl, COUNT(*) as jml")
+            ->where('created_at', '>=', now()->subDays(6)->startOfDay())
+            ->groupBy('tgl')
+            ->pluck('jml', 'tgl');
+        $trenLabels = [];
+        $trenData = [];
+        for ($i = 6; $i >= 0; $i--) {
+            $d = now()->subDays($i);
+            $trenLabels[] = $d->format('d M');
+            $trenData[] = (int) ($trenRaw[$d->format('Y-m-d')] ?? 0);
+        }
+
+        return view('admin.dashboard', compact('stats', 'logTerbaru', 'trenLabels', 'trenData'));
     }
 
     public function petugas()
