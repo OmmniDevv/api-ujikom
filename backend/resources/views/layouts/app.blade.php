@@ -8,6 +8,14 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+    // Terapkan tema sebelum paint agar tidak kedip (dark default, ref: light/dark toggle)
+    try {
+        if ((localStorage.getItem('sipinjam-theme') || 'dark') === 'light') {
+            document.documentElement.classList.add('light');
+        }
+    } catch (e) {}
+    </script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="fire-bg text-white font-sans h-full relative selection:bg-orange-500/30 selection:text-orange-200">
@@ -180,6 +188,16 @@
                 <p class="text-xs text-orange-400/60">@yield('page-subtitle', '')</p>
             </div>
             <div class="flex items-center gap-3 text-sm">
+                {{-- Theme toggle --}}
+                <button type="button" onclick="toggleTheme()" title="Ganti mode gelap/terang"
+                    class="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white/60 hover:text-orange-400 hover:border-orange-500/40 transition">
+                    <svg id="iconMoon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                    </svg>
+                    <svg id="iconSun" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                    </svg>
+                </button>
                 @if(auth()->user()?->role === 'peminjam')
                     @php $tier = auth()->user()->tier_reputasi; @endphp
                     <div class="flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 hover:border-orange-500/30 transition cursor-help"
@@ -484,6 +502,17 @@ document.addEventListener('keydown', function(e) {
 
 
 <script>
+// ===== Tema gelap/terang =====
+function toggleTheme() {
+    const light = document.documentElement.classList.toggle('light');
+    try { localStorage.setItem('sipinjam-theme', light ? 'light' : 'dark'); } catch (e) {}
+    syncThemeIcon();
+}
+function syncThemeIcon() {
+    const light = document.documentElement.classList.contains('light');
+    document.getElementById('iconMoon')?.classList.toggle('hidden', light);
+    document.getElementById('iconSun')?.classList.toggle('hidden', !light);
+}
 // ===== Sidebar floating: collapse + search (ref: SideBar UI reel) =====
 function toggleSidebar() {
     const sb = document.getElementById('appSidebar');
@@ -492,6 +521,12 @@ function toggleSidebar() {
     try { localStorage.setItem('sipinjam-sidebar', sb.classList.contains('is-collapsed') ? '1' : '0'); } catch (e) {}
 }
 (function () {
+    syncThemeIcon();
+    // Entrance animation stagger untuk kartu dashboard
+    document.querySelectorAll('main .stat-card, main .glass-card').forEach(function (el, i) {
+        el.classList.add('animate-rise');
+        el.style.animationDelay = Math.min(i * 60, 480) + 'ms';
+    });
     try {
         if (localStorage.getItem('sipinjam-sidebar') === '1') {
             document.getElementById('appSidebar')?.classList.add('is-collapsed');

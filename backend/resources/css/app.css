@@ -568,3 +568,91 @@ select.input-glass option {
 .chart-bar:hover { opacity: 1 !important; filter: brightness(1.25); }
 .glass-table-row { transition: background 0.2s ease; }
 .glass-table-row:hover { background: rgba(255, 255, 255, 0.05); }
+
+/* ==========================================================================
+   LIGHT MODE — toggle gelap/terang (class "light" di <html>)
+   ========================================================================== */
+html.light body { background-color: #eef2f7; color: #0f172a; }
+html.light .fire-bg { background-color: #eef2f7; }
+html.light .ambient-orb { opacity: 0.22; }
+html.light ::selection { background: rgba(249, 115, 22, 0.25); }
+
+/* Permukaan kaca -> kaca terang */
+html.light .glass-card,
+html.light .stat-card {
+    background: rgba(255, 255, 255, 0.72);
+    border-color: rgba(15, 23, 42, 0.08);
+    box-shadow: 0 10px 30px -8px rgba(15, 23, 42, 0.12),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+html.light .sidebar-float {
+    background: rgba(255, 255, 255, 0.8);
+    border-color: rgba(15, 23, 42, 0.08);
+    box-shadow: 0 24px 60px -12px rgba(15, 23, 42, 0.16),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+html.light .glass-nav {
+    background: rgba(255, 255, 255, 0.78);
+    border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+    box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.08);
+}
+html.light .glass-card-hover:hover {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: rgba(249, 115, 22, 0.4);
+}
+
+/* Teks: putih -> slate gelap (kecuali ikon di atas gradien & komponen berwarna) */
+html.light .text-white { color: #0f172a !important; }
+html.light svg.text-white { color: #ffffff !important; }
+html.light .text-white\/25 { color: rgba(15, 23, 42, 0.25) !important; }
+html.light .text-white\/30 { color: rgba(15, 23, 42, 0.3) !important; }
+html.light .text-white\/40 { color: rgba(15, 23, 42, 0.4) !important; }
+html.light .text-white\/50 { color: rgba(15, 23, 42, 0.5) !important; }
+html.light .text-white\/60 { color: rgba(15, 23, 42, 0.6) !important; }
+html.light .nav-float.active { color: #ffffff !important; }
+
+/* Permukaan putih transparan -> slate transparan */
+html.light .bg-white\/5 { background-color: rgba(15, 23, 42, 0.04) !important; }
+html.light .bg-white\/\[0\.04\] { background-color: rgba(15, 23, 42, 0.04) !important; }
+html.light .bg-white\/3 { background-color: rgba(15, 23, 42, 0.03) !important; }
+html.light .border-white\/5 { border-color: rgba(15, 23, 42, 0.06) !important; }
+html.light .border-white\/10 { border-color: rgba(15, 23, 42, 0.1) !important; }
+html.light .border-white\/15 { border-color: rgba(15, 23, 42, 0.14) !important; }
+
+/* Navigasi */
+html.light .nav-float { color: rgba(15, 23, 42, 0.6); }
+html.light .nav-float:hover { background: rgba(15, 23, 42, 0.05); color: #0f172a; }
+html.light .nav-section { color: rgba(15, 23, 42, 0.35); }
+
+/* Input & tabel */
+html.light .input-glass {
+    background: rgba(255, 255, 255, 0.8);
+    border-color: rgba(15, 23, 42, 0.12);
+    color: #0f172a;
+}
+html.light #sidebarSearch::placeholder { color: rgba(15, 23, 42, 0.3); }
+html.light .glass-table-row:hover { background: rgba(15, 23, 42, 0.04); }
+html.light .bg-black\/40 { background-color: rgba(15, 23, 42, 0.06) !important; }
+
+/* ==========================================================================
+   ANIMASI — entrance + chart (ref: micro-interactions reel)
+   ========================================================================== */
+@keyframes rise {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.animate-rise { animation: rise 0.55s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+@keyframes barGrow {
+    from { transform: scaleY(0); }
+    to { transform: scaleY(1); }
+}
+.chart-bar {
+    transform-origin: bottom;
+    animation: barGrow 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .animate-rise, .chart-bar { animation: none; }
+    .nav-float, #appSidebar { transition: none; }
+}
