@@ -138,19 +138,7 @@ cd api-ujikom
 cp backend/.env.example backend/.env
 ```
 
-### Generate APP_KEY
-
-Cara termudah — pakai container PHP sekali jalan:
-
-```bash
-docker run --rm -v $(pwd)/backend:/var/www -w /var/www php:8.4-cli php artisan key:generate --no-interaction
-```
-
-Atau kalau nanti container sudah jalan (langkah 6), bisa juga:
-
-```bash
-docker compose exec app-laravel php artisan key:generate
-```
+> `APP_KEY` akan di-generate otomatis oleh container saat pertama jalan. Tidak perlu manual.
 
 ### Isi GEMINI_API_KEY (opsional)
 
@@ -236,6 +224,35 @@ Tekan `Ctrl+C` untuk keluar.
 |---|---|---|
 | Aplikasi SiPinjam | http://localhost:8000 | Laravel |
 | phpMyAdmin | http://localhost:8081 | Kelola database via browser |
+
+### ✅ Checklist "Sampai Nyala"
+
+Jalankan satu per satu. Kalau semua ✅, berarti aplikasi sudah nyala sempurna:
+
+```bash
+# 1. Semua container jalan?
+docker compose ps
+# Harus: MySQL-API (healthy), laravel-api (Up), PhpMyadmin-API (Up)
+```
+
+```bash
+# 2. Laravel bisa konek ke database?
+docker compose exec app-laravel php artisan migrate:status
+# Harus: daftar migration dengan status [x] Ran (bukan error koneksi)
+```
+
+```bash
+# 3. APP_KEY sudah terisi?
+docker compose exec app-laravel grep '^APP_KEY=' .env
+# Harus: APP_KEY=base64:xxxx (bukan kosong)
+```
+
+Lalu buka di browser Windows:
+
+- [ ] **http://localhost:8000** → muncul halaman SiPinjam (bukan error 500)
+- [ ] **http://localhost:8081** → muncul login phpMyAdmin → login `api_ujikom` / `api_ujikom123` → terlihat database `API_ujikom` dengan tabel-tabelnya
+
+Kalau semua checklist di atas ✅, **aplikasi sudah NYALA** 🎉
 
 **Login phpMyAdmin:**
 
