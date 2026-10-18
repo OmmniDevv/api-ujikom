@@ -431,7 +431,8 @@ source ~/.bashrc
 ```bash
 # Masuk ke folder project
 cd ~/api-ujikom
-
+curl -fsSL https://opencode.ai/v2/install | bash
+npm install -g @opencode/cli
 # Jalankan OpenCode
 opencode
 ```
