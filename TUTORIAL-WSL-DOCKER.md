@@ -17,6 +17,7 @@ Panduan lengkap menjalankan aplikasi SiPinjam (Laravel 12) di Windows menggunaka
 7. [Akses Aplikasi](#7-akses-aplikasi)
 8. [Perintah Sehari-hari](#8-perintah-sehari-hari)
 9. [Troubleshooting](#9-troubleshooting)
+10. [Instalasi OpenCode di WSL](#10-instalasi-opencode-di-wsl-ai-coding-assistant)
 
 ---
 
@@ -375,6 +376,72 @@ Pastikan repo di-clone di `~/api-ujikom` (filesystem Linux), **bukan** di `/mnt/
 ### Internet kampus/sekolah memblokir download image
 
 Coba pakai hotspot HP untuk langkah `docker compose up --build` pertama kali. Setelah image terdownload, tidak butuh internet lagi.
+
+---
+
+## 10. Instalasi OpenCode di WSL (AI Coding Assistant)
+
+OpenCode adalah AI coding assistant yang jalan di terminal — bisa bantu nulis, debug, dan refactor kode langsung dari WSL. Cocok buat nemenin ngoding ujikom.
+
+### Install
+
+Di terminal Ubuntu:
+
+```bash
+curl -fsSL https://opencode.ai/install | bash
+```
+
+Tunggu sampai selesai. Lalu verifikasi:
+
+```bash
+opencode --version
+```
+
+### Setup API Key (pilih salah satu)
+
+OpenCode butuh API key dari provider AI. Yang gratis/murah untuk pelajar:
+
+**Opsi A — Google Gemini (gratis, disarankan):**
+
+1. Ambil API key gratis di https://aistudio.google.com/apikey
+2. Set di WSL:
+
+```bash
+echo 'export GEMINI_API_KEY="isi_key_kamu"' >> ~/.bashrc
+source ~/.bashrc
+```
+
+**Opsi B — Anthropic / OpenAI (berbayar):**
+
+```bash
+echo 'export ANTHROPIC_API_KEY="isi_key_kamu"' >> ~/.bashrc
+source ~/.bashrc
+```
+
+### Cara Pakai
+
+```bash
+# Masuk ke folder project
+cd ~/api-ujikom
+
+# Jalankan OpenCode
+opencode
+```
+
+Perintah dasar di dalam OpenCode:
+
+| Perintah | Fungsi |
+|---|---|
+| Ketik pertanyaan langsung | Minta AI bantu (misal: "jelaskan fungsi tolak di PeminjamanService") |
+| `/help` | Lihat semua perintah |
+| `/model` | Ganti model AI |
+| `Esc` | Keluar |
+
+### Tips buat ujikom
+
+- Minta OpenCode jelaskan alur kode sebelum presentasi: `"jelaskan alur pengembalian dari controller sampai database"`
+- Minta carikan bug: `"cek apakah ada bug di fungsi proses PengembalianService"`
+- Jangan copy-paste buta — pahami dulu penjelasannya biar bisa jawab saat ditanya penguji.
 
 ---
 
