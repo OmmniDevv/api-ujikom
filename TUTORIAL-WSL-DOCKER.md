@@ -1,6 +1,6 @@
-# Tutorial: Menjalankan SiPinjam di WSL + Docker (Dari Nol)
+# Tutorial: Menjalankan SiPinjam di WSL + Docker Desktop (Dari Nol)
 
-Panduan lengkap menjalankan aplikasi SiPinjam (Laravel 12) di Windows menggunakan WSL2 + Docker. Cocok untuk pemula yang belum pernah pakai WSL/Docker sama sekali.
+Panduan lengkap menjalankan aplikasi SiPinjam (Laravel 12) di Windows menggunakan WSL2 + **Docker Desktop**. Ditulis untuk yang sedang ujikom pakai source code ini — dari nol banget, tinggal ikuti langkahnya.
 
 **Estimasi waktu:** 30–45 menit (tergantung kecepatan internet untuk download image Docker).
 
@@ -10,7 +10,7 @@ Panduan lengkap menjalankan aplikasi SiPinjam (Laravel 12) di Windows menggunaka
 
 1. [Install WSL2](#1-install-wsl2)
 2. [Install Ubuntu di WSL](#2-install-ubuntu-di-wsl)
-3. [Install Docker di WSL](#3-install-docker-di-wsl)
+3. [Setup Docker Desktop + WSL2](#3-setup-docker-desktop--wsl2)
 4. [Clone Repository](#4-clone-repository)
 5. [Konfigurasi Environment](#5-konfigurasi-environment)
 6. [Jalankan dengan Docker Compose](#6-jalankan-dengan-docker-compose)
@@ -22,7 +22,7 @@ Panduan lengkap menjalankan aplikasi SiPinjam (Laravel 12) di Windows menggunaka
 
 ## 1. Install WSL2
 
-WSL (Windows Subsystem for Linux) memungkinkan menjalankan Linux di dalam Windows tanpa dual-boot.
+WSL (Windows Subsystem for Linux) memungkinkan menjalankan Linux di dalam Windows tanpa dual-boot. Docker Desktop butuh WSL2 sebagai backend-nya.
 
 ### Syarat
 
@@ -32,7 +32,7 @@ WSL (Windows Subsystem for Linux) memungkinkan menjalankan Linux di dalam Window
 ### Langkah
 
 1. Buka **PowerShell sebagai Administrator** (klik kanan tombol Start → Terminal (Admin)).
-2. Jalankan perintah ini:
+2. Jalankan:
 
 ```powershell
 wsl --install
@@ -40,17 +40,22 @@ wsl --install
 
 3. Tunggu sampai selesai, lalu **restart komputer** saat diminta.
 
-> Perintah ini menginstall WSL2 + Ubuntu secara otomatis di Windows terbaru. Kalau Ubuntu tidak ikut terinstall, lanjut ke langkah 2.
+> Perintah ini menginstall WSL2 + Ubuntu otomatis di Windows terbaru. Kalau Ubuntu tidak ikut terinstall, lanjut ke langkah 2.
 
 ### Verifikasi
 
-Buka PowerShell biasa (bukan admin), jalankan:
+Buka PowerShell biasa, jalankan:
 
 ```powershell
 wsl --list --verbose
 ```
 
-Pastikan ada distro Linux dengan VERSION 2.
+Pastikan ada distro Linux dengan VERSION 2. Contoh:
+
+```
+  NAME      STATE           VERSION
+* Ubuntu    Running         2
+```
 
 ---
 
@@ -63,8 +68,8 @@ wsl --install -d Ubuntu
 ```
 
 1. Tunggu download selesai.
-2. Jendela Ubuntu akan terbuka — buat **username** dan **password** Linux (bebas, misal `dev` / `dev123`).
-3. Update paket dasar:
+2. Jendela Ubuntu akan terbuka — buat **username** dan **password** Linux (bebas, misal `dev`).
+3. Update paket dasar (di terminal Ubuntu):
 
 ```bash
 sudo apt update && sudo apt upgrade -y
@@ -72,65 +77,47 @@ sudo apt update && sudo apt upgrade -y
 
 ---
 
-## 3. Install Docker di WSL
+## 3. Setup Docker Desktop + WSL2
 
-Kita install **Docker Engine langsung di dalam WSL** (tanpa Docker Desktop — lebih ringan dan gratis).
+Karena Om sudah download Docker Desktop, tinggal pastikan konfigurasinya benar.
 
-Di terminal Ubuntu (WSL), jalankan satu per satu:
+### 3.1. Pastikan WSL2 jadi backend
 
-```bash
-# 1. Install dependensi
-sudo apt install -y ca-certificates curl gnupg
+1. Buka **Docker Desktop**.
+2. Klik ikon **⚙️ Settings** (kanan atas).
+3. Masuk ke **General** → pastikan **"Use the WSL 2 based engine"** tercentang.
+4. Masuk ke **Resources → WSL Integration**:
+   - Aktifkan **"Enable integration with my default WSL distro"**
+   - Centang **Ubuntu** di daftar distro.
+5. Klik **Apply & restart**.
 
-# 2. Tambah GPG key resmi Docker
-sudo install -m 0755 -d /etc/apt/keyrings
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-sudo chmod a+r /etc/apt/keyrings/docker.gpg
+### 3.2. Verifikasi dari WSL
 
-# 3. Tambah repository Docker
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-
-# 4. Install Docker Engine + plugin Compose
-sudo apt update
-sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-
-# 5. Agar bisa pakai docker tanpa sudo
-sudo usermod -aG docker $USER
-```
-
-**Penting:** tutup terminal Ubuntu lalu buka lagi (agar grup `docker` aktif).
-
-### Verifikasi
+Buka terminal **Ubuntu** (bukan PowerShell), jalankan:
 
 ```bash
 docker --version
 docker compose version
 ```
 
-Keduanya harus menampilkan nomor versi tanpa error permission.
+Keduanya harus menampilkan nomor versi **tanpa error**. Kalau muncul `permission denied`, tutup terminal Ubuntu dan buka lagi.
 
-### Jalankan Docker saat WSL start (opsional tapi disarankan)
+> Docker Desktop otomatis menyediakan perintah `docker` di dalam WSL — tidak perlu install Docker Engine manual.
 
-Docker Engine tidak auto-start di WSL. Jalankan manual tiap buka terminal:
+### 3.3. Pastikan Docker Desktop berjalan
 
-```bash
-sudo service docker start
-```
+Docker Desktop harus dalam keadaan **running** (ikon paus di system tray tidak merah) setiap kali mau menjalankan project. Atur agar auto-start:
 
-Atau tambah ke `~/.bashrc` agar otomatis:
-
-```bash
-echo 'sudo service docker start > /dev/null 2>&1' >> ~/.bashrc
-```
+Settings → General → centang **"Start Docker Desktop when you log in"**.
 
 ---
 
 ## 4. Clone Repository
 
-Di terminal Ubuntu:
+Di terminal **Ubuntu** (WSL):
 
 ```bash
-# Masuk ke home directory
+# Masuk ke home directory Linux (PENTING: jangan di /mnt/c, lebih lambat)
 cd ~
 
 # Clone repo
@@ -140,6 +127,8 @@ git clone https://github.com/OmmniDevv/api-ujikom.git
 cd api-ujikom
 ```
 
+> **Kenapa di `~` bukan di `C:\`?** File yang disimpan di filesystem Linux (`~`) diakses 5–10x lebih cepat oleh Docker dibanding file di `/mnt/c`. Untuk ujikom yang kejar waktu, ini ngaruh banget.
+
 ---
 
 ## 5. Konfigurasi Environment
@@ -147,25 +136,48 @@ cd api-ujikom
 ```bash
 # Copy template env
 cp backend/.env.example backend/.env
-
-# Generate APP_KEY (wajib)
-cd backend
-php artisan key:generate --no-interaction 2>/dev/null || echo "PHP belum ada di WSL, key akan di-generate otomatis oleh container"
-cd ..
 ```
 
-> Catatan: container Docker akan menjalankan `composer install` dan setup otomatis, jadi tidak perlu install PHP/Composer di WSL secara manual.
+### Generate APP_KEY
 
-### Sesuaikan password database (opsional)
+Cara termudah — pakai container PHP sekali jalan:
 
-Password default di `docker-compose.yml`:
+```bash
+docker run --rm -v $(pwd)/backend:/var/www -w /var/www php:8.4-cli php artisan key:generate --no-interaction
+```
+
+Atau kalau nanti container sudah jalan (langkah 6), bisa juga:
+
+```bash
+docker compose exec app-laravel php artisan key:generate
+```
+
+### Isi GEMINI_API_KEY (opsional)
+
+Kalau mau fitur AI (chatbot/rekomendasi) jalan, edit `backend/.env`:
+
+```bash
+nano backend/.env
+```
+
+Cari baris ini dan isi:
+
+```
+GEMINI_API_KEY=isi_api_key_kamu_disini
+```
+
+Dapatkan gratis di https://aistudio.google.com/apikey. Kalau dikosongkan, aplikasi tetap jalan — cuma fitur AI-nya nonaktif.
+
+### Password database (opsional)
+
+Default di `docker-compose.yml`:
 
 | Variabel | Default |
 |---|---|
 | `MYSQL_ROOT_PASSWORD` | `root123` |
 | `MYSQL_PASSWORD` | `api_ujikom123` |
 
-Untuk pemakaian lokal, default ini cukup. Untuk server/production, **wajib diganti**.
+Untuk ujikom/lokal, default ini cukup. Jangan lupa ganti kalau deploy ke server.
 
 ---
 
@@ -174,16 +186,17 @@ Untuk pemakaian lokal, default ini cukup. Untuk server/production, **wajib digan
 Di folder `api-ujikom` (sejajar dengan `docker-compose.yml`):
 
 ```bash
-# Build & jalankan semua container (pertama kali agak lama: download image + install dependency)
+# Build & jalankan semua container
+# Pertama kali agak lama (3-5 menit): download image + install dependency
 docker compose up -d --build
 ```
 
-Tunggu 3–5 menit. Container `app-laravel` akan otomatis:
+Container `app-laravel` akan otomatis:
 
 1. Install ekstensi PHP yang dibutuhkan
 2. Install Composer + dependency Laravel
 3. Install Node.js + build asset frontend
-4. Jalankan **migration database** (termasuk enum `ditolak`)
+4. Jalankan **migration database** (termasuk enum `ditolak` untuk status tolak)
 5. Menjalankan server di port 8000
 
 ### Cek status container
@@ -192,26 +205,28 @@ Tunggu 3–5 menit. Container `app-laravel` akan otomatis:
 docker compose ps
 ```
 
-Semua harus berstatus `Up` / `healthy`:
+Semua harus berstatus `Up`:
 
 ```
-NAME            STATUS
-MySQL-API       Up (healthy)
-laravel-api     Up
-PhpMyadmin-API  Up
+NAME             STATUS
+MySQL-API        Up (healthy)
+laravel-api      Up
+PhpMyadmin-API   Up
 ```
+
+Bisa juga cek lewat **Docker Desktop** → tab Containers — ketiga container harus hijau.
 
 ### Lihat log kalau ada masalah
 
 ```bash
-# Log semua
+# Log semua container
 docker compose logs -f
 
 # Log container tertentu
 docker compose logs -f app-laravel
 ```
 
-Tekan `Ctrl+C` untuk keluar dari log.
+Tekan `Ctrl+C` untuk keluar.
 
 ---
 
@@ -224,17 +239,16 @@ Tekan `Ctrl+C` untuk keluar dari log.
 
 **Login phpMyAdmin:**
 
-- Server: `mysql-server` (sudah terisi otomatis)
 - Username: `api_ujikom`
 - Password: `api_ujikom123`
 
-### Buat akun admin pertama (via tinker)
+### Buat akun admin/petugas pertama
 
 ```bash
 docker compose exec app-laravel php artisan tinker
 ```
 
-Lalu di dalam tinker:
+Di dalam tinker:
 
 ```php
 \App\Models\User::create([
@@ -246,7 +260,7 @@ Lalu di dalam tinker:
 exit
 ```
 
-> Sesuaikan field dengan struktur tabel `users` jika berbeda (cek migration).
+> Sesuaikan `role` dengan nilai yang dipakai aplikasi (cek migration tabel `users`).
 
 ---
 
@@ -259,86 +273,113 @@ cd ~/api-ujikom
 # Nyalakan semua container
 docker compose up -d
 
-# Matikan semua container (data MySQL tetap tersimpan di volume)
+# Matikan semua container (data MySQL tetap tersimpan)
 docker compose down
 
-# Matikan + hapus data database (reset total, hati-hati!)
+# Matikan + hapus data database (reset total — hati-hati!)
 docker compose down -v
 
-# Jalankan migration baru
+# Jalankan migration baru (setelah git pull ada migration baru)
 docker compose exec app-laravel php artisan migrate --force
 
 # Masuk ke shell container Laravel
 docker compose exec app-laravel bash
 
-# Update kode dari GitHub lalu restart
+# Update kode dari GitHub
 git pull
 docker compose up -d --build
+
+# Lihat daftar container yang jalan
+docker compose ps
+```
+
+### Alur kerja ujikom yang disarankan
+
+```bash
+# Pagi: nyalakan Docker Desktop, lalu di terminal Ubuntu:
+cd ~/api-ujikom
+docker compose up -d
+
+# Sore/selesai: matikan untuk hemat baterai
+docker compose down
 ```
 
 ---
 
 ## 9. Troubleshooting
 
+### Docker Desktop tidak mau start
+
+- Pastikan virtualisasi aktif: Task Manager → Performance → CPU → **Virtualization: Enabled**.
+- Pastikan WSL2 terinstall: `wsl --list --verbose` di PowerShell.
+- Restart Docker Desktop / restart laptop.
+
+### `docker: command not found` di WSL
+
+WSL Integration belum aktif. Buka Docker Desktop → Settings → Resources → WSL Integration → centang Ubuntu → Apply & restart.
+
 ### `permission denied` saat jalankan docker
 
-Grup `docker` belum aktif. Tutup terminal WSL dan buka lagi. Atau logout/login ulang Windows.
+Tutup terminal Ubuntu dan buka lagi. Docker Desktop mengatur permission otomatis setelah terminal di-restart.
 
 ### Port 8000 / 3306 / 8081 sudah dipakai
 
-Cek aplikasi yang memakai port tersebut (misal MySQL lokal / XAMPP). Matikan dulu, atau ubah mapping port di `docker-compose.yml`:
+Matikan aplikasi yang memakai port tersebut (misal XAMPP/MySQL lokal). Atau ubah mapping di `docker-compose.yml`:
 
 ```yaml
 ports:
   - "8001:8000"   # akses via http://localhost:8001
 ```
 
-### Container `app-laravel` restart terus
-
-Lihat log untuk tau penyebabnya:
+### Container `app-laravel` restart terus / error
 
 ```bash
 docker compose logs app-laravel --tail 50
 ```
 
-Penyebab umum: koneksi ke MySQL belum siap (tunggu healthcheck), atau `composer install` gagal karena internet putus — jalankan ulang `docker compose up -d --build`.
+Penyebab umum:
+- MySQL belum siap → tunggu 1–2 menit, healthcheck akan retry otomatis.
+- `composer install` gagal (internet putus) → `docker compose up -d --build` ulang.
+- `APP_KEY` kosong → generate key sesuai langkah 5.
 
 ### Migration gagal: `table already exists`
 
-Database sudah punya tabel dari run sebelumnya tapi migration tracking-nya hilang. Reset volume lalu ulang:
+Database sudah punya tabel tapi tracking migration hilang. Reset lalu ulang:
 
 ```bash
 docker compose down -v
 docker compose up -d --build
 ```
 
-### Aplikasi lemot di WSL
+### Aplikasi lemot
 
-Pastikan project disimpan di filesystem Linux (`~/api-ujikom`), **bukan** di `/mnt/c/...`. Akses file Windows dari WSL jauh lebih lambat.
+Pastikan repo di-clone di `~/api-ujikom` (filesystem Linux), **bukan** di `/mnt/c/...`.
 
-### `docker compose` tidak dikenal
+### Internet kampus/sekolah memblokir download image
 
-Pastikan plugin terinstall: `docker compose version`. Kalau belum, ulangi langkah 3 bagian install `docker-compose-plugin`.
+Coba pakai hotspot HP untuk langkah `docker compose up --build` pertama kali. Setelah image terdownload, tidak butuh internet lagi.
 
 ---
 
 ## Ringkasan Arsitektur
 
 ```
-┌─────────────────────────────────────────────┐
-│  WSL2 (Ubuntu)                              │
-│                                             │
-│  ┌──────────────┐  ┌──────────────┐         │
-│  │  app-laravel │  │ mysql-server │         │
-│  │  php:8.4-cli │  │ mysql:8.0    │         │
-│  │  :8000       │  │ :3306        │         │
-│  └──────────────┘  └──────────────┘         │
-│                                             │
-│  ┌──────────────┐                           │
-│  │ phpmyadmin   │                           │
-│  │ :8081        │                           │
-│  └──────────────┘                           │
-└─────────────────────────────────────────────┘
+┌──────────────────────────────────────────────┐
+│  Windows + Docker Desktop (WSL2 backend)      │
+│                                              │
+│  ┌──────────────┐  ┌──────────────┐          │
+│  │ app-laravel  │  │ mysql-server │          │
+│  │ php:8.4-cli  │──│ mysql:8.0    │          │
+│  │ :8000        │  │ :3306        │          │
+│  └──────────────┘  └──────────────┘          │
+│                                              │
+│  ┌──────────────┐                            │
+│  │ phpmyadmin   │                            │
+│  │ :8081        │                            │
+│  └──────────────┘                            │
+└──────────────────────────────────────────────┘
+       ↕ diakses dari browser Windows via
+         http://localhost:8000
 ```
 
-Selamat ngoding! 🚀
+Selamat ujikom, semoga lancar! 🚀
