@@ -383,12 +383,20 @@ Coba pakai hotspot HP untuk langkah `docker compose up --build` pertama kali. Se
 
 OpenCode adalah AI coding assistant yang jalan di terminal — bisa bantu nulis, debug, dan refactor kode langsung dari WSL. Cocok buat nemenin ngoding ujikom.
 
-### Install
+### Install (via npm)
 
-Di terminal Ubuntu:
+Di terminal Ubuntu — pastikan Node.js sudah terinstall:
 
 ```bash
-curl -fsSL https://opencode.ai/install | bash
+# Cek node sudah ada atau belum
+node --version
+
+# Kalau belum ada, install dulu:
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo bash -
+sudo apt install -y nodejs
+
+# Install OpenCode global via npm
+npm install -g opencode-ai
 ```
 
 Tunggu sampai selesai. Lalu verifikasi:
