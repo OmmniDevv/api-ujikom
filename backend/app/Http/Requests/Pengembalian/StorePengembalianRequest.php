@@ -27,6 +27,7 @@ class StorePengembalianRequest extends FormRequest
             }],
             'kondisi_kembali' => ['required', 'in:baik,rusak,perbaikan'],
             'catatan' => ['nullable', 'string', 'max:500'],
+            'denda_manual' => ['nullable', 'integer', 'min:0'],
         ];
     }
 

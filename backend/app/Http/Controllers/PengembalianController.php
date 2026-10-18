@@ -48,7 +48,8 @@ class PengembalianController extends Controller
                 $request->tgl_kembali,
                 $request->kondisi_kembali,
                 auth()->id(),
-                $request->catatan
+                $request->catatan,
+                $request->denda_manual
             );
 
             $catatanExtra = $request->catatan ? ' | Catatan: '.$request->catatan : '';

@@ -96,7 +96,7 @@ class PeminjamanService
                 $namaAlat[] = $detail->alat->nama_alat;
             }
 
-            $peminjaman->delete();
+            $peminjaman->update(['status' => 'ditolak']);
             DB::commit();
 
             return $namaAlat;

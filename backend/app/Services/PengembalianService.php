@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 
 class PengembalianService
 {
-    public function proses(Peminjaman $peminjaman, string $tglKembali, string $kondisiKembali, int $petugasId, ?string $catatan = null): array
+    public function proses(Peminjaman $peminjaman, string $tglKembali, string $kondisiKembali, int $petugasId, ?string $catatan = null, ?int $dendaManual = null): array
     {
         if ($peminjaman->status !== 'dipinjam') {
             throw new \RuntimeException('Peminjaman ini tidak dalam status "dipinjam".');
@@ -26,7 +26,7 @@ class PengembalianService
 
             $terlambatHari = max(0, (int) $tglRencana->startOfDay()->diffInDays($tglKembaliCarbon->startOfDay(), false));
 
-            $denda = $terlambatHari * 5000;
+            $denda = $dendaManual ?? ($terlambatHari * 5000);
             $namaAlat = [];
 
             foreach ($peminjaman->detailPinjam as $detail) {
