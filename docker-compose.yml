@@ -1,94 +1,69 @@
 services:
-
-  # ============================================================
-  # 1. DATABASE — MySQL 8.0
-  # ============================================================
+  # 1. SERVER DATABASE
   mysql-server:
-    image: mysql:8.0
+    image: mysql:8.0-debian
     container_name: MySQL-API
-    restart: unless-stopped
+    restart: always
     environment:
       MYSQL_DATABASE: API_ujikom
       MYSQL_USER: api_ujikom
-      MYSQL_PASSWORD: api_ujikom
+      MYSQL_PASSWORD: api_ujikom123
       MYSQL_ROOT_PASSWORD: passwordroot
     ports:
       - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
     networks:
       - API-UJIKOM
-    volumes:
-      - mysql_data:/var/lib/mysql
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "api_ujikom", "--password=api_ujikom"]
-      interval: 5s
-      timeout: 5s
-      retries: 20
-      start_period: 30s
 
-  # ============================================================
-  # 2. BACKEND — Laravel 12 (pakai image php:8.4-cli)
-  # ============================================================
+  # 2. SERVER BACKEND (LARAVEL)
   app-laravel:
-    image: php:8.4-cli
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     container_name: laravel-api
     restart: unless-stopped
+    user: "1000:1000"
     working_dir: /var/www
     ports:
       - "8000:8000"
     volumes:
       - ./backend:/var/www
+    command: >
+      bash -c "
+        composer install --no-interaction --no-dev --optimize-autoloader &&
+        ([ -f public/build/manifest.json ] || (npm install && npm run build)) &&
+        (grep -q '^APP_KEY=base64' .env 2>/dev/null || php artisan key:generate --no-interaction) &&
+        php artisan migrate --force &&
+        php artisan serve --host=0.0.0.0 --port=8000 --no-reload
+      "
     depends_on:
-      mysql-server:
-        condition: service_healthy
-    networks:
-      - API-UJIKOM
+      - mysql-server
     environment:
       DB_HOST: mysql-server
       DB_PORT: 3306
       DB_DATABASE: API_ujikom
       DB_USERNAME: api_ujikom
       DB_PASSWORD: api_ujikom123
-    command: >
-      bash -c "
-        apt-get update -q &&
-        apt-get install -y -q libzip-dev libpng-dev libonig-dev libxml2-dev zip unzip curl git &&
-        docker-php-ext-install pdo pdo_mysql zip mbstring &&
-        curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer &&
-        curl -fsSL https://deb.nodesource.com/setup_20.x | bash - &&
-        apt-get install -y nodejs &&
-        composer install --no-interaction --no-dev --optimize-autoloader &&
-        npm install &&
-        npm run build &&
-        (grep -q '^APP_KEY=base64' .env || php artisan key:generate --no-interaction) &&
-        php artisan migrate --force &&
-        php artisan storage:link --force 2>/dev/null || true &&
-        php artisan config:clear &&
-        php artisan serve --host=0.0.0.0 --port=8000
-      "
-
-  # ============================================================
-  # 3. DATABASE UI — phpMyAdmin
-  # ============================================================
-  phpmyadmin:
-    image: phpmyadmin:latest
-    container_name: PhpMyadmin-API
-    restart: unless-stopped
-    environment:
-      PMA_HOST: mysql-server
-      PMA_PORT: 3306
-    ports:
-      - "8081:80"
-    depends_on:
-      mysql-server:
-        condition: service_healthy
     networks:
       - API-UJIKOM
 
-# ============================================================
-# Volumes & Networks
-# ============================================================
+  # 3. SERVER UI DATABASE (PHPMYADMIN)
+  phpmyadmin:
+    image: phpmyadmin
+    container_name: PhpMyadmin-API
+    restart: always
+    environment:
+      PMA_HOST: mysql-server
+    ports:
+      - "8081:80"
+    depends_on:
+      - mysql-server
+    networks:
+      - API-UJIKOM
+
 volumes:
-  mysql_data:
+  db_data:
 
 networks:
   API-UJIKOM:

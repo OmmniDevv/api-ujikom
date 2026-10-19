@@ -82,7 +82,7 @@ else
 fi
 
 # ── 4. Build & jalankan container ──────────────────────────────
-info "Menjalankan Docker Compose (ini butuh beberapa menit saat pertama kali)..."
+info "Menjalankan Docker Compose (build image sekali, 3-5 menit pertama kali)..."
 
 docker compose up -d --build
 
@@ -109,7 +109,7 @@ done
 
 # ── 6. Tunggu Laravel selesai setup ────────────────────────────
 info "Menunggu Laravel selesai install dependency + migration..."
-info "(composer install + npm build bisa makan waktu 3-5 menit pertama kali)"
+info "(composer install pertama kali bisa makan waktu 2-3 menit)"
 
 for i in $(seq 1 60); do
     if docker compose exec -T app-laravel php artisan migrate:status &> /dev/null; then

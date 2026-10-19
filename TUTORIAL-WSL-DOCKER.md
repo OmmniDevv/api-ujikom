@@ -176,16 +176,17 @@ Di folder `api-ujikom` (sejajar dengan `docker-compose.yml`):
 
 ```bash
 # Build & jalankan semua container
-# Pertama kali agak lama (3-5 menit): download image + install dependency
+# Pertama kali 3-5 menit: build image (PHP+ext+composer+node sekali aja via Dockerfile)
+# Up berikutnya jauh lebih cepat karena image sudah jadi
 docker compose up -d --build
 ```
 
 Container `app-laravel` akan otomatis:
 
-1. Install ekstensi PHP yang dibutuhkan
-2. Install Composer + dependency Laravel
-3. Install Node.js + build asset frontend
-4. Jalankan **migration database** (termasuk enum `ditolak` untuk status tolak)
+1. Install dependency Laravel via Composer (cepat kalau `vendor/` sudah ada)
+2. Build asset frontend via npm (sekali aja, di-skip kalau `public/build` sudah ada)
+3. Generate `APP_KEY` otomatis (kalau masih kosong)
+4. Jalankan **migration database**
 5. Menjalankan server di port 8000
 
 ### Cek status container
@@ -431,8 +432,7 @@ source ~/.bashrc
 ```bash
 # Masuk ke folder project
 cd ~/api-ujikom
-curl -fsSL https://opencode.ai/v2/install | bash
-npm install -g @opencode/cli
+
 # Jalankan OpenCode
 opencode
 ```
@@ -462,7 +462,7 @@ Perintah dasar di dalam OpenCode:
 │                                              │
 │  ┌──────────────┐  ┌──────────────┐          │
 │  │ app-laravel  │  │ mysql-server │          │
-│  │ php:8.4-cli  │──│ mysql:8.0    │          │
+│  │ (Dockerfile) │──│ mysql:8.0    │          │
 │  │ :8000        │  │ :3306        │          │
 │  └──────────────┘  └──────────────┘          │
 │                                              │
