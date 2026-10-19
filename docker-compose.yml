@@ -31,6 +31,7 @@ services:
       - ./backend:/var/www
     command: >
       bash -c "
+        (command -v composer >/dev/null 2>&1 || curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer) &&
         composer install --no-interaction --no-dev --optimize-autoloader &&
         ([ -f public/build/manifest.json ] || (npm install && npm run build)) &&
         (grep -q '^APP_KEY=base64' .env 2>/dev/null || php artisan key:generate --no-interaction) &&
