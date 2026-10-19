@@ -6,10 +6,8 @@
 @section('content')
 <div class="space-y-6">
 
-    {{-- 1. Executive Stat Cards Grid --}}
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         
-        {{-- Kepatuhan / Disiplin --}}
         <div class="stat-card p-5 group hover:border-orange-500/40 transition">
             <div class="flex items-center justify-between">
                 <span class="text-xs font-semibold text-white/50 uppercase tracking-wider">Disiplin Pengembalian</span>
@@ -24,7 +22,6 @@
             <p class="text-xs text-white/40 mt-1">Rasio kembali tepat waktu tanpa denda</p>
         </div>
 
-        {{-- Rata-rata Skor Reputasi --}}
         <div class="stat-card p-5 group hover:border-orange-500/40 transition">
             <div class="flex items-center justify-between">
                 <span class="text-xs font-semibold text-white/50 uppercase tracking-wider">Indeks Reputasi Siswa</span>
@@ -39,7 +36,6 @@
             <p class="text-xs text-white/40 mt-1">Rata-rata skor kredibilitas peminjam</p>
         </div>
 
-        {{-- Akumulasi Denda --}}
         <div class="stat-card p-5 group hover:border-orange-500/40 transition">
             <div class="flex items-center justify-between">
                 <span class="text-xs font-semibold text-white/50 uppercase tracking-wider">Penerimaan Denda</span>
@@ -54,7 +50,6 @@
             <p class="text-xs text-white/40 mt-1">Total denda dari {{ $totalTelat }} kasus telat</p>
         </div>
 
-        {{-- Volume Peminjaman --}}
         <div class="stat-card p-5 group hover:border-orange-500/40 transition">
             <div class="flex items-center justify-between">
                 <span class="text-xs font-semibold text-white/50 uppercase tracking-wider">Total Transaksi</span>
@@ -71,10 +66,8 @@
 
     </div>
 
-    {{-- 2. Bar Chart Tren Peminjaman & Distribusi Reputasi --}}
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-        {{-- Tren Peminjaman Bulanan --}}
         <div class="glass-card p-5 lg:col-span-2 flex flex-col justify-between">
             <div>
                 <div class="flex items-center justify-between mb-2">
@@ -84,7 +77,6 @@
                 <p class="text-xs text-white/40 mb-6">Grafik frekuensi transaksi peminjaman laboratorium per bulan</p>
             </div>
 
-            {{-- Visual Bar Chart (Neon Glass Columns) --}}
             <div class="grid grid-cols-6 gap-3 items-end h-56 pt-6 pb-2 border-b border-white/10 px-2">
                 @foreach($trenBulanan as $tren)
                 @php
@@ -112,7 +104,6 @@
             </div>
         </div>
 
-        {{-- Distribusi Tier Reputasi Siswa --}}
         <div class="glass-card p-5 flex flex-col justify-between">
             <div>
                 <h2 class="font-semibold text-white text-base mb-1">Distribusi Reputasi Peminjam</h2>
@@ -120,7 +111,6 @@
             </div>
 
             <div class="space-y-3.5">
-                {{-- Teladan --}}
                 <div class="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
                     <div class="flex justify-between items-center mb-1">
                         <span class="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
@@ -131,7 +121,6 @@
                     <p class="text-[11px] text-white/50">Skor 120 - 150 (Disiplin tinggi & prima)</p>
                 </div>
 
-                {{-- Kredibel --}}
                 <div class="p-3 rounded-lg bg-cyan-500/10 border border-cyan-500/20">
                     <div class="flex justify-between items-center mb-1">
                         <span class="text-xs font-bold text-cyan-400 flex items-center gap-1.5">
@@ -142,7 +131,6 @@
                     <p class="text-[11px] text-white/50">Skor 90 - 119 (Siswa patuh aturan)</p>
                 </div>
 
-                {{-- Perlu Perhatian --}}
                 <div class="p-3 rounded-lg bg-amber-500/10 border border-amber-500/20">
                     <div class="flex justify-between items-center mb-1">
                         <span class="text-xs font-bold text-amber-400 flex items-center gap-1.5">
@@ -153,7 +141,6 @@
                     <p class="text-[11px] text-white/50">Skor 60 - 89 (Pernah terlambat)</p>
                 </div>
 
-                {{-- Rawan --}}
                 <div class="p-3 rounded-lg bg-rose-500/10 border border-rose-500/20">
                     <div class="flex justify-between items-center mb-1">
                         <span class="text-xs font-bold text-rose-400 flex items-center gap-1.5">
@@ -170,10 +157,8 @@
 
     </div>
 
-    {{-- 3. Utilisasi Aset: Hot Assets vs Idle Assets --}}
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-        {{-- Hot Assets (Paling Sering Dipinjam) --}}
         <div class="glass-card p-5">
             <div class="flex items-center justify-between mb-4">
                 <div>
@@ -207,7 +192,6 @@
             </div>
         </div>
 
-        {{-- Idle Assets (Alat Mengendap / Kurang Dimanfaatkan) --}}
         <div class="glass-card p-5">
             <div class="flex items-center justify-between mb-4">
                 <div>
@@ -243,7 +227,6 @@
 
     </div>
 
-    {{-- 4. Status Kondisi Fisik Alat Lab --}}
     <div class="glass-card p-5">
         <h2 class="font-semibold text-white text-base mb-1">Status Kesehatan Aset Fisik</h2>
         <p class="text-xs text-white/40 mb-4">Persentase kondisi seluruh inventaris alat laboratorium</p>
@@ -255,7 +238,6 @@
             $pctPerbaikan = round(($kondisiStat['perbaikan'] / $totalSemuaKondisi) * 100);
         @endphp
 
-        {{-- Multi-color bar --}}
         <div class="w-full h-4 rounded-full bg-white/10 overflow-hidden flex mb-4">
             <div class="h-full bg-emerald-500 transition-all duration-700" style="width: {{ $pctBaik }}%;" title="Baik: {{ $pctBaik }}%"></div>
             <div class="h-full bg-amber-500 transition-all duration-700" style="width: {{ $pctPerbaikan }}%;" title="Perbaikan: {{ $pctPerbaikan }}%"></div>

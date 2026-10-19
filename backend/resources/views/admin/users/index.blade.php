@@ -6,7 +6,6 @@
 @section('content')
 <div class="space-y-4">
 
-    {{-- Header actions --}}
     <div class="flex flex-col md:flex-row gap-3 justify-between items-stretch md:items-center">
         <form method="GET" class="flex flex-1 flex-wrap sm:flex-nowrap gap-2.5 items-center max-w-3xl">
             <div class="relative flex-1 min-w-[220px]">
@@ -39,7 +38,6 @@
         </a>
     </div>
 
-    {{-- Table --}}
     <div class="glass-card overflow-hidden">
         <table class="table-glass w-full">
             <thead>
@@ -110,7 +108,6 @@
             </tbody>
         </table>
 
-        {{-- Pagination --}}
         @if($users->hasPages())
         <div class="p-4 border-t border-white/10">
             {{ $users->links() }}

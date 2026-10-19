@@ -24,7 +24,6 @@
         @endforeach
     </div>
 
-    {{-- Reputation Card --}}
     @php $tier = auth()->user()->tier_reputasi; @endphp
     <div class="glass-card p-5 border border-orange-500/20 bg-gradient-to-r from-orange-950/30 via-slate-900/40 to-slate-900/20">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">

@@ -7,7 +7,6 @@
 <div class="space-y-5">
 
 
-    {{-- Filter & Search --}}
     <div class="glass-card p-4">
         <form method="GET" class="flex flex-wrap sm:flex-nowrap gap-3 items-end">
             <div class="flex-1 min-w-[220px]">
@@ -38,7 +37,6 @@
         </form>
     </div>
 
-    {{-- Tabel --}}
     <div class="glass-card overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full table-glass">
@@ -95,7 +93,6 @@
             </table>
         </div>
 
-        {{-- Pagination --}}
         @if($peminjamanList->hasPages())
         <div class="p-4 border-t border-white/5">
             {{ $peminjamanList->links() }}

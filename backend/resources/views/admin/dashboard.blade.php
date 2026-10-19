@@ -6,7 +6,6 @@
 @section('content')
 <div class="space-y-6">
 
-    {{-- Stat cards --}}
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
         @php
         $cards = [
@@ -34,7 +33,6 @@
         @endforeach
     </div>
 
-    {{-- Status peminjaman --}}
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div class="glass-card p-5 text-center">
             <p class="text-2xl font-bold text-yellow-400">{{ $stats['diajukan'] }}</p>
@@ -58,7 +56,6 @@
         </div>
     </div>
 
-    {{-- Log aktivitas terbaru --}}
     <div class="glass-card p-5">
         <div class="flex items-center justify-between mb-4">
             <h2 class="font-semibold text-white">Log Aktivitas Terbaru</h2>

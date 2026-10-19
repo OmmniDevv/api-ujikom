@@ -15,7 +15,6 @@ class ExecutiveAnalyticsController extends Controller
 {
     public function index()
     {
-        // 1. Metrik Ringkasan Utama
         $totalPeminjaman = Peminjaman::count();
         $totalDikembalikan = Peminjaman::where('status', 'dikembalikan')->count();
         $totalTelat = Peminjaman::where('status', 'telat')->count();
@@ -27,7 +26,6 @@ class ExecutiveAnalyticsController extends Controller
 
         $rataSkorReputasi = round(User::where('role', 'peminjam')->avg('skor_reputasi') ?? 100, 1);
 
-        // 2. Top 5 Alat Paling Sering Dipinjam (Hot Assets)
         $topAlats = DetailPinjam::select('alat_id', DB::raw('SUM(jumlah) as total_dipinjam'), DB::raw('COUNT(DISTINCT peminjaman_id) as frekuensi_pinjam'))
             ->groupBy('alat_id')
             ->orderByDesc('total_dipinjam')
@@ -35,7 +33,6 @@ class ExecutiveAnalyticsController extends Controller
             ->take(5)
             ->get();
 
-        // 3. Top 5 Alat Mengendap (Idle Assets)
         $idleAlats = Alat::with('kategori')
             ->withCount('detailPinjam')
             ->orderBy('detail_pinjam_count', 'asc')
@@ -43,14 +40,12 @@ class ExecutiveAnalyticsController extends Controller
             ->take(5)
             ->get();
 
-        // 4. Kondisi Fisik Alat Lab
         $kondisiStat = [
             'baik' => Alat::where('status_kondisi', 'baik')->count(),
             'rusak' => Alat::where('status_kondisi', 'rusak')->count(),
             'perbaikan' => Alat::where('status_kondisi', 'perbaikan')->count(),
         ];
 
-        // 5. Tren Peminjaman 6 Bulan Terakhir
         $trenBulanan = [];
         for ($i = 5; $i >= 0; $i--) {
             $date = Carbon::now()->subMonths($i);
@@ -70,7 +65,6 @@ class ExecutiveAnalyticsController extends Controller
 
         $maxTren = max(array_column($trenBulanan, 'total')) ?: 1;
 
-        // 6. Distribusi Reputasi Peminjam
         $distribusiReputasi = [
             'teladan' => User::where('role', 'peminjam')->where('skor_reputasi', '>=', 120)->count(),
             'kredibel' => User::where('role', 'peminjam')->whereBetween('skor_reputasi', [90, 119])->count(),

@@ -6,7 +6,6 @@
 @section('content')
 <div class="space-y-6">
 
-    {{-- Stats --}}
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
         @php
         $cards = [
@@ -25,7 +24,6 @@
         @endforeach
     </div>
 
-    {{-- Peminjaman perlu tindakan --}}
     <div class="glass-card p-5">
         <div class="flex items-center justify-between mb-4">
             <h2 class="font-semibold text-white">Peminjaman Perlu Tindakan</h2>

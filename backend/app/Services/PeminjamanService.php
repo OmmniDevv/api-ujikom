@@ -22,8 +22,6 @@ class PeminjamanService
 
             $namaAlat = [];
 
-            // ponytail: race condition stok diabaikan — aplikasi single-server sekolah,
-            // lockForUpdate + re-cek cukup. Kalau scale-out: pindah ke DB CHECK (stok >= 0).
             $seen = [];
             foreach ($detail as $item) {
                 if (in_array($item['alat_id'], $seen, true)) {
@@ -76,8 +74,6 @@ class PeminjamanService
             throw new \RuntimeException('Hanya peminjaman berstatus "diajukan" yang bisa disetujui.');
         }
 
-        // Stok sudah di-reserve saat pengajuan (lihat ajukan()).
-        // Approve hanya mengubah status, tidak mengubah stok lagi.
         $peminjaman->update(['status' => 'dipinjam']);
     }
 

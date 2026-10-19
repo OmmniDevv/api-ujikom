@@ -11,7 +11,6 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        // Gunakan Tailwind pagination (sudah dikustomisasi dengan fire theme)
         Paginator::useTailwind();
     }
 }

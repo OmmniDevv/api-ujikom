@@ -12,7 +12,6 @@
 </head>
 <body class="fire-bg text-white font-sans h-full relative selection:bg-orange-500/30 selection:text-orange-200">
 
-{{-- Ambient Floating Glow Orbs for Glassmorphism --}}
 <div class="fixed inset-0 pointer-events-none overflow-hidden -z-10" aria-hidden="true">
     <div class="ambient-orb ambient-orb-1"></div>
     <div class="ambient-orb ambient-orb-2"></div>
@@ -21,9 +20,7 @@
 
 <div class="flex h-screen overflow-hidden">
 
-    {{-- ===== SIDEBAR ===== --}}
     <aside class="glass-sidebar w-64 flex-shrink-0 flex flex-col h-full overflow-y-auto">
-        {{-- Logo --}}
         <div class="p-5 border-b border-orange-900/30">
             <a href="{{ url('/') }}" class="flex items-center gap-3">
                 <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center shadow-lg shadow-orange-900/50">
@@ -39,7 +36,6 @@
             </a>
         </div>
 
-        {{-- User info --}}
         @auth
         <div class="p-4 border-b border-orange-900/20">
             <div class="flex items-center gap-3">
@@ -54,11 +50,9 @@
         </div>
         @endauth
 
-        {{-- Navigation --}}
         <nav class="flex-1 p-3 space-y-0.5">
             @php $role = auth()->user()?->role; @endphp
 
-            {{-- ADMIN NAV --}}
             @if($role === 'admin')
                 <p class="text-xs font-semibold text-orange-500/50 uppercase tracking-widest px-3 py-2 mt-1">Menu Admin</p>
                 <a href="{{ route('admin.dashboard') }}"
@@ -105,7 +99,6 @@
                 </a>
             @endif
 
-            {{-- PETUGAS NAV --}}
             @if($role === 'petugas')
                 <p class="text-xs font-semibold text-orange-500/50 uppercase tracking-widest px-3 py-2 mt-1">Menu Petugas</p>
                 <a href="{{ route('petugas.dashboard') }}"
@@ -140,7 +133,6 @@
                 </a>
             @endif
 
-            {{-- PEMINJAM NAV --}}
             @if($role === 'peminjam')
                 <p class="text-xs font-semibold text-orange-500/50 uppercase tracking-widest px-3 py-2 mt-1">Menu Peminjam</p>
                 <a href="{{ route('peminjam.dashboard') }}"
@@ -164,7 +156,6 @@
             @endif
         </nav>
 
-        {{-- Logout --}}
         <div class="p-3 border-t border-orange-900/20">
             <form action="{{ route('logout') }}" method="POST">
                 @csrf
@@ -177,10 +168,8 @@
         </div>
     </aside>
 
-    {{-- ===== MAIN CONTENT ===== --}}
     <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
 
-        {{-- Topbar --}}
         <header class="glass-nav h-14 flex items-center justify-between px-6 flex-shrink-0">
             <div>
                 <h1 class="text-sm font-semibold text-white">@yield('page-title', 'Dashboard')</h1>
@@ -202,7 +191,6 @@
             </div>
         </header>
 
-        {{-- Flash messages --}}
         <div class="px-6 pt-4 space-y-2">
             @if(session('success'))
                 <div class="alert-success flex items-center gap-2">
@@ -222,18 +210,14 @@
             @endif
         </div>
 
-        {{-- Page Content --}}
         <main class="flex-1 overflow-y-auto p-6">
             @yield('content')
         </main>
     </div>
 </div>
 
-{{-- ===== MODAL KONFIRMASI HAPUS ===== --}}
 <div id="deleteModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
-    {{-- Backdrop --}}
     <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" onclick="closeDeleteModal()"></div>
-    {{-- Modal --}}
     <div id="deleteModalCard" class="relative glass-card p-6 w-full max-w-sm border border-red-500/30 shadow-2xl shadow-red-900/30">
         <div class="flex items-center gap-3 mb-4">
             <div class="w-10 h-10 rounded-full bg-red-500/20 border border-red-500/30 flex items-center justify-center flex-shrink-0">
@@ -259,12 +243,9 @@
     </div>
 </div>
 
-{{-- ===== FLOATING AI LAB ASSISTANT WIDGET ===== --}}
 <div id="aiWidgetContainer" class="fixed bottom-5 right-5 z-40 flex flex-col items-end">
     
-    {{-- Chat Drawer Box (Hidden by default) --}}
     <div id="aiChatDrawer" class="hidden mb-3 w-[360px] sm:w-[400px] h-[520px] max-h-[80vh] glass-card flex-col border border-orange-500/30 shadow-2xl shadow-black/80 rounded-2xl overflow-hidden backdrop-blur-2xl bg-slate-950/85 transition-all duration-300">
-        {{-- Header --}}
         <div class="px-4 py-3 bg-gradient-to-r from-orange-950/50 via-slate-900/60 to-red-950/50 border-b border-white/10 flex items-center justify-between">
             <div class="flex items-center gap-2.5">
                 <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-orange-500 to-amber-400 flex items-center justify-center text-white text-xs font-bold shadow-md shadow-orange-500/30">
@@ -284,9 +265,7 @@
             </button>
         </div>
 
-        {{-- Messages Container --}}
         <div id="aiChatMessages" class="flex-1 overflow-y-auto p-4 space-y-3 text-xs">
-            {{-- Welcome bubble from AI --}}
             <div class="flex items-start gap-2">
                 <div class="w-6 h-6 rounded-full bg-orange-500/20 border border-orange-500/30 text-orange-400 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
                     AI
@@ -296,7 +275,6 @@
                 </div>
             </div>
 
-            {{-- Quick Chips --}}
             <div id="aiQuickChips" class="flex flex-wrap gap-1.5 pt-1">
                 <button type="button" onclick="sendQuickPrompt('Rekomendasi alat rekam video podcast')" class="text-[11px] px-2.5 py-1 rounded-full bg-orange-500/10 hover:bg-orange-500/20 text-orange-300 border border-orange-500/20 transition">
                     🎥 Rekomendasi Podcast
@@ -310,7 +288,6 @@
             </div>
         </div>
 
-        {{-- Input Form --}}
         <div class="p-3 border-t border-white/10 bg-slate-900/40">
             <form id="aiChatForm" onsubmit="handleAiSubmit(event)" class="flex gap-2">
                 <input type="text" id="aiInputText" placeholder="Tanya alat praktikum atau lab..."
@@ -325,7 +302,6 @@
         </div>
     </div>
 
-    {{-- Floating Toggle Button (FAB) --}}
     <button id="aiFabBtn" onclick="toggleAiDrawer()"
         class="w-12 h-12 rounded-full bg-gradient-to-tr from-orange-600 via-orange-500 to-amber-400 p-0.5 shadow-[0_0_20px_rgba(249,115,22,0.5)] hover:shadow-[0_0_30px_rgba(249,115,22,0.8)] hover:scale-105 active:scale-95 transition-all duration-300 flex items-center justify-center group"
         title="Tanya SiPinjam AI">

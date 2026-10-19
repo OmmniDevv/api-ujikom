@@ -6,7 +6,6 @@
 @section('content')
 <div class="max-w-3xl space-y-5">
 
-    {{-- Status denda --}}
     @if($pengembalian->denda > 0)
     <div class="alert-error flex items-center gap-3">
         <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -25,7 +24,6 @@
     </div>
     @endif
 
-    {{-- Info Pengembalian --}}
     <div class="glass-card p-6">
         <h2 class="font-semibold text-white mb-4">Informasi Pengembalian</h2>
         <div class="fire-divider mb-4"></div>
@@ -86,7 +84,6 @@
         </div>
     </div>
 
-    {{-- Alat yang dikembalikan --}}
     <div class="glass-card p-6">
         <h3 class="font-semibold text-white mb-4">Alat yang Dikembalikan</h3>
         <div class="fire-divider mb-4"></div>
@@ -120,7 +117,6 @@
         </div>
     </div>
 
-    {{-- Info Peminjaman asal --}}
     <div class="glass-card p-5 border border-white/5">
         <p class="text-white/40 text-xs uppercase tracking-wider mb-3">Referensi Peminjaman</p>
         <div class="flex items-center justify-between">

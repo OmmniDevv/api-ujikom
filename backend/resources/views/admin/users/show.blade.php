@@ -6,7 +6,6 @@
 @section('content')
 <div class="max-w-3xl space-y-5">
 
-    {{-- Info Akun --}}
     <div class="glass-card p-6">
         <div class="flex items-center gap-5 mb-5">
             <div class="w-16 h-16 rounded-full bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center text-white text-2xl font-bold shadow-lg shadow-orange-900/40 flex-shrink-0">
@@ -43,7 +42,6 @@
         </div>
     </div>
 
-    {{-- Riwayat Peminjaman --}}
     <div class="glass-card p-6">
         <h3 class="font-semibold text-white mb-4">Riwayat Peminjaman</h3>
         <div class="fire-divider mb-4"></div>
@@ -65,7 +63,6 @@
         @endforelse
     </div>
 
-    {{-- Actions --}}
     <div class="flex items-center gap-3">
         <a href="{{ route('admin.users.edit', $user) }}" class="btn-fire">Edit User</a>
         <a href="{{ route('admin.users.index') }}" class="btn-ghost">← Kembali</a>

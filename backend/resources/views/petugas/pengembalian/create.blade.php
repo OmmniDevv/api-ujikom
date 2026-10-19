@@ -6,7 +6,6 @@
 @section('content')
 <div class="max-w-2xl space-y-4">
 
-    {{-- Pilih peminjaman --}}
     @if(!$selectedPeminjaman)
     <div class="glass-card p-5">
         <h2 class="font-semibold text-white mb-4">Pilih Peminjaman</h2>
@@ -27,7 +26,6 @@
     </div>
     @else
 
-    {{-- Form pengembalian --}}
     <div class="glass-card p-5">
         <h2 class="font-semibold text-white mb-1">Peminjam: {{ $selectedPeminjaman->user?->name ?? 'User Dihapus' }}</h2>
         <p class="text-xs text-white/40 mb-4">Rencana kembali: {{ $selectedPeminjaman->tgl_kembali_plan->format('d M Y') }}</p>

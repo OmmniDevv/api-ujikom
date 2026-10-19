@@ -7,7 +7,6 @@
 @section('content')
 <div class="space-y-6">
 
-    {{-- ===== STATISTIK RINGKASAN LAPORAN ===== --}}
     @php
         $totalData = $peminjamans->count();
         $totalDipinjam = $peminjamans->where('status', 'dipinjam')->count();
@@ -80,13 +79,11 @@
         </div>
     </div>
 
-    {{-- ===== ACTION TOOLBAR (EXPORT BUTTONS) ===== --}}
     <div class="glass-card p-4 flex flex-col sm:flex-row items-center justify-between gap-3 print:hidden">
         <div class="text-xs text-white/60">
             <span>Menampilkan <strong class="text-white">{{ $totalData }}</strong> transaksi peminjaman</span>
         </div>
         <div class="flex flex-wrap items-center gap-2">
-            {{-- Tombol Export PDF --}}
             <a href="{{ route('petugas.laporan.pdf') }}"
                class="btn-danger flex items-center gap-2 px-4 py-2 text-xs font-semibold shadow-lg shadow-red-900/20 transition hover:scale-105"
                title="Unduh laporan dalam format PDF siap cetak">
@@ -96,7 +93,6 @@
                 Unduh PDF
             </a>
 
-            {{-- Tombol Export Excel --}}
             <a href="{{ route('petugas.laporan.excel') }}"
                class="btn-ghost flex items-center gap-2 px-4 py-2 text-xs font-semibold bg-emerald-600/30 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-600/50 shadow-lg shadow-emerald-900/20 transition hover:scale-105"
                title="Unduh laporan dalam format spreadsheet Excel .xlsx">
@@ -106,7 +102,6 @@
                 Unduh Excel
             </a>
 
-            {{-- Tombol Print Browser --}}
             <button onclick="window.print()"
                     class="btn-fire flex items-center gap-2 px-4 py-2 text-xs font-semibold transition hover:scale-105">
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -118,7 +113,6 @@
         </div>
     </div>
 
-    {{-- ===== PRINT ONLY HEADER & METADATA (Tampil Eksklusif Saat Dicetak / Save as PDF) ===== --}}
     @php
         $currentUser = auth()->user();
         $generatorNama = $currentUser ? $currentUser->name : 'Sistem Otomatis';
@@ -129,12 +123,10 @@
     @endphp
 
     <div class="hidden print:block mb-4">
-        {{-- Watermark Background Print --}}
         <div class="print-watermark">
             SIPINJAM • SMKN 7 BALEENDAH • DOKUMEN RESMI TERVERIFIKASI
         </div>
 
-        {{-- Kop Header --}}
         <div class="flex items-center justify-between pb-3 mb-3 border-b-2 border-orange-600">
             <div>
                 <h1 class="text-lg font-black text-orange-600 uppercase tracking-tight">⚡ SiPinjam - SMKN 7 Baleendah</h1>
@@ -147,7 +139,6 @@
             </div>
         </div>
 
-        {{-- Metadata Box Generator --}}
         <div class="p-3 rounded bg-slate-50 border border-slate-200 border-l-4 border-l-orange-500 mb-4 text-xs">
             <div class="grid grid-cols-2 gap-y-1 gap-x-4">
                 <div>
@@ -170,7 +161,6 @@
             </div>
         </div>
 
-        {{-- Metric Strip Ringkasan Cetak --}}
         <div class="grid grid-cols-5 gap-2 mb-4 text-center">
             <div class="p-2 rounded bg-slate-100 border border-slate-200">
                 <span class="text-[9px] font-bold text-slate-600 uppercase block">Total Transaksi</span>
@@ -195,7 +185,6 @@
         </div>
     </div>
 
-    {{-- ===== TABEL LAPORAN LENGKAP ===== --}}
     <div class="glass-card overflow-hidden">
         <div class="overflow-x-auto">
             <table class="table-glass w-full text-xs">
@@ -290,7 +279,6 @@
         </div>
     </div>
 
-    {{-- PRINT FOOTER: PENGESAHAN & CHECKSUM DIGITAL (Hanya tampil saat print) --}}
     <div class="hidden print:block mt-6 pt-4 border-t border-dashed border-slate-300" style="page-break-inside: avoid;">
         <div class="flex items-start justify-between gap-6">
             <div class="w-7/12 p-3 rounded bg-slate-50 border border-slate-200 text-[10px] text-slate-600 leading-relaxed">
@@ -316,7 +304,6 @@
 
 </div>
 
-{{-- CSS KHUSUS PRINT BROWSER MODERN & ELEGAN --}}
 <style>
 @media print {
     @page {

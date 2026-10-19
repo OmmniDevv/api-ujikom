@@ -11,7 +11,6 @@
 </head>
 <body class="fire-bg min-h-screen flex items-center justify-center p-4 font-sans relative overflow-hidden selection:bg-orange-500/30 selection:text-orange-200">
 
-    {{-- Ambient Floating Glow Orbs for Glassmorphism --}}
     <div class="fixed inset-0 pointer-events-none overflow-hidden -z-10" aria-hidden="true">
         <div class="ambient-orb ambient-orb-1"></div>
         <div class="ambient-orb ambient-orb-2"></div>
@@ -20,7 +19,6 @@
 
     <div class="w-full max-w-md relative z-10">
 
-        {{-- Logo & Brand Header --}}
         <div class="text-center mb-8">
             <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 via-orange-600 to-red-600 mb-4 shadow-xl shadow-orange-950/70 border border-white/20">
                 <svg class="w-8 h-8 text-white drop-shadow" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -32,14 +30,12 @@
             <p class="text-orange-200/70 text-xs font-medium mt-1">Sistem Peminjaman Alat Laboratorium & Inventaris</p>
         </div>
 
-        {{-- Glassmorphism Login Card --}}
         <div class="glass-card p-8 sm:p-10 border border-white/10 shadow-2xl backdrop-blur-2xl">
             <div class="mb-6 text-center">
                 <h2 class="text-lg font-bold text-white tracking-wide">Selamat Datang Kembali</h2>
                 <p class="text-xs text-white/50 mt-1">Masukkan kredensial akun untuk mengakses sistem</p>
             </div>
 
-            {{-- Error Notifications --}}
             @if($errors->any())
                 <div class="alert-error mb-5 text-xs">
                     <ul class="list-disc list-inside space-y-1">

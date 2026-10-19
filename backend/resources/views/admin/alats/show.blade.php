@@ -6,10 +6,8 @@
 @section('content')
 <div class="max-w-3xl space-y-5">
 
-    {{-- Info Alat --}}
     <div class="glass-card p-6">
         <div class="flex gap-5">
-            {{-- Gambar --}}
             <div class="w-28 h-28 rounded-xl overflow-hidden flex-shrink-0 bg-white/5 flex items-center justify-center border border-white/10">
                 @if($alat->gambar)
                     <img src="{{ asset('storage/' . $alat->gambar) }}" alt="{{ $alat->nama_alat }}" class="w-full h-full object-cover">
@@ -20,7 +18,6 @@
                     </svg>
                 @endif
             </div>
-            {{-- Detail --}}
             <div class="flex-1">
                 <div class="flex items-start justify-between">
                     <div>
@@ -55,7 +52,6 @@
         </div>
     </div>
 
-    {{-- Riwayat Peminjaman --}}
     <div class="glass-card p-6">
         <h3 class="font-semibold text-white mb-4">Riwayat Peminjaman Alat</h3>
         <div class="fire-divider mb-4"></div>
@@ -92,7 +88,6 @@
         </div>
     </div>
 
-    {{-- Actions --}}
     <div class="flex items-center gap-3">
         <a href="{{ route('admin.alats.edit', $alat) }}" class="btn-fire">Edit Alat</a>
         <a href="{{ route('admin.alats.index') }}" class="btn-ghost">← Kembali</a>

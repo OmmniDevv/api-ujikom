@@ -7,7 +7,6 @@
 @section('content')
 <div class="space-y-4">
 
-    {{-- Search --}}
     <div class="flex flex-col md:flex-row gap-3 justify-between items-stretch md:items-center">
         <form method="GET" class="flex flex-1 flex-wrap sm:flex-nowrap gap-2.5 items-center max-w-xl">
             <div class="relative flex-1 min-w-[220px]">

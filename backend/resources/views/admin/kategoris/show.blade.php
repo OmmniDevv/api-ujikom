@@ -6,7 +6,6 @@
 @section('content')
 <div class="max-w-3xl space-y-5">
 
-    {{-- Info Kategori --}}
     <div class="glass-card p-6">
         <div class="flex items-start justify-between mb-4">
             <div>
@@ -28,7 +27,6 @@
         </div>
     </div>
 
-    {{-- Daftar Alat --}}
     <div class="glass-card p-6">
         <h3 class="font-semibold text-white mb-4">Alat dalam Kategori ini</h3>
         <div class="fire-divider mb-4"></div>
@@ -49,7 +47,6 @@
         @endforelse
     </div>
 
-    {{-- Actions --}}
     <div class="flex items-center gap-3">
         <a href="{{ route('admin.kategoris.edit', $kategori) }}" class="btn-fire">Edit Kategori</a>
         <a href="{{ route('admin.kategoris.index') }}" class="btn-ghost">← Kembali</a>

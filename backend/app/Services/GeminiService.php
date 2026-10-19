@@ -22,9 +22,6 @@ class GeminiService
         ];
     }
 
-    /**
-     * Kirim percakapan ke Gemini AI dengan batas konteks peminjaman alat yang ketat.
-     */
     public function chat(string $userMessage, array $conversationHistory = []): array
     {
         if (empty($this->apiKey)) {
@@ -34,7 +31,6 @@ class GeminiService
             ];
         }
 
-        // Ambil data inventaris alat yang tersedia saat ini
         $alats = Alat::with('kategori:id,nama_kategori')
             ->select('id', 'nama_alat', 'kategori_id', 'stok', 'status_kondisi', 'deskripsi')
             ->where('stok', '>', 0)
@@ -65,10 +61,8 @@ Anda adalah "SiPinjam AI" — Asisten Virtual Cerdas Laboratorium & Peminjaman A
 {$daftarAlatText}
 INSTRUCTION;
 
-        // Susun payload contents
         $contents = [];
 
-        // Masukkan riwayat pesan jika ada (maksimal 6 riwayat terakhir)
         if (!empty($conversationHistory)) {
             $recentHistory = array_slice($conversationHistory, -6);
             foreach ($recentHistory as $msg) {
@@ -82,13 +76,11 @@ INSTRUCTION;
             }
         }
 
-        // Tambahkan pesan user terkini
         $contents[] = [
             'role' => 'user',
             'parts' => [['text' => $userMessage]],
         ];
 
-        // Lakukan request dengan fallback model jika terjadi spike
         $lastError = null;
         foreach ($this->candidateModels as $model) {
             try {

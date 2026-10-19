@@ -1,17 +1,12 @@
 import './bootstrap';
 import { animate, stagger } from 'animejs';
 
-// Pastikan DOM sudah siap
 document.addEventListener('DOMContentLoaded', () => {
-    // Hormati preferensi aksesibilitas pengguna (prefers-reduced-motion)
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (prefersReducedMotion) {
         return;
     }
 
-    // =========================================================================
-    // 1. AMBIENT ORBS FLOATING BREATHING ANIMATION
-    // =========================================================================
     if (document.querySelector('.ambient-orb-1')) {
         animate('.ambient-orb-1', {
             translateX: [0, 30, -20, 0],
@@ -34,11 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // =========================================================================
-    // 2. ENTRANCE STAGGER ANIMATIONS (PAGE LOAD)
-    // =========================================================================
 
-    // A. Stat Cards Entry
     const statCards = document.querySelectorAll('.stat-card');
     if (statCards.length > 0) {
         animate(statCards, {
@@ -50,7 +41,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // B. Glass Cards Entry
     const glassCards = document.querySelectorAll('.glass-card:not(.stat-card)');
     if (glassCards.length > 0) {
         animate(glassCards, {
@@ -62,7 +52,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // C. Table Rows Stagger Reveal
     const tableRows = document.querySelectorAll('.table-glass tbody tr');
     if (tableRows.length > 0 && tableRows.length <= 30) {
         animate(tableRows, {
@@ -74,7 +63,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // D. Flash Message Notification Pop-in
     const alertMsg = document.querySelectorAll('.alert-success, .alert-error');
     if (alertMsg.length > 0) {
         animate(alertMsg, {
@@ -86,13 +74,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // =========================================================================
-    // 3. DYNAMIC NUMBER COUNTER ANIMATION
-    // =========================================================================
     const counterElements = document.querySelectorAll('[data-counter], .stat-card p.text-3xl, .stat-card p.text-2xl');
     counterElements.forEach((el) => {
         const rawText = el.textContent.trim();
-        // Cek jika teks berupa angka murni
         const numericVal = parseInt(rawText.replace(/[^0-9]/g, ''), 10);
         if (!isNaN(numericVal) && numericVal > 0 && numericVal < 1000000) {
             const hasCurrencyPrefix = rawText.includes('Rp');
@@ -117,9 +101,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // =========================================================================
-    // 4. ANIMATED DELETE MODAL WITH ANIMEJS
-    // =========================================================================
     const modal = document.getElementById('deleteModal');
     const modalCard = document.getElementById('deleteModalCard');
 

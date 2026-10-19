@@ -216,7 +216,6 @@
 </head>
 <body>
 
-{{-- Watermark Digital --}}
 <div class="watermark">
   SIPINJAM • SMKN 7 BALEENDAH • DOKUMEN RESMI TERVERIFIKASI
 </div>
@@ -237,7 +236,6 @@
     $totalDenda = $peminjamans->sum(fn($p) => $p->pengembalian?->denda ?? 0);
 @endphp
 
-{{-- 1. Header Surat Resmi --}}
 <table class="header-wrap">
   <tr>
     <td style="width: 55%; vertical-align: middle;">
@@ -254,7 +252,6 @@
   </tr>
 </table>
 
-{{-- 2. Metadata Generator Box (Di-generate oleh siapa & kapan) --}}
 <div class="meta-box">
   <table class="meta-table">
     <tr>
@@ -274,7 +271,6 @@
   </table>
 </div>
 
-{{-- 3. Ringkasan Eksekutif --}}
 <table class="metrics-table">
   <tr>
     <td style="width: 20%;">
@@ -310,7 +306,6 @@
   </tr>
 </table>
 
-{{-- 4. Tabel Transaksi --}}
 <table class="data-table">
   <thead>
     <tr>
@@ -381,7 +376,6 @@
   </tbody>
 </table>
 
-{{-- 5. Footer Keamanan & Lembar Tanda Tangan Resmi --}}
 <table class="footer-table">
   <tr>
     <td style="width: 60%;">

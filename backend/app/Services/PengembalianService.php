@@ -30,7 +30,6 @@ class PengembalianService
             $namaAlat = [];
 
             foreach ($peminjaman->detailPinjam as $detail) {
-                // Guard: alat mungkin sudah dihapus (soft issue) — lewati agar tidak NPE
                 if (! $detail->alat) {
                     continue;
                 }
@@ -48,7 +47,6 @@ class PengembalianService
                 'denda' => $denda,
                 'petugas_id' => $petugasId,
             ];
-            // Simpan catatan jika kolom tersedia (migrasi akan menambahkannya); aman untuk backward-compat
             if ($catatan !== null && \Illuminate\Support\Facades\Schema::hasColumn('pengembalian', 'catatan')) {
                 $payload['catatan'] = $catatan;
             }
@@ -57,7 +55,6 @@ class PengembalianService
             $statusBaru = $terlambatHari > 0 ? 'telat' : 'dikembalikan';
             $peminjaman->update(['status' => $statusBaru]);
 
-            // Pembaruan skor reputasi & gamifikasi peminjam
             $userPeminjam = $peminjaman->user;
             if ($userPeminjam) {
                 $skorSekarang = $userPeminjam->skor_reputasi ?? 100;

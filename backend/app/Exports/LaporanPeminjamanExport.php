@@ -30,7 +30,6 @@ class LaporanPeminjamanExport
     {
         $tmpFile = tempnam(sys_get_temp_dir(), 'laporan_') . '.xlsx';
 
-        // ===== KONFIGURASI LEBAR KOLOM & MERGE CELLS =====
         $options = new Options();
         $options->setColumnWidth(7, 1);    // A: No
         $options->setColumnWidth(24, 2);   // B: Nama Peminjam
@@ -43,7 +42,6 @@ class LaporanPeminjamanExport
         $options->setColumnWidth(18, 9);   // I: Kondisi Kembali
         $options->setColumnWidth(22, 10);  // J: Nominal Denda
 
-        // Merge Judul & Header Info (0-indexed columns, 1-indexed rows)
         $options->mergeCells(0, 1, 9, 1); // Judul Utama
         $options->mergeCells(0, 2, 9, 2); // Subtitle Instansi
         $options->mergeCells(0, 3, 9, 3); // Metadata Pembuat
@@ -52,7 +50,6 @@ class LaporanPeminjamanExport
         $writer = new Writer($options);
         $writer->openToFile($tmpFile);
 
-        // ===== DEFINISI BORDER =====
         $borderThin = new Border(
             new BorderPart(BorderName::LEFT, 'CBD5E1', BorderWidth::THIN, BorderStyle::SOLID),
             new BorderPart(BorderName::RIGHT, 'CBD5E1', BorderWidth::THIN, BorderStyle::SOLID),
@@ -74,7 +71,6 @@ class LaporanPeminjamanExport
             new BorderPart(BorderName::BOTTOM, '0F172A', BorderWidth::MEDIUM, BorderStyle::DOUBLE)
         );
 
-        // ===== STYLES =====
         $titleStyle = (new Style())
             ->withFontBold(true)
             ->withFontSize(13)
@@ -101,7 +97,6 @@ class LaporanPeminjamanExport
             ->withBackgroundColor('F1F5F9')
             ->withCellAlignment(CellAlignment::LEFT);
 
-        // Header Tabel Style (Dark Navy Kontras Tinggi)
         $headerBase = (new Style())
             ->withFontBold(true)
             ->withFontSize(10)
@@ -113,7 +108,6 @@ class LaporanPeminjamanExport
         $thLeft   = $headerBase->withCellAlignment(CellAlignment::LEFT);
         $thRight  = $headerBase->withCellAlignment(CellAlignment::RIGHT);
 
-        // Style Cell Data
         $styleCenter = (new Style())->withFontSize(9)->withBorder($borderThin)->withCellAlignment(CellAlignment::CENTER);
         $styleLeft   = (new Style())->withFontSize(9)->withBorder($borderThin)->withCellAlignment(CellAlignment::LEFT);
         $styleRight  = (new Style())->withFontSize(9)->withBorder($borderThin)->withCellAlignment(CellAlignment::RIGHT);
@@ -122,31 +116,26 @@ class LaporanPeminjamanExport
         $styleLeftZebra   = (new Style())->withFontSize(9)->withBorder($borderThin)->withBackgroundColor('F8FAFC')->withCellAlignment(CellAlignment::LEFT);
         $styleRightZebra  = (new Style())->withFontSize(9)->withBorder($borderThin)->withBackgroundColor('F8FAFC')->withCellAlignment(CellAlignment::RIGHT);
 
-        // Style Status Khusus
         $styleDipinjam = (new Style())->withFontSize(9)->withFontBold(true)->withFontColor('1D4ED8')->withBackgroundColor('EFF6FF')->withBorder($borderThin)->withCellAlignment(CellAlignment::CENTER);
         $styleKembali  = (new Style())->withFontSize(9)->withFontBold(true)->withFontColor('047857')->withBackgroundColor('ECFDF5')->withBorder($borderThin)->withCellAlignment(CellAlignment::CENTER);
         $styleTelat    = (new Style())->withFontSize(9)->withFontBold(true)->withFontColor('BE123C')->withBackgroundColor('FFF1F2')->withBorder($borderThin)->withCellAlignment(CellAlignment::CENTER);
 
-        // Metadata Pembuat
         $generatorName = auth()->user()->name ?? 'System Admin';
         $generatorRole = ucfirst(auth()->user()->role ?? 'Admin');
         $waktuGenerate = now()->format('d F Y, H:i:s') . ' WIB';
         $docId         = 'SPJ-XLS-' . now()->format('Ymd') . '-' . strtoupper(substr(hash('crc32', $generatorName . now()->timestamp), 0, 6));
 
-        // Metrik Ringkasan
         $totalTransaksi = count($this->peminjamans);
         $totalUnit      = $this->peminjamans->sum(fn ($p) => $p->detailPinjam->sum('jumlah'));
         $totalDenda     = $this->peminjamans->sum(fn ($p) => $p->pengembalian?->denda ?? 0);
         $totalTelat     = $this->peminjamans->where('status', 'telat')->count();
 
-        // ===== 1. KOP SURAT & TITLE =====
         $writer->addRow(Row::fromValuesWithStyle(['LAPORAN REKAPITULASI PEMINJAMAN ALAT - SIPINJAM SMKN 7 BALEENDAH'], $titleStyle));
         $writer->addRow(Row::fromValuesWithStyle(['Laboratorium & Bengkel Praktik Kejuruan | Jl. Siliwangi No. 127, Baleendah, Bandung'], $subTitleStyle));
         $writer->addRow(Row::fromValuesWithStyle(["Di-generate oleh: {$generatorName} ({$generatorRole}) | Tanggal: {$waktuGenerate} | No. Dokumen: {$docId}"], $metaStyle));
         $writer->addRow(Row::fromValuesWithStyle(["STATUS: DOKUMEN RESMI TERSERTIFIKASI ELEKTRONIK • INTEGRITAS DATABASE SIPINJAM"], $certStyle));
         $writer->addRow(Row::fromValues([''])); // Blank Row
 
-        // ===== 2. STRIP RINGKASAN METRIK =====
         $metricLabelStyle = (new Style())->withFontSize(9)->withFontBold(true)->withFontColor('475569')->withBackgroundColor('F1F5F9')->withCellAlignment(CellAlignment::CENTER);
         $metricValueStyle = (new Style())->withFontSize(11)->withFontBold(true)->withFontColor('0F172A')->withBackgroundColor('FFFFFF')->withBorder($borderThin)->withCellAlignment(CellAlignment::CENTER);
         $metricAlertStyle = (new Style())->withFontSize(11)->withFontBold(true)->withFontColor('BE123C')->withBackgroundColor('FFF1F2')->withBorder($borderThin)->withCellAlignment(CellAlignment::CENTER);
@@ -171,7 +160,6 @@ class LaporanPeminjamanExport
 
         $writer->addRow(Row::fromValues([''])); // Blank Row
 
-        // ===== 3. TABLE HEADER ROW =====
         $writer->addRow(Row::fromValuesWithStyles([
             'NO',
             'NAMA PEMINJAM',
@@ -196,7 +184,6 @@ class LaporanPeminjamanExport
             $thRight,  // DENDA
         ]));
 
-        // ===== 4. DATA ROWS =====
         $no = 1;
         foreach ($this->peminjamans as $item) {
             $isZebra = ($no % 2 === 0);
@@ -214,7 +201,6 @@ class LaporanPeminjamanExport
             $kondisi    = $item->pengembalian?->kondisi_kembali ?? '-';
             $denda      = (int) ($item->pengembalian?->denda ?? 0);
 
-            // Status Badge Style
             $statusStyle = match ($item->status) {
                 'dipinjam'     => $styleDipinjam,
                 'dikembalikan' => $styleKembali,
@@ -265,7 +251,6 @@ class LaporanPeminjamanExport
             $no++;
         }
 
-        // ===== 5. FOOTER SUMMARY ROW =====
         $totalLabelStyle = (new Style())
             ->withFontBold(true)
             ->withFontSize(10)
@@ -302,7 +287,6 @@ class LaporanPeminjamanExport
             $totalDendaStyle
         ]));
 
-        // ===== 6. LEGALITAS & LEMBAR TANDA TANGAN =====
         $writer->addRow(Row::fromValues([''])); // Blank Row
 
         $footerMetaStyle = (new Style())->withFontSize(8)->withFontColor('64748B')->withFontItalic(true);
@@ -354,7 +338,6 @@ class LaporanPeminjamanExport
 
         $writer->close();
 
-        // Stream ke browser
         $content = file_get_contents($tmpFile);
         unlink($tmpFile);
 

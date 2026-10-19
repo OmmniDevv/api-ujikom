@@ -6,7 +6,6 @@
 @section('content')
 <div class="max-w-3xl space-y-5">
 
-    {{-- Info Peminjaman --}}
     <div class="glass-card p-6">
         <div class="flex items-center justify-between mb-4">
             <h2 class="font-semibold text-white">Informasi Peminjaman</h2>
@@ -39,7 +38,6 @@
         </div>
     </div>
 
-    {{-- Detail Alat --}}
     <div class="glass-card p-6">
         <h3 class="font-semibold text-white mb-4">Alat yang Dipinjam</h3>
         <div class="fire-divider mb-4"></div>
@@ -56,7 +54,6 @@
         </div>
     </div>
 
-    {{-- Info Pengembalian (jika sudah dikembalikan) --}}
     @if($peminjaman->pengembalian)
     <div class="glass-card p-6 border border-green-500/20">
         <h3 class="font-semibold text-green-400 mb-4">Informasi Pengembalian</h3>
