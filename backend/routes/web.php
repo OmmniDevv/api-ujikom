@@ -12,10 +12,6 @@ use App\Http\Controllers\AiChatController;
 use App\Http\Controllers\ExecutiveAnalyticsController;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| AUTH ROUTES (guest only)
-|--------------------------------------------------------------------------
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.post');
@@ -29,10 +25,6 @@ Route::post('/ai/chat', [AiChatController::class, 'chat'])
     ->middleware('auth')
     ->name('ai.chat');
 
-/*
-|--------------------------------------------------------------------------
-| ADMIN ROUTES
-|--------------------------------------------------------------------------
 Route::prefix('admin')
     ->name('admin.')
     ->middleware(['auth', 'role:admin'])
@@ -56,10 +48,6 @@ Route::prefix('admin')
         Route::get('/laporan/excel', [PetugasController::class, 'laporanExcel'])->name('laporan.excel');
     });
 
-/*
-|--------------------------------------------------------------------------
-| PETUGAS ROUTES
-|--------------------------------------------------------------------------
 Route::prefix('petugas')
     ->name('petugas.')
     ->middleware(['auth', 'role:petugas,admin'])
@@ -85,10 +73,6 @@ Route::prefix('petugas')
         Route::get('/analitik', [ExecutiveAnalyticsController::class, 'index'])->name('analitik.index');
     });
 
-/*
-|--------------------------------------------------------------------------
-| PEMINJAM ROUTES
-|--------------------------------------------------------------------------
 Route::prefix('peminjam')
     ->name('peminjam.')
     ->middleware(['auth', 'role:peminjam'])
@@ -104,10 +88,6 @@ Route::prefix('peminjam')
         Route::post('/peminjaman/{peminjaman}/ajukan-kembali', [PeminjamanController::class, 'ajukanKembali'])->name('peminjaman.ajukan-kembali');
     });
 
-/*
-|--------------------------------------------------------------------------
-| ROOT REDIRECT
-|--------------------------------------------------------------------------
 Route::get('/', function () {
     if (auth()->check()) {
         return match (auth()->user()->role) {

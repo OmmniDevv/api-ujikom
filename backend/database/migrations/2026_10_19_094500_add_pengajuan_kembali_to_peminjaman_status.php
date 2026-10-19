@@ -2,16 +2,21 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
     public function up(): void
     {
-        DB::statement("ALTER TABLE peminjaman MODIFY COLUMN status ENUM('diajukan', 'dipinjam', 'dikembalikan', 'telat', 'ditolak', 'pengajuan_kembali') NOT NULL DEFAULT 'diajukan'");
+        if (Schema::getConnection()->getDriverName() === 'mysql') {
+            DB::statement("ALTER TABLE peminjaman MODIFY COLUMN status ENUM('diajukan', 'dipinjam', 'dikembalikan', 'telat', 'ditolak', 'pengajuan_kembali') NOT NULL DEFAULT 'diajukan'");
+        }
     }
 
     public function down(): void
     {
-        DB::statement("ALTER TABLE peminjaman MODIFY COLUMN status ENUM('diajukan', 'dipinjam', 'dikembalikan', 'telat', 'ditolak') NOT NULL DEFAULT 'diajukan'");
+        if (Schema::getConnection()->getDriverName() === 'mysql') {
+            DB::statement("ALTER TABLE peminjaman MODIFY COLUMN status ENUM('diajukan', 'dipinjam', 'dikembalikan', 'telat', 'ditolak') NOT NULL DEFAULT 'diajukan'");
+        }
     }
 };

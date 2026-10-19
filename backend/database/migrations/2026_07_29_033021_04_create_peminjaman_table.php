@@ -18,6 +18,8 @@ return new class extends Migration
                 'dipinjam',
                 'dikembalikan',
                 'telat',
+                'ditolak',
+                'pengajuan_kembali',
             ])->default('diajukan');
             $table->timestamps();
         });

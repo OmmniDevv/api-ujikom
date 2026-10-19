@@ -110,7 +110,7 @@ class PeminjamanFlowTest extends TestCase
         $service->tolak($peminjaman);
 
         $this->assertSame(5, $this->alat->fresh()->stok, 'Tolak harus mengembalikan stok');
-        $this->assertDatabaseMissing('peminjaman', ['id' => $peminjaman->id]);
+        $this->assertDatabaseHas('peminjaman', ['id' => $peminjaman->id, 'status' => 'ditolak']);
     }
 
     public function test_stok_tidak_bisa_negatif(): void
@@ -210,5 +210,80 @@ class PeminjamanFlowTest extends TestCase
     {
         $this->get(route('admin.dashboard'))
             ->assertRedirect(route('login'));
+    }
+
+    public function test_peminjam_bisa_ajukan_pengembalian(): void
+    {
+        $service = app(PeminjamanService::class);
+
+        $peminjaman = $service->ajukan(
+            $this->peminjam->id,
+            '2026-09-21',
+            '2026-09-25',
+            [['alat_id' => $this->alat->id, 'jumlah' => 2]]
+        )['peminjaman'];
+
+        $service->approve($peminjaman);
+        $this->assertSame('dipinjam', $peminjaman->fresh()->status);
+
+        $this->actingAs($this->peminjam)
+            ->post(route('peminjam.peminjaman.ajukan-kembali', $peminjaman))
+            ->assertRedirect();
+
+        $this->assertSame('pengajuan_kembali', $peminjaman->fresh()->status);
+    }
+
+    public function test_peminjam_tidak_bisa_ajukan_pengembalian_milik_orang_lain(): void
+    {
+        $service = app(PeminjamanService::class);
+
+        $peminjaman = $service->ajukan(
+            $this->peminjam->id,
+            '2026-09-21',
+            '2026-09-25',
+            [['alat_id' => $this->alat->id, 'jumlah' => 2]]
+        )['peminjaman'];
+
+        $service->approve($peminjaman);
+
+        $orangLain = User::create([
+            'name' => 'Orang Lain',
+            'email' => 'lain@test.com',
+            'password' => 'password123',
+            'role' => 'peminjam',
+        ]);
+
+        $this->actingAs($orangLain)
+            ->post(route('peminjam.peminjaman.ajukan-kembali', $peminjaman))
+            ->assertRedirect();
+
+        $this->assertSame('dipinjam', $peminjaman->fresh()->status);
+    }
+
+    public function test_petugas_bisa_proses_pengajuan_kembali(): void
+    {
+        $peminjamService = app(PeminjamanService::class);
+        $kembaliService = app(PengembalianService::class);
+
+        $peminjaman = $peminjamService->ajukan(
+            $this->peminjam->id,
+            '2026-09-21',
+            '2026-09-25',
+            [['alat_id' => $this->alat->id, 'jumlah' => 2]]
+        )['peminjaman'];
+
+        $peminjamService->approve($peminjaman);
+        $peminjaman->update(['status' => 'pengajuan_kembali']);
+
+        $result = $kembaliService->proses(
+            $peminjaman,
+            '2026-09-24',
+            'baik',
+            $this->petugas->id
+        );
+
+        $this->assertSame('dikembalikan', $result['statusBaru']);
+        $this->assertSame('dikembalikan', $peminjaman->fresh()->status);
+        $this->assertSame(5, $this->alat->fresh()->stok, 'Stok harus kembali penuh');
     }
 }
