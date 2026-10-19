@@ -157,20 +157,30 @@ GEMINI_API_KEY=isi_api_key_kamu_disini
 
 Dapatkan gratis di https://aistudio.google.com/apikey. Kalau dikosongkan, aplikasi tetap jalan — cuma fitur AI-nya nonaktif.
 
-### Password database (opsional)
+### Password database
 
 Default di `docker-compose.yml`:
 
-| Variabel | Default |
+| Variabel | Nilai |
 |---|---|
-| `MYSQL_ROOT_PASSWORD` | `root123` |
-| `MYSQL_PASSWORD` | `api_ujikom123` |
+| `MYSQL_DATABASE` | `API_ujikom` |
+| `MYSQL_USER` / `MYSQL_PASSWORD` | `api_ujikom` / `api_ujikom123` |
+| `MYSQL_ROOT_PASSWORD` | `passwordroot` |
 
 Untuk ujikom/lokal, default ini cukup. Jangan lupa ganti kalau deploy ke server.
 
 ---
 
 ## 6. Jalankan dengan Docker Compose
+
+> **Jalan pintas:** kalau mau otomatis semua, pakai script:
+> ```bash
+> chmod +x install-and-start.sh
+> ./install-and-start.sh
+> ```
+> Script ini mengerjakan langkah 5–7 otomatis: cek Docker, setup `.env`, `compose up`, tunggu MySQL + Laravel siap, lalu verifikasi sampai nyala. Aman dijalankan ulang.
+>
+> Atau ikuti langkah manual di bawah:
 
 Di folder `api-ujikom` (sejajar dengan `docker-compose.yml`):
 
@@ -199,7 +209,7 @@ Semua harus berstatus `Up`:
 
 ```
 NAME             STATUS
-MySQL-API        Up (healthy)
+MySQL-API        Up
 laravel-api      Up
 PhpMyadmin-API   Up
 ```
@@ -234,7 +244,7 @@ Jalankan satu per satu. Kalau semua ✅, berarti aplikasi sudah nyala sempurna:
 ```bash
 # 1. Semua container jalan?
 docker compose ps
-# Harus: MySQL-API (healthy), laravel-api (Up), PhpMyadmin-API (Up)
+# Harus: MySQL-API (Up), laravel-api (Up), PhpMyadmin-API (Up)
 ```
 
 ```bash
@@ -327,6 +337,14 @@ docker compose down
 
 ## 9. Troubleshooting
 
+> **Cara cepat:** 90% masalah selesai dengan urutan ini:
+> ```bash
+> cd ~/api-ujikom
+> docker compose down
+> docker compose up -d --build
+> docker compose logs -f app-laravel   # lihat apa yang error
+> ```
+
 ### Docker Desktop tidak mau start
 
 - Pastikan virtualisasi aktif: Task Manager → Performance → CPU → **Virtualization: Enabled**.
@@ -350,33 +368,104 @@ ports:
   - "8001:8000"   # akses via http://localhost:8001
 ```
 
-### Container `app-laravel` restart terus / error
+### Container `app-laravel` restart terus / Exit 1
 
 ```bash
 docker compose logs app-laravel --tail 50
 ```
 
-Penyebab umum:
-- MySQL belum siap → tunggu 1–2 menit, healthcheck akan retry otomatis.
-- `composer install` gagal (internet putus) → `docker compose up -d --build` ulang.
-- `APP_KEY` kosong → generate key sesuai langkah 5.
+Penyebab umum + solusi:
 
-### Migration gagal: `table already exists`
+| Gejala di log | Penyebab | Solusi |
+|---|---|---|
+| `Connection refused` / `SQLSTATE[HY000] [2002]` | MySQL belum siap saat Laravel start | Tunggu 1-2 menit, atau `docker compose restart app-laravel` |
+| `No application encryption key` | APP_KEY kosong | `docker compose exec app-laravel php artisan key:generate` lalu `docker compose restart app-laravel` |
+| `composer install` gagal / timeout | Internet putus saat download | `docker compose up -d --build` ulang |
+| `npm install` / `npm run build` gagal | Internet putus atau memori kurang | `docker compose exec app-laravel npm run build` manual setelah internet stabil |
+| `Permission denied` saat tulis file | UID container ≠ UID host | Pastikan `user: "1000:1000"` di docker-compose.yml sesuai UID WSL (`id -u`) |
 
-Database sudah punya tabel tapi tracking migration hilang. Reset lalu ulang:
+### Error 500 saat buka http://localhost:8000
 
+1. Cek log: `docker compose logs app-laravel --tail 30`
+2. Cek APP_KEY: `docker compose exec app-laravel grep '^APP_KEY=' .env` (jangan kosong)
+3. Cek koneksi DB: `docker compose exec app-laravel php artisan migrate:status`
+4. Bersihkan cache: `docker compose exec app-laravel php artisan config:clear && php artisan cache:clear`
+
+### Migration gagal
+
+**`table already exists`:**
+Database sudah punya tabel tapi tracking migration hilang. Reset total:
 ```bash
-docker compose down -v
+docker compose down -v   # HATI-HATI: hapus semua data!
 docker compose up -d --build
+```
+
+**`Unknown database 'API_ujikom'`:**
+MySQL belum selesai init. Tunggu 1 menit lalu:
+```bash
+docker compose exec app-laravel php artisan migrate --force
+```
+
+**Setelah `git pull` ada migration baru:**
+```bash
+docker compose exec app-laravel php artisan migrate --force
+```
+
+### phpMyAdmin tidak bisa login
+
+- Pastikan container mysql sudah `Up`: `docker compose ps`
+- Username: `api_ujikom` / Password: `api_ujikom123` (bukan root!)
+- Kalau tetap gagal, cek password di `docker-compose.yml` bagian `mysql-server` → `MYSQL_PASSWORD`
+
+### Gambar alat tidak muncul (404)
+
+Storage link belum dibuat atau terhapus:
+```bash
+docker compose exec app-laravel php artisan storage:link --force
 ```
 
 ### Aplikasi lemot
 
-Pastikan repo di-clone di `~/api-ujikom` (filesystem Linux), **bukan** di `/mnt/c/...`.
+1. Pastikan repo di-clone di `~/api-ujikom` (filesystem Linux), **bukan** di `/mnt/c/...` (5-10x lebih lambat).
+2. Di Docker Desktop → Settings → Resources, naikkan alokasi Memory minimal 4GB.
+3. Matikan container yang tidak dipakai: `docker compose down` saat selesai.
 
-### Internet kampus/sekolah memblokir download image
+### Internet kampus/sekolah memblokir download
 
-Coba pakai hotspot HP untuk langkah `docker compose up --build` pertama kali. Setelah image terdownload, tidak butuh internet lagi.
+- Pakai hotspot HP untuk `docker compose up --build` pertama kali (download image + composer + npm).
+- Setelah image terdownload, tidak butuh internet lagi kecuali `composer install`/`npm install` ulang.
+- Kalau npm diblokir: `docker compose exec app-laravel npm config set registry https://registry.npmmirror.com` (mirror China, biasanya tidak diblokir).
+
+### Disk penuh (`no space left on device`)
+
+Bersihkan image/container yang tidak dipakai:
+```bash
+docker system prune -a --volumes
+# HATI-HATI: ini hapus SEMUA image & volume yang tidak dipakai, termasuk data MySQL!
+# Backup dulu kalau data penting.
+```
+
+Versi aman (hanya yang benar-benar sampah):
+```bash
+docker system prune
+```
+
+### Mau mulai dari NOL total (reset pabrik)
+
+```bash
+cd ~/api-ujikom
+docker compose down -v          # hapus container + volume database
+rm -rf backend/vendor backend/node_modules backend/public/build
+docker compose up -d --build    # build ulang dari nol
+```
+
+### Script `install-and-start.sh` error di tengah jalan
+
+Script ini idempotent (aman dijalankan ulang). Cukup jalankan lagi:
+```bash
+./install-and-start.sh
+```
+Dia akan skip langkah yang sudah beres (`.env` tidak ditimpa, `APP_KEY` tidak di-generate ulang).
 
 ---
 
