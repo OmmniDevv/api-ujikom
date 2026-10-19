@@ -20,7 +20,6 @@ class PengembalianController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        // Pengajuan pengembalian dari user yang menunggu diproses (ACC)
         $pengajuanList = Peminjaman::with(['user', 'detailPinjam.alat'])
             ->where('status', 'pengajuan_kembali')
             ->latest()

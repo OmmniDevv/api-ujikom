@@ -85,14 +85,8 @@ class PeminjamanController extends Controller
         return view('admin.peminjaman.show', compact('peminjaman'));
     }
 
-    /**
-     * Peminjam mengajukan pengembalian barang yang sedang dipinjam.
-     * Status berubah dari 'dipinjam' menjadi 'pengajuan_kembali'.
-     * Petugas kemudian memproses (ACC) via form pengembalian.
-     */
     public function ajukanKembali(Peminjaman $peminjaman)
     {
-        // Pastikan milik user yang sedang login
         if ($peminjaman->user_id !== auth()->id()) {
             return back()->with('error', 'Data peminjaman tidak ditemukan.');
         }

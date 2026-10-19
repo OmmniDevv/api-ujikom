@@ -13,7 +13,6 @@
         </a>
     </div>
 
-    {{-- Pengajuan pengembalian dari user yang menunggu ACC --}}
     @if($pengajuanList->isNotEmpty())
     <div class="glass-card p-4 border-yellow-500/30">
         <h3 class="font-semibold text-yellow-300 mb-3 flex items-center gap-2">
