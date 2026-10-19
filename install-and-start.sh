@@ -144,6 +144,14 @@ echo "=============================================="
 echo "  VERIFIKASI"
 echo "=============================================="
 
+# Cek seeder jalan (ada user di DB?)
+USER_COUNT=$(docker compose exec -T app-laravel php artisan tinker --execute="echo App\Models\User::count();" 2>/dev/null | tr -d '\r\n ')
+if [ -n "$USER_COUNT" ] && [ "$USER_COUNT" -gt 0 ] 2>/dev/null; then
+    sukses "Seeder jalan: $USER_COUNT user di database"
+else
+    peringatan "Seeder belum jalan atau DB kosong — coba manual: docker compose exec app-laravel php artisan db:seed --force"
+fi
+
 # Cek APP_KEY
 KEY=$(docker compose exec -T app-laravel grep '^APP_KEY=' .env 2>/dev/null | cut -d= -f2)
 if [ -n "$KEY" ] && [ "$KEY" != "" ]; then
