@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Http\Controllers\AuthController;
 use App\Models\Alat;
 use App\Models\Kategori;
+use App\Models\Peminjaman;
 use App\Models\User;
 use App\Services\PeminjamanService;
 use App\Services\PengembalianService;
@@ -210,6 +211,41 @@ class PeminjamanFlowTest extends TestCase
     {
         $this->get(route('admin.dashboard'))
             ->assertRedirect(route('login'));
+    }
+
+    public function test_bisa_pinjam_multi_item_sekaligus(): void
+    {
+        $alat2 = Alat::create([
+            'kategori_id' => $this->alat->kategori_id,
+            'nama_alat' => 'Switch Test',
+            'stok' => 10,
+            'status_kondisi' => 'baik',
+        ]);
+        $alat3 = Alat::create([
+            'kategori_id' => $this->alat->kategori_id,
+            'nama_alat' => 'Kabel Test',
+            'stok' => 8,
+            'status_kondisi' => 'baik',
+        ]);
+
+        $response = $this->actingAs($this->peminjam)->post(route('peminjam.peminjaman.store'), [
+            'tgl_pinjam' => now()->format('Y-m-d'),
+            'tgl_kembali_plan' => now()->addDays(3)->format('Y-m-d'),
+            'detail' => [
+                ['alat_id' => $this->alat->id, 'jumlah' => 1],
+                ['alat_id' => $alat2->id, 'jumlah' => 2],
+                ['alat_id' => $alat3->id, 'jumlah' => 3],
+            ],
+        ]);
+
+        $response->assertRedirect(route('peminjam.peminjaman.riwayat'));
+
+        $peminjaman = Peminjaman::where('user_id', $this->peminjam->id)->first();
+        $this->assertNotNull($peminjaman);
+        $this->assertCount(3, $peminjaman->detailPinjam);
+        $this->assertSame(4, $this->alat->fresh()->stok);
+        $this->assertSame(8, $alat2->fresh()->stok);
+        $this->assertSame(5, $alat3->fresh()->stok);
     }
 
     public function test_peminjam_bisa_ajukan_pengembalian(): void
