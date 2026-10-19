@@ -11,7 +11,7 @@ class PengembalianService
 {
     public function proses(Peminjaman $peminjaman, string $tglKembali, string $kondisiKembali, int $petugasId, ?string $catatan = null, ?int $dendaManual = null): array
     {
-        if ($peminjaman->status !== 'dipinjam') {
+        if (! in_array($peminjaman->status, ['dipinjam', 'pengajuan_kembali'])) {
             throw new \RuntimeException('Peminjaman ini tidak dalam status "dipinjam".');
         }
 

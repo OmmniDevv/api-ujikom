@@ -85,4 +85,36 @@ class PeminjamanController extends Controller
         return view('admin.peminjaman.show', compact('peminjaman'));
     }
 
+    /**
+     * Peminjam mengajukan pengembalian barang yang sedang dipinjam.
+     * Status berubah dari 'dipinjam' menjadi 'pengajuan_kembali'.
+     * Petugas kemudian memproses (ACC) via form pengembalian.
+     */
+    public function ajukanKembali(Peminjaman $peminjaman)
+    {
+        // Pastikan milik user yang sedang login
+        if ($peminjaman->user_id !== auth()->id()) {
+            return back()->with('error', 'Data peminjaman tidak ditemukan.');
+        }
+
+        if ($peminjaman->status !== 'dipinjam') {
+            return back()->with('error', 'Hanya peminjaman berstatus "dipinjam" yang bisa diajukan pengembaliannya.');
+        }
+
+        try {
+            $peminjaman->update(['status' => 'pengajuan_kembali']);
+
+            ActivityLogger::log(
+                'Ajukan Pengembalian',
+                "Peminjaman #{$peminjaman->id} diajukan pengembalian oleh " . auth()->user()->name
+            );
+
+            return back()->with('success', 'Pengajuan pengembalian berhasil dikirim. Tunggu petugas memprosesnya.');
+        } catch (\Exception $e) {
+            ActivityLogger::logError('Gagal Ajukan Pengembalian', $e->getMessage());
+
+            return back()->with('error', 'Terjadi kesalahan. Silakan coba lagi.');
+        }
+    }
+
 }

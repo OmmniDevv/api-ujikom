@@ -10,10 +10,11 @@
             <div class="w-48 shrink-0">
                 <select name="status" class="input-glass w-full">
                     <option value="">Semua Status</option>
-                    <option value="diajukan"     {{ request('status')=='diajukan'     ? 'selected':'' }}>Diajukan</option>
-                    <option value="dipinjam"     {{ request('status')=='dipinjam'     ? 'selected':'' }}>Dipinjam</option>
-                    <option value="dikembalikan" {{ request('status')=='dikembalikan' ? 'selected':'' }}>Dikembalikan</option>
-                    <option value="telat"        {{ request('status')=='telat'        ? 'selected':'' }}>Telat</option>
+                    <option value="diajukan"          {{ request('status')=='diajukan'          ? 'selected':'' }}>Diajukan</option>
+                    <option value="dipinjam"         {{ request('status')=='dipinjam'          ? 'selected':'' }}>Dipinjam</option>
+                    <option value="pengajuan_kembali" {{ request('status')=='pengajuan_kembali' ? 'selected':'' }}>Pengajuan Kembali</option>
+                    <option value="dikembalikan"     {{ request('status')=='dikembalikan'     ? 'selected':'' }}>Dikembalikan</option>
+                    <option value="telat"            {{ request('status')=='telat'            ? 'selected':'' }}>Telat</option>
                 </select>
             </div>
             <button type="submit" class="btn-ghost shrink-0 px-4">Filter</button>
@@ -36,6 +37,7 @@
                     <div class="flex items-center gap-2 mb-2">
                         @if($p->status === 'diajukan')     <span class="badge badge-warning">Menunggu Persetujuan</span>
                         @elseif($p->status === 'dipinjam') <span class="badge badge-info">Sedang Dipinjam</span>
+                        @elseif($p->status === 'pengajuan_kembali') <span class="badge badge-warning">Menunggu ACC Petugas</span>
                         @elseif($p->status === 'dikembalikan') <span class="badge badge-success">Sudah Dikembalikan</span>
                         @else <span class="badge badge-danger">Terlambat</span>
                         @endif
@@ -52,6 +54,18 @@
                         <span class="badge badge-gray">{{ $d->alat?->nama_alat }} ({{ $d->jumlah }})</span>
                         @endforeach
                     </div>
+
+                    @if($p->status === 'dipinjam')
+                    <form method="POST" action="{{ route('peminjam.peminjaman.ajukan-kembali', $p) }}" class="mt-3"
+                          onsubmit="return confirm('Ajukan pengembalian untuk peminjaman ini? Petugas akan memprosesnya.')">
+                        @csrf
+                        <button type="submit" class="btn-fire text-xs px-4 py-2 flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 15v-1a4 4 0 00-8 0v1m8 0a2 2 0 012 2v1a2 2 0 01-2 2H8a2 2 0 01-2-2v-1a2 2 0 012-2m8 0H8"/>
+                            </svg> Ajukan Pengembalian
+                        </button>
+                    </form>
+                    @endif
                 </div>
 
                 @if($p->pengembalian)

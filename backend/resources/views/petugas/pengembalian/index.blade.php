@@ -13,6 +13,35 @@
         </a>
     </div>
 
+    {{-- Pengajuan pengembalian dari user yang menunggu ACC --}}
+    @if($pengajuanList->isNotEmpty())
+    <div class="glass-card p-4 border-yellow-500/30">
+        <h3 class="font-semibold text-yellow-300 mb-3 flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            Menunggu ACC ({{ $pengajuanList->count() }})
+        </h3>
+        <div class="space-y-2">
+            @foreach($pengajuanList as $pj)
+            <div class="flex items-center justify-between gap-3 p-3 rounded-xl bg-white/5">
+                <div>
+                    <p class="font-medium text-white">{{ $pj->user?->name }}</p>
+                    <div class="flex flex-wrap gap-1.5 mt-1">
+                        @foreach($pj->detailPinjam as $d)
+                        <span class="badge badge-gray text-xs">{{ $d->alat?->nama_alat }} ({{ $d->jumlah }})</span>
+                        @endforeach
+                    </div>
+                    <p class="text-xs text-white/40 mt-1">Diajukan {{ $pj->updated_at->format('d M Y H:i') }}</p>
+                </div>
+                <a href="{{ route('petugas.pengembalian.create', ['peminjaman_id' => $pj->id]) }}"
+                   class="btn-fire shrink-0 px-4 py-2 text-xs">Proses</a>
+            </div>
+            @endforeach
+        </div>
+    </div>
+    @endif
+
     <div class="glass-card overflow-hidden">
         <table class="table-glass w-full">
             <thead>

@@ -20,13 +20,20 @@ class PengembalianController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        return view('petugas.pengembalian.index', compact('pengembalianList'));
+        // Pengajuan pengembalian dari user yang menunggu diproses (ACC)
+        $pengajuanList = Peminjaman::with(['user', 'detailPinjam.alat'])
+            ->where('status', 'pengajuan_kembali')
+            ->latest()
+            ->get();
+
+        return view('petugas.pengembalian.index', compact('pengembalianList', 'pengajuanList'));
     }
 
     public function create(Request $request)
     {
         $peminjamanAktif = Peminjaman::with(['user', 'detailPinjam.alat'])
-            ->where('status', 'dipinjam')
+            ->whereIn('status', ['dipinjam', 'pengajuan_kembali'])
+            ->orderByRaw("FIELD(status, 'pengajuan_kembali', 'dipinjam')")
             ->get();
 
         $selectedPeminjaman = null;
