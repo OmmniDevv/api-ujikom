@@ -82,9 +82,15 @@ else
 fi
 
 # ── 4. Build & jalankan container ──────────────────────────────
-info "Menjalankan Docker Compose (build image sekali, 3-5 menit pertama kali)..."
+info "Menjalankan Docker Compose..."
 
-docker compose up -d --build
+# Build image kalau belum ada (pertama kali 3-5 menit)
+if ! docker compose images app-laravel 2>/dev/null | grep -q "laravel"; then
+    info "Image belum ada, build dari Dockerfile..."
+    docker compose build app-laravel
+fi
+
+docker compose up -d
 
 sukses "Perintah docker compose dikirim"
 
