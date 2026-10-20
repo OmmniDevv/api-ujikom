@@ -10,6 +10,7 @@ use App\Http\Controllers\PetugasController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AiChatController;
 use App\Http\Controllers\ExecutiveAnalyticsController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
@@ -24,6 +25,14 @@ Route::match(['get', 'post'], '/logout', [AuthController::class, 'logout'])
 Route::post('/ai/chat', [AiChatController::class, 'chat'])
     ->middleware('auth')
     ->name('ai.chat');
+
+Route::get('/me', [ProfileController::class, 'show'])
+    ->middleware('auth')
+    ->name('me');
+
+Route::put('/me', [ProfileController::class, 'update'])
+    ->middleware('auth')
+    ->name('me.update');
 
 Route::prefix('admin')
     ->name('admin.')

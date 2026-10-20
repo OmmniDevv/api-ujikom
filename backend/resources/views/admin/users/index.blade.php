@@ -57,9 +57,13 @@
                     <td class="text-white/40">{{ $users->firstItem() + $i }}</td>
                     <td>
                         <div class="flex items-center gap-2">
-                            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center text-xs font-bold flex-shrink-0">
-                                {{ strtoupper(substr($user->name, 0, 1)) }}
-                            </div>
+                            @if($user->foto_profile_url)
+                                <img src="{{ $user->foto_profile_url }}" alt="Foto {{ $user->name }}" class="w-8 h-8 rounded-full object-cover flex-shrink-0 border border-orange-500/30">
+                            @else
+                                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center text-xs font-bold flex-shrink-0">
+                                    {{ strtoupper(substr($user->name, 0, 1)) }}
+                                </div>
+                            @endif
                             <span class="font-medium text-white">{{ $user->name }}</span>
                             @if($user->id === auth()->id())
                                 <span class="text-[10px] px-2 py-0.5 rounded-full bg-orange-500/20 text-orange-300 font-medium border border-orange-500/30">Anda</span>

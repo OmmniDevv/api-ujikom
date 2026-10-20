@@ -72,6 +72,19 @@ class User extends Authenticatable
         return $query;
     }
 
+    public function getFotoProfileUrlAttribute(): ?string
+    {
+        if (!$this->foto_profile) {
+            return null;
+        }
+
+        if (!\Illuminate\Support\Facades\Storage::disk('public')->exists($this->foto_profile)) {
+            return null;
+        }
+
+        return asset('storage/' . $this->foto_profile);
+    }
+
     public function getTierReputasiAttribute(): array
     {
         $skor = $this->skor_reputasi ?? 100;

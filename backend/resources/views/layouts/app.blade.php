@@ -39,9 +39,14 @@
         @auth
         <div class="p-4 border-b border-orange-900/20">
             <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-full bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center text-sm font-bold flex-shrink-0">
-                    {{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 1)) }}
-                </div>
+                @php $fotoSidebar = auth()->user()->foto_profile_url; @endphp
+                @if($fotoSidebar)
+                    <img src="{{ $fotoSidebar }}" alt="Foto profil" class="w-9 h-9 rounded-full object-cover flex-shrink-0 border border-orange-500/30">
+                @else
+                    <div class="w-9 h-9 rounded-full bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center text-sm font-bold flex-shrink-0">
+                        {{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 1)) }}
+                    </div>
+                @endif
                 <div class="min-w-0">
                     <p class="text-sm font-medium text-white truncate">{{ auth()->user()->name ?? 'User' }}</p>
                     <span class="badge badge-fire text-xs">{{ ucfirst(auth()->user()->role ?? 'Guest') }}</span>
@@ -52,6 +57,15 @@
 
         <nav class="flex-1 p-3 space-y-0.5">
             @php $role = auth()->user()?->role; @endphp
+
+            @auth
+            <a href="{{ route('me') }}"
+               class="nav-link {{ request()->routeIs('me') ? 'active' : '' }}">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                </svg> Profil Saya
+            </a>
+            @endauth
 
             @if($role === 'admin')
                 <p class="text-xs font-semibold text-orange-500/50 uppercase tracking-widest px-3 py-2 mt-1">Menu Admin</p>

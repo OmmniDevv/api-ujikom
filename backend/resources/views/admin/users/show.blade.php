@@ -8,9 +8,13 @@
 
     <div class="glass-card p-6">
         <div class="flex items-center gap-5 mb-5">
-            <div class="w-16 h-16 rounded-full bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center text-white text-2xl font-bold shadow-lg shadow-orange-900/40 flex-shrink-0">
-                {{ strtoupper(substr($user->name, 0, 1)) }}
-            </div>
+            @if($user->foto_profile_url)
+                <img src="{{ $user->foto_profile_url }}" alt="Foto {{ $user->name }}" class="w-16 h-16 rounded-full object-cover shadow-lg shadow-orange-900/40 flex-shrink-0 border-2 border-orange-500/30">
+            @else
+                <div class="w-16 h-16 rounded-full bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center text-white text-2xl font-bold shadow-lg shadow-orange-900/40 flex-shrink-0">
+                    {{ strtoupper(substr($user->name, 0, 1)) }}
+                </div>
+            @endif
             <div>
                 <h2 class="text-xl font-bold text-white">{{ $user->name }}</h2>
                 <p class="text-white/50 text-sm">{{ $user->email }}</p>

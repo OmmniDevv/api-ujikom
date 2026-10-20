@@ -49,8 +49,8 @@
                 </div>
                 <div class="col-span-2">
                     <label class="block text-sm font-medium text-orange-200/80 mb-2">Foto Profile</label>
-                    @if($user->foto_profile)
-                        <img src="{{ asset('storage/'.$user->foto_profile) }}" class="w-16 h-16 rounded-full mb-2 object-cover border border-orange-500/30">
+                    @if($user->foto_profile_url)
+                        <img src="{{ $user->foto_profile_url }}" class="w-16 h-16 rounded-full mb-2 object-cover border border-orange-500/30">
                     @endif
                     <input type="file" name="foto_profile" class="input-glass" accept="image/*">
                 </div>
