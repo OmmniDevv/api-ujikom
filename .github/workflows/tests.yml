@@ -1,0 +1,59 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  phpunit:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP 8.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.4"
+          extensions: mbstring, xml, sqlite3, pdo_sqlite, curl, zip, bcmath, gd
+          coverage: none
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/composer
+          key: ${{ runner.os }}-composer-${{ hashFiles('backend/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Setup Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Build frontend assets
+        # Wajib: 2 test yang me-render Blade gagal tanpa public/build/manifest.json (Vite).
+        run: |
+          npm ci
+          npm run build
+
+      - name: Prepare environment
+        # phpunit.xml hanya menset env testing/SQLite; APP_KEY belum ada,
+        # padahal 13 test error tanpa .env yang valid (terverifikasi lokal).
+        run: |
+          cp .env.example .env
+          php artisan key:generate --no-interaction
+
+      - name: Run PHPUnit
+        run: php vendor/bin/phpunit
