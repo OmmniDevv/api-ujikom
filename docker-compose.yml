@@ -7,8 +7,8 @@ services:
     environment:
       MYSQL_DATABASE: API_ujikom
       MYSQL_USER: api_ujikom
-      MYSQL_PASSWORD: api_ujikom123
-      MYSQL_ROOT_PASSWORD: passwordroot
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-api_ujikom123}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-passwordroot}
     ports:
       - "3306:3306"
     volumes:
@@ -50,7 +50,7 @@ services:
       DB_PORT: 3306
       DB_DATABASE: API_ujikom
       DB_USERNAME: api_ujikom
-      DB_PASSWORD: api_ujikom123
+      DB_PASSWORD: ${DB_PASSWORD:-api_ujikom123}
     networks:
       - API-UJIKOM
 
