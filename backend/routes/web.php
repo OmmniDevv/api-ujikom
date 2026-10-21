@@ -15,17 +15,17 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-    Route::post('/login', [AuthController::class, 'login'])->name('login.post');
-    Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
-    Route::post('/register', [AuthController::class, 'register'])->name('register.post');
+Route::post('/login', [AuthController::class, 'login'])
+    ->middleware('throttle:5,1')
+    ->name('login.post');
 });
 
-Route::match(['get', 'post'], '/logout', [AuthController::class, 'logout'])
+Route::post('/logout', [AuthController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
 
 Route::post('/ai/chat', [AiChatController::class, 'chat'])
-    ->middleware('auth')
+    ->middleware(['auth', 'throttle:30,1'])
     ->name('ai.chat');
 
 Route::get('/me', [ProfileController::class, 'show'])

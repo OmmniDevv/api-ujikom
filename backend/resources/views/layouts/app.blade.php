@@ -413,8 +413,17 @@ function appendMessage(role, text) {
     const div = document.createElement('div');
     div.className = 'flex items-start gap-2 ' + (role === 'user' ? 'justify-end' : '');
 
-    // Format text sederhana (bolding markdown & baris baru)
-    const formattedText = text
+    // Escape HTML entities DULU supaya tag/script dari balasan AI atau
+    // prompt user tidak pernah dieksekusi browser (fix XSS H-2).
+    const escapedText = text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+
+    // Format text sederhana (bolding markdown & baris baru) SETELAH escaping
+    const formattedText = escapedText
         .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
         .replace(/\n/g, '<br>');
 
