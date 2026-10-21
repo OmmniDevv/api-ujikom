@@ -1,0 +1,14 @@
+# Build ulang sendiri di dalam image (Dockerfile menjalankan composer install
+# dan npm install sendiri), jadi artifact lokal ini tidak perlu masuk konteks.
+node_modules/
+vendor/
+.env
+
+# Artifact lokal yang tidak diperlukan image
+storage/logs/*.log
+storage/framework/cache/data/*
+storage/framework/sessions/*
+storage/framework/views/*
+
+# Kontrol versi tidak dibutuhkan image
+.git/
