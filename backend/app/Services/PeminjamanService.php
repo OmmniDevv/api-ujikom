@@ -5,12 +5,20 @@ namespace App\Services;
 use App\Models\Alat;
 use App\Models\DetailPinjam;
 use App\Models\Peminjaman;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class PeminjamanService
 {
     public function ajukan(int $userId, string $tglPinjam, string $tglKembaliPlan, array $detail): array
     {
+        // Guard konsistensi dengan StorePeminjamanRequest (rule after_or_equal:tgl_pinjam).
+        // Dipanggil sebelum transaksi agar tidak ada record/stok yang tersentuh.
+        // Perbandingan sebagai tanggal saja (jam diabaikan); kembali di hari yang sama tetap boleh.
+        if (Carbon::parse($tglKembaliPlan)->toDateString() < Carbon::parse($tglPinjam)->toDateString()) {
+            return ['success'=>false,'error'=>'Tanggal kembali tidak boleh sebelum tanggal pinjam.','peminjaman'=>null,'namaAlat'=>[]];
+        }
+
         DB::beginTransaction();
         try {
             $peminjaman = Peminjaman::create([
