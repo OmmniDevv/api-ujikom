@@ -95,6 +95,11 @@
                 <button type="submit" class="btn-fire w-full py-3 text-sm font-semibold tracking-wide shadow-lg shadow-orange-900/30 mt-2">
                     Masuk ke Sistem
                 </button>
+
+                <p class="text-center text-xs text-white/50">
+                    Belum punya akun?
+                    <a href="{{ route('register') }}" class="text-orange-300 font-semibold hover:text-orange-200 underline underline-offset-2">Register di sini</a>
+                </p>
             </form>
         </div>
 
