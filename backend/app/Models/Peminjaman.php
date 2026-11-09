@@ -36,6 +36,19 @@ class Peminjaman extends Model
         return $this->hasOne(Pengembalian::class);
     }
 
+    public function getHariTerlambatAttribute(): int
+    {
+        if ($this->status !== 'dipinjam' || ! $this->tgl_kembali_plan) {
+            return 0;
+        }
+
+        if ($this->tgl_kembali_plan->gte(now()->startOfDay())) {
+            return 0;
+        }
+
+        return (int) $this->tgl_kembali_plan->diffInDays(now()->startOfDay(), true);
+    }
+
     public function scopeByStatus($query, ?string $status)
     {
         if ($status) {

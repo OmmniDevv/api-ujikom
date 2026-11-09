@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Alat;
 use App\Models\DetailPinjam;
 use App\Models\Peminjaman;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -17,6 +18,21 @@ class PeminjamanService
         // Perbandingan sebagai tanggal saja (jam diabaikan); kembali di hari yang sama tetap boleh.
         if (Carbon::parse($tglKembaliPlan)->toDateString() < Carbon::parse($tglPinjam)->toDateString()) {
             return ['success'=>false,'error'=>'Tanggal kembali tidak boleh sebelum tanggal pinjam.','peminjaman'=>null,'namaAlat'=>[]];
+        }
+
+        $user = User::findOrFail($userId);
+        $tier = $user->tier_reputasi;
+        $alatAktif = DetailPinjam::whereHas('peminjaman', function ($q) use ($userId) {
+            $q->where('user_id', $userId)->whereIn('status', ['diajukan', 'dipinjam', 'pengajuan_kembali']);
+        })->pluck('alat_id')->all();
+        $alatDipakai = array_unique(array_merge($alatAktif, array_column($detail, 'alat_id')));
+        if (count($alatDipakai) > $tier['kuota_max']) {
+            return [
+                'success' => false,
+                'error' => "Kuota pinjam kamu penuh. Skor reputasi {$user->skor_reputasi} ({$tier['nama']}) membatasi maksimal {$tier['kuota_max']} alat aktif sekaligus, pengajuan ini membuat totalnya jadi ".count($alatDipakai).' alat. Kembalikan dulu alat yang sedang kamu pinjam.',
+                'peminjaman' => null,
+                'namaAlat' => [],
+            ];
         }
 
         DB::beginTransaction();

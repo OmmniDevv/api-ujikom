@@ -61,7 +61,13 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
-        return view('petugas.dashboard', compact('stats', 'peminjamanTerbaru'));
+        $peminjamanTerlambat = Peminjaman::with(['user', 'detailPinjam.alat'])
+            ->where('status', 'dipinjam')
+            ->whereDate('tgl_kembali_plan', '<', now()->toDateString())
+            ->orderBy('tgl_kembali_plan')
+            ->get();
+
+        return view('petugas.dashboard', compact('stats', 'peminjamanTerbaru', 'peminjamanTerlambat'));
     }
 
     public function peminjam()

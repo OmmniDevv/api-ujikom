@@ -5,6 +5,10 @@
 
 @section('content')
 <div class="max-w-3xl">
+    @php $tierSaya = auth()->user()->tier_reputasi; @endphp
+    <div class="glass-card p-4 mb-4">
+        <p class="text-sm text-white/70">Skor reputasi kamu <strong class="text-white">{{ auth()->user()->skor_reputasi }}</strong> ({{ $tierSaya['nama'] }}). Kuota kamu maksimal <strong class="text-orange-400">{{ $tierSaya['kuota_max'] }} alat aktif sekaligus</strong>, termasuk yang masih menunggu persetujuan dan yang sedang dipinjam. Kembalikan alat tepat waktu supaya skor dan kuotamu naik.</p>
+    </div>
     <div class="glass-card p-6">
         <form action="{{ route('peminjam.peminjaman.store') }}" method="POST" id="formPeminjaman" class="space-y-6">
             @csrf

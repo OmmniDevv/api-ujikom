@@ -24,6 +24,31 @@
         @endforeach
     </div>
 
+    @if($peminjamanTerlambat->isNotEmpty())
+    <div class="glass-card p-5">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="font-semibold text-white">Sudah Terlambat, Belum Kembali</h2>
+            <span class="badge badge-danger">{{ $peminjamanTerlambat->count() }} peminjaman</span>
+        </div>
+        <div class="fire-divider"></div>
+        <div class="space-y-3 mt-3">
+            @foreach($peminjamanTerlambat as $p)
+            <div class="flex items-center justify-between p-3 rounded-lg bg-white/3 hover:bg-white/5 transition">
+                <div>
+                    <p class="text-sm font-medium text-white">{{ $p->user?->name ?? 'User Dihapus' }}</p>
+                    <p class="text-xs text-white/40 mt-0.5">{{ $p->detailPinjam->count() }} alat · Rencana kembali {{ $p->tgl_kembali_plan->format('d M Y') }} · Estimasi denda Rp {{ number_format($p->hari_terlambat * 5000, 0, ',', '.') }}</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="badge badge-danger">Telat {{ $p->hari_terlambat }} hari</span>
+                    <a href="{{ route('petugas.pengembalian.create', ['peminjaman_id' => $p->id]) }}"
+                       class="btn-ghost px-3 py-1.5 text-xs">Proses Kembali</a>
+                </div>
+            </div>
+            @endforeach
+        </div>
+    </div>
+    @endif
+
     <div class="glass-card p-5">
         <div class="flex items-center justify-between mb-4">
             <h2 class="font-semibold text-white">Peminjaman Perlu Tindakan</h2>

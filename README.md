@@ -72,7 +72,8 @@ Untuk mematikan aplikasi gunakan `docker compose down`. Bila ingin menghapus dat
 - Admin: CRUD User, Kategori, dan Alat, memantau seluruh peminjaman, analitik, serta laporan PDF dan Excel.
 - Petugas: menyetujui atau menolak pengajuan peminjaman, mencatat pengembalian beserta denda keterlambatan, dan membuat laporan.
 - Peminjam: melihat katalog alat, mengajukan peminjaman banyak alat sekaligus, melihat riwayat, dan mengajukan pengembalian yang kemudian diproses Petugas.
-- Skor reputasi peminjam yang berubah mengikuti ketepatan waktu pengembalian.
+- Skor reputasi peminjam yang berubah mengikuti ketepatan waktu pengembalian, dan skor itu menentukan kuota alat aktif yang boleh dipinjam sekaligus: skor 120 ke atas maksimal 5 alat, 90 sampai 119 maksimal 3 alat, 60 sampai 89 maksimal 2 alat, di bawah 60 maksimal 1 alat. Pengajuan yang melebihi kuota ditolak dengan pesan yang menjelaskan skor dan kuotanya.
+- Dashboard Petugas menampilkan daftar peminjaman yang sudah lewat tanggal rencana kembali tetapi belum dikembalikan, lengkap dengan jumlah hari terlambat dan estimasi denda Rp 5.000 per hari, supaya petugas bisa langsung memproses pengembaliannya.
 
 ## Struktur repo
 
