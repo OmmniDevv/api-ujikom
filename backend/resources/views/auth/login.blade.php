@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login — SiPinjam (Sistem Peminjaman Alat)</title>
+    <link rel="icon" type="image/png" href="{{ asset('logo.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -20,12 +21,7 @@
     <div class="w-full max-w-md relative z-10">
 
         <div class="text-center mb-8">
-            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 via-orange-600 to-red-600 mb-4 shadow-xl shadow-orange-950/70 border border-white/20">
-                <svg class="w-8 h-8 text-white drop-shadow" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"/>
-                </svg>
-            </div>
+            <img src="{{ asset('logo.png') }}" alt="Logo SiPinjam" class="w-20 h-20 rounded-2xl object-cover mb-4 shadow-xl shadow-orange-950/70 border border-white/20">
             <h1 class="text-3xl font-extrabold fire-text tracking-tight">SiPinjam</h1>
             <p class="text-orange-200/70 text-xs font-medium mt-1">Sistem Peminjaman Alat Laboratorium & Inventaris</p>
         </div>
